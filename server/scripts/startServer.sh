@@ -1,0 +1,1 @@
+forever start production-map-server/app.js --prod
