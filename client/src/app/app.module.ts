@@ -23,7 +23,7 @@ import { CalendarModule } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthenticationService } from './shared/services/authentication.service';
-import { routing, appRoutingProviders } from './app.routing';
+import { AppRoutingModule } from './app.routing';
 import { ConstsService } from './shared/services/consts.service';
 import { ServersService } from './shared/services/servers.service';
 
@@ -151,6 +151,9 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
+
+    AppRoutingModule,
+    
     NgbModule.forRoot(),
     CalendarModule.forRoot(),
     ModalModule.forRoot(),
@@ -165,13 +168,11 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
             prefix: 'pm-app',
             storageType: 'localStorage'
         }),
-    routing,
     DatePickerModule
   ],
   providers: [
     AuthenticationService,
     LocalStorageService,
-    appRoutingProviders,
     ConstsService,
     ServersService,
     ScheduleModule,

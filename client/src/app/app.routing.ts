@@ -1,7 +1,7 @@
-import { SystemHooksComponent } from './admin-panel/system-hooks/system-hooks.component';
-import { ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { SystemHooksComponent } from './admin-panel/system-hooks/system-hooks.component';
 import { LoginComponent } from './login/login.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { MapsRootComponent } from './maps-root/maps-root.component';
@@ -38,8 +38,12 @@ const appRoutes: Routes = [
     { path: '**', component: PageNotFoundComponent }
 ];
 
-export const appRoutingProviders: any[] = [
-
-];
-
-export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);
+@NgModule({
+    imports:[
+        RouterModule.forRoot(appRoutes)
+    ],
+    exports: [
+        RouterModule
+    ]
+})
+export class AppRoutingModule {}
