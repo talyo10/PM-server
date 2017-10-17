@@ -16,11 +16,8 @@ header h2 i:before {
 }
 
 header [role="search"] {
-  height: 38px;
-  margin-top: 5px;
-  padding-bottom: 10px;
   border-bottom: 1px solid #4a4e50;
-  padding-right: 44px;
+  padding: 8px 5px;
 }
 
 header [role="search"]:before, header [role="search"]:after {
@@ -32,12 +29,15 @@ header [role="search"]:after {
   clear: both;
 }
 
-label {
-  margin: 4px;
+header [role="search"] .input-group label{
+  margin: 0 0 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-header [role="search"] .input-group {
-  margin-left: 5px;
+label {
+  margin: 4px;
 }
 
 header [role="search"] input:active, header [role="search"] input:focus, header [role="search"] input:hover {
