@@ -6,6 +6,8 @@ import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
 
 import * as _ from 'lodash';
 
+import { environment } from '../../../../environments/environment'
+
 
 @Component({
   selector: 'modal-content',
@@ -21,8 +23,8 @@ export class InstallAgentComponentWindow {
     this.agent = {
       username: '',
       sshKey: '',
-      port: 8080,
-      url: 'localhost'
+      port: environment.port,
+      url: environment.url
     };
     this.installing = false;
   }

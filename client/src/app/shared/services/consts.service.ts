@@ -6,7 +6,7 @@ declare var jQuery:any;
 @Injectable()
 export class ConstsService {
 
-  private serverUrl = 'http://localhost:8080/';
+  private serverUrl = environment.serverUrl;
 
   constructor() {
     if (environment.production) {
