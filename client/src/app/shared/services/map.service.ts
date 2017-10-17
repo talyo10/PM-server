@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
-import { Response } from '@angular/http';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+
+import { Observable } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
+
 import { ConstsService } from './consts.service';
 
 import * as _ from 'lodash';
@@ -20,6 +23,7 @@ export class MapService {
   };
 
   public openMaps = [];
+  private map = new Subject<any>();
 
   constructor(private http: Http, public options: RequestOptions, private constsService: ConstsService) {
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
@@ -75,6 +79,14 @@ export class MapService {
 
   saveMap(map) {
     return this.http.post(this.serverUrl + 'map/addMapVersion', map, this.options).map(this.extractData);
+  }
+
+  setCurrentMap(map) {
+    this.map.next(map);
+  }
+
+  getCurrentMapObservable(): Observable<any> {
+    return this.map.asObservable();
   }
   
   stopMap(map) {

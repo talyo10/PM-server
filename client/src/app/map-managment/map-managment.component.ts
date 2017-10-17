@@ -1,9 +1,13 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { Subscription } from 'rxjs/Subscription';
+import { ResizeEvent } from 'angular2-resizable';
+
 import { ProjectService } from '../shared/services/project.service';
 import { MapService } from '../shared/services/map.service';
 import { AuthenticationService } from '../shared/services/authentication.service';
 import { CombinedPopupComponent } from './map-editor/map-designer/combined-popup/combined-popup.component';
-import { ResizeEvent } from 'angular2-resizable';
 
 import * as _ from 'lodash';
 declare var jQuery:any;
@@ -14,7 +18,7 @@ declare var jQuery:any;
   styleUrls: ['./map-managment.component.css'],
   providers: [ProjectService]
 })
-export class MapManagmentComponent implements OnInit, AfterViewInit{
+export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
 
   @ViewChild('messagesEl') messagesEl: ElementRef;
   @ViewChild('mapControl') mapControl: ElementRef;
@@ -36,12 +40,23 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
   private minMessageHeight: number = 0;
   private initialEditorWidth: number = 0;
 
+  private paramsReq: any;
+  id: string;
+  currentMapSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService
-              ,private m_elementRef: ElementRef) {
+  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.currentMap = map;
+        }
+      );
   }
 
   ngOnInit() {
+    // getting the id from the url
+    this.paramsReq = this.route.params
+      .subscribe((p) => this.id = p.id);
 
     let user = this.authenticationService.getCurrentUser();
     if (!user || !user.id) {
@@ -79,6 +94,11 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
 
   }
 
+  ngOnDestroy() {
+    this.paramsReq.unsubscribe();
+    this.currentMapSubscription.unsubscribe();
+  }
+
   ngAfterViewInit() {
     let leftPanel = jQuery(this.leftPanel.nativeElement);
     let rightPanel = jQuery(this.rightPanel.nativeElement);
@@ -104,7 +124,6 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
   }
 
   selectMap($event) {
-    this.currentMap.active = false;
     let mapIndex = _.findIndex(this.mapService.openMaps, (map) => { return map.name === $event.name; });
     if (mapIndex < 0) {
       this.mapLoaded = true;
@@ -119,6 +138,7 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
       this.currentMap = this.mapService.openMaps[mapIndex];
     }
     this.currentMap.active = true;
+    this.mapService.setCurrentMap($event);
   }
 
   changeMap($event) {

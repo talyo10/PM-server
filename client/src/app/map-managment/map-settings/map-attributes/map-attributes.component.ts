@@ -1,7 +1,10 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChange } from '@angular/core';
+
+import { Subscription } from 'rxjs/Subscription';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 import { AttributeWindow } from '../../../shared/popups/attribute-window/attribute-window.component';
+import { MapService } from '../../../shared/services/map.service'
 
 
 @Component({
@@ -9,17 +12,23 @@ import { AttributeWindow } from '../../../shared/popups/attribute-window/attribu
   templateUrl: './map-attributes.component.html',
   styleUrls: ['./map-attributes.component.css']
 })
-export class MapAttributesComponent implements OnInit, OnChanges {
+export class MapAttributesComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() map: any;
+  map: any = {};
+  currentMapSubscription: Subscription;
+
   searchtext: string = null;
 
-  constructor(public modalService: NgbModal) {
+  constructor(public modalService: NgbModal, private mapService: MapService) {
     this.map = {
       mapView: {
         attributes: []
       }
     };
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => this.map = map
+      );
   }
 
   initAttributes() {
@@ -34,6 +43,10 @@ export class MapAttributesComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.initAttributes();
+  }
+
+  ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
   }
 
   addAttribute() {

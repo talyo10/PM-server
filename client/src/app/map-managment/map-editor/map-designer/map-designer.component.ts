@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter, ViewEncapsulation, ViewContainerRef, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, Input, EventEmitter, ViewEncapsulation, ViewContainerRef, ViewChild, OnChanges, SimpleChange } from '@angular/core';
 
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
@@ -7,6 +7,7 @@ import * as joint from 'jointjs';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContextMenuService, ContextMenuComponent } from 'ngx-contextmenu';
+import { Subscription } from 'rxjs/Subscription';
 
 import { MapService } from '../../../shared/services/map.service';
 import { ProcessesComponentWindow } from './processes/processes.component';
@@ -26,13 +27,12 @@ import {CombinedPopupComponent} from "./combined-popup/combined-popup.component"
 export class MapDesignerComponent implements OnInit, OnChanges {
 
   @Output() paperInit = new EventEmitter();
-  @Input() map: any = {};
   @Input() width: number = 0;
   @Input() height: number = 0;
   @Input() gridSize: number = 0;
   @ViewChild(ContextMenuComponent) public contextMenu: ContextMenuComponent;
-
-
+  
+  
   public graph: any;
   public paper: any;
   private _currentLink: any;
@@ -41,10 +41,20 @@ export class MapDesignerComponent implements OnInit, OnChanges {
   private graphScale: number = 1;
   private innerWidth: number;
   private innerHeight: number;
-
+  
+  map: any = {};
+  currentMapSubscription: Subscription;
+  
   constructor(private modalService: NgbModal, private mapService: MapService, private contextMenuService: ContextMenuService) {
     this._currentLink = null;
-    this.reconnectingLink = false;modalService
+    this.reconnectingLink = false;modalService;
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.map = map;
+          this.loadMap();
+        }
+      );
   }
 
   openProcessesModal(link: any, src: any, dest: any) {
@@ -330,10 +340,11 @@ export class MapDesignerComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
-    if (changes['map'].currentValue != null && this.graph != null) {
-      console.log(this.graph);
-      this.loadMap();
-    }
+    console.log("--->", changes);
+    // if (changes['map'].currentValue != null && this.graph != null) {
+    //   console.log(this.graph);
+    //   this.loadMap();
+    // }
   }
 
   updatePaper() {
@@ -359,17 +370,17 @@ export class MapDesignerComponent implements OnInit, OnChanges {
         console.log("content");
         return;
       }
-
       this.graph.fromJSON(JSON.parse(this.map.mapView.content));
 
     } catch (e) {
-      console.log(e);
+      console.log("Error loading map", e);
     }
 
     this.updatePaper();
   }
 
   /* when changing the graph we want to update the inner content that saves the graph json */
+  /* http://resources.jointjs.com/docs/jointjs/v1.1/joint.html#dia.Graph.prototype.toJSON */
   updateMapViewContentGraph() {
     let res = this.graph.toJSON();
     res = JSON.stringify(res);

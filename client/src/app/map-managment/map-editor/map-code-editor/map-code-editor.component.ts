@@ -1,6 +1,9 @@
 import { Component, ViewChild, ElementRef, OnInit, Input, OnDestroy, OnChanges, SimpleChange } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
+
 import { LibPMService } from '../../../shared/services/libpm.service';
+import { MapService } from '../../../shared/services/map.service';
 
 import * as _ from 'lodash';
 
@@ -12,14 +15,20 @@ import * as _ from 'lodash';
 export class MapCodeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   @ViewChild('editor') editorContent: ElementRef;
-  @Input() map: any = {};
+  map: any = {};
   public editor: any;
   private monaco: any;
 
+  currentMapSubscription: Subscription;
 
-
-  constructor(private libpmService: LibPMService) {
+  constructor(private libpmService: LibPMService, private mapService: MapService) {
     this.monaco = this.libpmService.getMonacoObject();
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.map = map;
+        }
+      );
   }
 
   // Will be called once monaco library is available
@@ -56,6 +65,7 @@ export class MapCodeEditorComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
     try {
       this.libpmService.removeAllLibs();
     } catch (ex) {

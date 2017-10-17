@@ -22,6 +22,7 @@ const appRoutes: Routes = [
         path: 'app', component: MapsRootComponent,
         children: [
             { path: 'map', component: MapManagmentComponent },
+            { path: 'map/:id', component: MapManagmentComponent },
             {
                 path: 'admin',
                 component: AdminPanelComponent,

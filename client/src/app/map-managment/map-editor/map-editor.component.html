@@ -1,6 +1,6 @@
 <section [ngSwitch]="currentPanel" class="nonScrollable designer-wrapper">
-  <app-map-designer (paperInit)="updateManagmentPanel($event)" *ngSwitchCase="0" [map]="map" [width]="800" [height]="500" [gridSize]="10"></app-map-designer>
-  <app-map-code-editor *ngSwitchCase="2" [map]="map"></app-map-code-editor>
+  <app-map-designer (paperInit)="updateManagmentPanel($event)" *ngSwitchCase="0" [width]="800" [height]="500" [gridSize]="10"></app-map-designer>
+  <app-map-code-editor *ngSwitchCase="2"></app-map-code-editor>
 </section>
 <footer>
   <div role="left-tabs">

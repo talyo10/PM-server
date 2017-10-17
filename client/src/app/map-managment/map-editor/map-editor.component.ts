@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, Input, EventEmitter } from '@angular/core';
 import { NgSwitch, NgSwitchCase } from '@angular/common';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { MapService } from '../../shared/services/map.service';
 import { LibPMService } from '../../shared/services/libpm.service';
@@ -12,22 +14,34 @@ import * as _ from 'lodash';
   styleUrls: ['./map-editor.component.css'],
   providers: [LibPMService]
 })
-export class MapEditorComponent implements OnInit {
+export class MapEditorComponent implements OnInit, OnDestroy {
 
   @Output() informOuterLayer = new EventEmitter();
   @Output() onExecution = new EventEmitter();
-  @Input() map: any = {};
+  map: any = {};
 
   public currentPanel: number = 0;
   public executingMap: boolean = false;
   public savingMap: boolean = false;
 
+  currentMapSubscription: Subscription;
+
   constructor(private mapService: MapService, private libpmService: LibPMService) {
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.map = map;
+        }
+      );
   }
 
   ngOnInit() {
     this.executingMap = false;
     this.savingMap = false;
+  }
+
+  ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
   }
 
   selectPanel(panelId: number) {
