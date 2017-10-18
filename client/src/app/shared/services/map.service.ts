@@ -23,6 +23,7 @@ export class MapService {
   };
 
   public openMaps = [];
+  public maxOpenMaps: number = 4;
   private map = new Subject<any>();
 
   constructor(private http: Http, public options: RequestOptions, private constsService: ConstsService) {
@@ -86,16 +87,31 @@ export class MapService {
   }
 
   getCurrentMapObservable(): Observable<any> {
+    /* return the map subject as an observable */
     return this.map.asObservable();
   }
   
   stopMap(map) {
     return this.http.post(this.serverUrl + 'map/updateVersionStatus', { map: map, status: this.runStatuses.Stopped }, this.options).map(this.extractData);
   }
+
+  selectMap(selectedMap) {
+    /* change the selected map */
+    let mapIndex = _.findIndex(this.openMaps, (map) => { return map.id === selectedMap.id; });
+    this.setCurrentMap(selectedMap);
+    if (mapIndex === -1) {
+      if (this.openMaps.length < this.maxOpenMaps) {
+        this.openMaps.push(selectedMap);
+      } else {
+        this.openMaps[this.maxOpenMaps - 1] = selectedMap;
+      }
+    }
+  }
   
   updateMapProject(MapId, ProjectId) {
     return this.http.get(this.serverUrl + 'map/updateMapProject/' + MapId + '/' + ProjectId, this.options).map(this.extractData);
   }
+
   updateMap(map) {
     return this.http.post(this.serverUrl + 'map/updateMapProject/', { map: map }, this.options).map(this.extractData);
   }
