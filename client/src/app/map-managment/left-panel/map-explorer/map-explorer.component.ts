@@ -1,10 +1,11 @@
-import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { TreeComponent, TreeModel, TreeNode, TREE_ACTIONS, IActionMapping, KEYS } from 'angular-tree-component';
 import { ContextMenuService, ContextMenuComponent } from 'ngx-contextmenu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { ProjectService } from '../../../shared/services/project.service';
 import { MapService } from '../../../shared/services/map.service';
 import { ExecutionReportComponent } from './execution-report/execution-report.component';
@@ -31,6 +32,9 @@ export class MapExplorerComponent implements OnInit {
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
+
+  private parmasReq: any;
+  id: string = null;
 
   treeOptions: any;
 
@@ -75,13 +79,52 @@ export class MapExplorerComponent implements OnInit {
     }
   };
 
-  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal) {
+  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) {  }
 
+  ngOnInit() {
+    
+    let user = this.authenticationService.getCurrentUser();
+
+    if (!user || !user.id) {
+      return;
+    }
+    
+    this.projectService.getJstreeProjectsByUser(user.id).subscribe((data) => {
+      this.projectsTree = data;
+      this.tree.treeModel.update();
+    });
+
+    let actionMapping = this.actionMapping;
+    this.treeOptions = {
+      getChildren: (node:TreeNode) => {
+        return new Promise((resolve, reject) => {
+          this.projectService.getNode(node.id).subscribe((node) => {
+            _.map(node.childs, this.mapNode.bind(this));
+            return resolve(node.childs);
+          });
+        });
+      },
+      /* getChildren: (node:TreeNode) => {
+        return this.projectService.getNode(node.id).subscribe((node)=>{
+          console.log(node);
+          return node
+        })
+      }, */
+      hasCustomContextMenu: true,
+      actionMapping
+    };
+
+    this.parmasReq = this.route.params.subscribe((params) => {
+      this.id = params['id'];
+      console.log(params);
+      console.log(this.tree.treeModel);
+    });
   }
+
 
   selectMap(node: TreeNode) {
     if (this.isMap(node)) {
-      this.onMapSelect.emit(node.data.map);
+      this.mapService.selectMap(node.data.map);
     }
   }
 
@@ -272,35 +315,6 @@ export class MapExplorerComponent implements OnInit {
     } else {
       return;
     }
-  }
-
-
-  ngOnInit() {
-    
-    let user = this.authenticationService.getCurrentUser();
-
-    if (!user || !user.id) {
-      return;
-    }
-    
-    this.projectService.getJstreeProjectsByUser(user.id).subscribe((data) => {
-      this.projectsTree = data;
-      this.tree.treeModel.update();
-    });
-
-    let actionMapping = this.actionMapping;
-    this.treeOptions = {
-      getChildren: (node:TreeNode) => {
-        return new Promise((resolve, reject) => {
-          this.projectService.getNode(node.id).subscribe((node) => {
-            _.map(node.childs, this.mapNode.bind(this))
-            return resolve(node.childs);
-          });
-        });
-      },
-      hasCustomContextMenu: true,
-      actionMapping
-    };
   }
 
   showExecutions(node: TreeNode) {

@@ -45,18 +45,23 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   currentMapSubscription: Subscription;
 
   constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {
-    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
-      .subscribe(
-        (map) => {
-          this.currentMap = map;
-        }
-      );
+    
   }
 
   ngOnInit() {
     // getting the id from the url
     this.paramsReq = this.route.params
       .subscribe((p) => this.id = p.id);
+
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+    .subscribe(
+      (map) => {
+        this.mapLoaded = true;
+        this.currentMap = map;
+        
+        // router.navigate([map.id], {relativeTo: this.route})
+      }
+    );
 
     let user = this.authenticationService.getCurrentUser();
     if (!user || !user.id) {
@@ -123,27 +128,16 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     this.messages.unshift(JSON.parse($event));
   }
 
-  selectMap($event) {
-    let mapIndex = _.findIndex(this.mapService.openMaps, (map) => { return map.name === $event.name; });
-    if (mapIndex < 0) {
-      this.mapLoaded = true;
-      this.currentMap = $event;
-
-      if (this.mapService.openMaps.length < this.maxOpenMaps) {
-        this.mapService.openMaps.push(this.currentMap);
-      } else {
-        this.mapService.openMaps[this.maxOpenMaps - 1] = this.currentMap;
-      }
-    } else {
-      this.currentMap = this.mapService.openMaps[mapIndex];
-    }
+/*   selectMap($event) {
+    this.currentMap.active = false;
+    this.mapService.selectMap($event);
+    this.mapLoaded = true; // this is responsible for making the map visible in the template.
     this.currentMap.active = true;
-    this.mapService.setCurrentMap($event);
-  }
+  } */
 
   changeMap($event) {
-    this.currentMap.active = false;
-    this.currentMap = $event;
+    this.currentMap.active = null;
+    this.mapService.selectMap($event);
     this.currentMap.active = true;
   }
 

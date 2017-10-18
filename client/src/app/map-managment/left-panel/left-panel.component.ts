@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChange, Output, EventEmitter } from '@angular/core';
 
+import { MapService } from '../../shared/services/map.service'
+
 @Component({
   selector: 'app-left-panel',
   templateUrl: './left-panel.component.html',
@@ -19,7 +21,7 @@ export class LeftPanelComponent implements OnInit {
   @Input() projectsTree: any;
   @Output() onMapSelect: EventEmitter<any> = new EventEmitter();
 
-  constructor() {
+  constructor(private mapService: MapService) {
     this.panelsTitles = [
       'PROJECTS',
       'Plugins'
@@ -28,10 +30,6 @@ export class LeftPanelComponent implements OnInit {
 
   ngOnInit() {
     this.selectPanel(0);
-  }
-
-  selectMap($event) {
-    this.onMapSelect.emit($event);
   }
 
   selectPanel(panelId: number) {
