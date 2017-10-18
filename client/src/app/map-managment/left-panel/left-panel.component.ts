@@ -19,7 +19,6 @@ export class LeftPanelComponent implements OnInit {
   public panelsTitles: any;
   @Input() graphProps: any;
   @Input() projectsTree: any;
-  @Output() onMapSelect: EventEmitter<any> = new EventEmitter();
 
   constructor(private mapService: MapService) {
     this.panelsTitles = [

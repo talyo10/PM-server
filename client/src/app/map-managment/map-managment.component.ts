@@ -128,13 +128,6 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     this.messages.unshift(JSON.parse($event));
   }
 
-/*   selectMap($event) {
-    this.currentMap.active = false;
-    this.mapService.selectMap($event);
-    this.mapLoaded = true; // this is responsible for making the map visible in the template.
-    this.currentMap.active = true;
-  } */
-
   changeMap($event) {
     this.currentMap.active = null;
     this.mapService.selectMap($event);

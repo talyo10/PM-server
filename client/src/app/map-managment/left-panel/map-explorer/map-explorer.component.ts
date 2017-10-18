@@ -27,7 +27,6 @@ export class MapExplorerComponent implements OnInit {
 
   @Input() projectsTree: any = [];
   @Input() searchtext: string = null;
-  @Output() onMapSelect: EventEmitter<any> = new EventEmitter();
   @ViewChild('tree') tree: TreeComponent;
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
