@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, OnChanges, SimpleChange, Output, EventEmitter } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
+
 import { MapService } from '../../shared/services/map.service'
+import { ProjectService } from '../../shared/services/project.service'
 
 @Component({
   selector: 'app-left-panel',
@@ -9,6 +12,7 @@ import { MapService } from '../../shared/services/map.service'
 })
 export class LeftPanelComponent implements OnInit {
 
+  @Input() graphProps: any;
   public innerPaper: any = null;
   public innerGraph: any = null;
   public designerOps: any = null;
@@ -17,10 +21,8 @@ export class LeftPanelComponent implements OnInit {
   public leftPanelTitle: string;
   public searchtext: string = null;
   public panelsTitles: any;
-  @Input() graphProps: any;
-  @Input() projectsTree: any;
 
-  constructor(private mapService: MapService) {
+  constructor(private mapService: MapService, private projectService: ProjectService) {
     this.panelsTitles = [
       'PROJECTS',
       'Plugins'

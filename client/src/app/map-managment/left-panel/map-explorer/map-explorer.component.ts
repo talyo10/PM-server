@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChange } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { TreeComponent, TreeModel, TreeNode, TREE_ACTIONS, IActionMapping, KEYS } from 'angular-tree-component';
 import { ContextMenuService, ContextMenuComponent } from 'ngx-contextmenu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs/Subscription';
 
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { ProjectService } from '../../../shared/services/project.service';
@@ -23,16 +24,17 @@ import * as _ from 'lodash';
   templateUrl: './map-explorer.component.html',
   styleUrls: ['./map-explorer.component.css']
 })
-export class MapExplorerComponent implements OnInit {
+export class MapExplorerComponent implements OnInit, OnDestroy {
 
-  @Input() projectsTree: any = [];
   @Input() searchtext: string = null;
   @ViewChild('tree') tree: TreeComponent;
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
-
+  
   private parmasReq: any;
+  projectsTree: any = [];
+  projectTreeSubscription: Subscription;
   id: string = null;
 
   treeOptions: any;
@@ -78,7 +80,17 @@ export class MapExplorerComponent implements OnInit {
     }
   };
 
-  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) {  }
+
+  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) { 
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+      .subscribe(
+        (tree) => {
+          console.log("map-explorer got tree")
+          this.projectsTree = tree;
+        },
+        (error) => console.log(error)
+      );
+   }
 
   ngOnInit() {
     
@@ -103,12 +115,6 @@ export class MapExplorerComponent implements OnInit {
           });
         });
       },
-      /* getChildren: (node:TreeNode) => {
-        return this.projectService.getNode(node.id).subscribe((node)=>{
-          console.log(node);
-          return node
-        })
-      }, */
       hasCustomContextMenu: true,
       actionMapping
     };
@@ -118,6 +124,10 @@ export class MapExplorerComponent implements OnInit {
       console.log(params);
       console.log(this.tree.treeModel);
     });
+  }
+
+  ngOnDestroy() {
+    this.projectTreeSubscription.unsubscribe();
   }
 
 

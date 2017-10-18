@@ -8,7 +8,8 @@
      (resize)="resizeLeftPanel($event)"
      [validateResize]="validateLeftPanelResize"
      role="left-bar" style="width:238px;" [ngSwitch]="leftPanelState">
-      <app-left-panel [projectsTree]="projectsTree" [graphProps]="designerOps"></app-left-panel>
+      <app-left-panel [graphProps]="designerOps"></app-left-panel>
+      <!-- <app-left-panel [projectsTree]="projectsTree" [graphProps]="designerOps"></app-left-panel> -->
     </aside>
     <section #mapEditor [hidden]="!mapLoaded">
       <header>

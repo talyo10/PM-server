@@ -43,9 +43,15 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   private paramsReq: any;
   id: string;
   currentMapSubscription: Subscription;
+  projectTreeSubscription: Subscription;
 
   constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {
-    
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+      .subscribe(
+        (tree) => {
+          this.projectsTree = tree;
+        }
+      )
   }
 
   ngOnInit() {
@@ -67,12 +73,6 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     if (!user || !user.id) {
       return;
     }
-    this.projectService.getJstreeProjectsByUser(user.id).subscribe((projects) => {
-      this.projectsTree = projects;
-    },
-      (error) => {
-        console.log(error);
-      });
 
     if (this.mapService.openMaps.length === 0) {
       this.mapLoaded = false;
@@ -102,6 +102,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   ngOnDestroy() {
     this.paramsReq.unsubscribe();
     this.currentMapSubscription.unsubscribe();
+    this.projectTreeSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
