@@ -23,7 +23,6 @@ export class ProjectService {
 
     this.getJstreeProjectsByUser(this.user.id)
       .subscribe((tree) => {
-        console.log(tree);
         this.setCurrentProjectTree(tree);
       },
       (error) => console.log(error)
