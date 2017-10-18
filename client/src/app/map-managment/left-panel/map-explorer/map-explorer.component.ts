@@ -85,26 +85,20 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
       .subscribe(
         (tree) => {
-          console.log("map-explorer got tree")
           this.projectsTree = tree;
+          this.tree.treeModel.update();
         },
         (error) => console.log(error)
       );
    }
 
   ngOnInit() {
-    
     let user = this.authenticationService.getCurrentUser();
 
     if (!user || !user.id) {
       return;
     }
     
-    this.projectService.getJstreeProjectsByUser(user.id).subscribe((data) => {
-      this.projectsTree = data;
-      this.tree.treeModel.update();
-    });
-
     let actionMapping = this.actionMapping;
     this.treeOptions = {
       getChildren: (node:TreeNode) => {
@@ -121,15 +115,12 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
     this.parmasReq = this.route.params.subscribe((params) => {
       this.id = params['id'];
-      console.log(params);
-      console.log(this.tree.treeModel);
     });
   }
 
   ngOnDestroy() {
     this.projectTreeSubscription.unsubscribe();
   }
-
 
   selectMap(node: TreeNode) {
     if (this.isMap(node)) {
