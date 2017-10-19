@@ -497,3 +497,7 @@ i.red {
 footer .pull-right {
   margin-bottom: 10px;
 }
+
+[role="handle"] {
+  cursor: move;
+}

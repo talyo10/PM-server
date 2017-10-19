@@ -1,6 +1,6 @@
-<div [draggable] role="small-popup-actions" class="small-popup-actions">
+<div ngDraggable [handle]="popupHandle" role="small-popup-actions" class="small-popup-actions">
   <header>
-    <h2> {{ header }} </h2>
+    <h2 role="handle" #popupHandle> {{ header }} </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <div class="row" style="margin:2%">

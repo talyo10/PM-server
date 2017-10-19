@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
 
-
 import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage';
@@ -21,6 +20,7 @@ import { NgPipesModule } from 'ngx-pipes';
 import {OverlayPanelModule, ScheduleModule} from 'primeng/primeng';
 import { CalendarModule } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 import { AuthenticationService } from './shared/services/authentication.service';
 import { routing, appRoutingProviders } from './app.routing';
@@ -64,7 +64,6 @@ import { NewProjectComponentWindow } from "./map-managment/left-panel/map-explor
 import { NewFolderComponentWindow } from "./map-managment/left-panel/map-explorer/popups/new-folder/new-folder.component";
 import { NewGroupComponentWindow } from "./admin-panel/servers/new-group/new-group.component";
 import { MessagePopupComponent } from './map-managment/messages/message-popup/message-popup.component';
-import { DraggableDirective } from './directives/draggable.directive';
 import { EditAgentComponentWindow } from './admin-panel/servers/edit-agent/edit-agent.component';
 import { UpdateMapComponentWindow } from './map-managment/left-panel/map-explorer/popups/update-map/update-map.component';
 import { RenameFolderComponentWindow } from './map-managment/left-panel/map-explorer/popups/rename-folder/rename-folder.component';
@@ -122,7 +121,6 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     NewProjectComponentWindow,
     NewMapComponentWindow,
     MessagePopupComponent,
-    DraggableDirective,
     EditAgentComponentWindow,
     UpdateMapComponentWindow,
     AttributeWindow,
@@ -155,6 +153,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     CalendarModule.forRoot(),
     ModalModule.forRoot(),
     BootstrapModalModule,
+    AngularDraggableModule,
     TreeModule,
     ChartsModule,
     ContextMenuModule,

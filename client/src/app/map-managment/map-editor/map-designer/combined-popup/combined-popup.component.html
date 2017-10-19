@@ -1,6 +1,6 @@
-<div [draggable] role="small-popup-processes" class="small-popup-processes">
+<div ngDraggable [handle]="popupHandle" role="small-popup-processes" class="small-popup-processes">
   <header>
-    <h2>Manage Processes</h2>
+    <h2 role="handle" #popupHandle>Manage Processes</h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <div class="process-selection">

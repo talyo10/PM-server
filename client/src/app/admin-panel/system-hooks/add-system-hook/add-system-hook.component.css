@@ -298,3 +298,7 @@ h5, td, th {
 .small-popup-add-agent section {
   font-size: 13px;
 }
+
+[role="handle"] {
+  cursor: move;
+}
