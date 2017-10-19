@@ -21,6 +21,7 @@ import { NgPipesModule } from 'ngx-pipes';
 import {OverlayPanelModule, ScheduleModule} from 'primeng/primeng';
 import { CalendarModule } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 import { AuthenticationService } from './shared/services/authentication.service';
 import { routing, appRoutingProviders } from './app.routing';
@@ -155,6 +156,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     CalendarModule.forRoot(),
     ModalModule.forRoot(),
     BootstrapModalModule,
+    AngularDraggableModule,
     TreeModule,
     ChartsModule,
     ContextMenuModule,
