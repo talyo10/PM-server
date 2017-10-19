@@ -20,48 +20,19 @@ header [role="search"] {
   padding: 8px 5px;
 }
 
-header [role="search"]:before, header [role="search"]:after {
-  content: " ";
-  display: table;
-}
-
 header [role="search"]:after {
   clear: both;
 }
 
-header [role="search"] .input-group label{
+.input-group label{
   margin: 0 0 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 label {
   margin: 4px;
-}
-
-header [role="search"] input:active, header [role="search"] input:focus, header [role="search"] input:hover {
-  background-color: #383a3d;
-  color: #FFF;
-}
-
-header [role="search"] > button {
-  float: right;
-  right: 0;
-  top: 0;
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  color: #6f6f6f;
-  margin-right: -24px;
-  font-size: 16px;
-}
-
-header [role="search"] > button:active, header [role="search"] > button:hover {
-  color: #bbb;
 }
 
 .agents {
