@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthenticationService } from '../shared/services/authentication.service';
 import { ConfirmPopupComponent } from '../shared/popups/confirm-popup/confirm-popup.component';
-import { ConfirmPopup } from "../shared/interfaces/iconfirm-popup"
+import { ConfirmPopupModel } from "../shared/interfaces/iconfirm-popup"
 
 
 
@@ -33,7 +33,7 @@ export class HeaderComponent {
 
   logout() {
     const pmodal = this.modalService.open(ConfirmPopupComponent);
-    let popupFields: ConfirmPopup = new ConfirmPopup();
+    let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
     popupFields.title = "Logout";
     popupFields.message = "Are you sure you want to logout?";
     popupFields.action = "Logout";

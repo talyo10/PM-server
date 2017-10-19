@@ -6,7 +6,7 @@ export interface IConfimPopup {
     abort?: string
 }
 
-export class ConfirmPopup implements IConfimPopup {
+export class ConfirmPopupModel implements IConfimPopup {
     title: string;
     message: string;
     object?: any;

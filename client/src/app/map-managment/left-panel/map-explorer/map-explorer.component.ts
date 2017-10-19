@@ -14,6 +14,9 @@ import { NewProjectComponentWindow } from './popups/new-project/new-project.comp
 import { NewFolderComponentWindow } from './popups/new-folder/new-folder.component';
 import { MapVersionsComponent } from './popups/map-versions/map-versions.component';
 import { RenameFolderComponentWindow } from './popups/rename-folder/rename-folder.component';
+import { ConfirmPopupComponent } from '../../../shared/popups/confirm-popup/confirm-popup.component';
+import { ConfirmPopupModel } from "../../../shared/interfaces/iconfirm-popup"
+
 
 import * as _ from 'lodash';
 
@@ -166,10 +169,27 @@ export class MapExplorerComponent implements OnInit {
 
   deleteProject(node: TreeNode) {
     let project: any = node.data;
-    this.projectService.deleteProject(project.id).subscribe((res) => {
-      _.remove(this.projectsTree, (proj: any) => { return proj.id === project.id; });
-      this.tree.treeModel.update();
-    });
+    
+    const pmodal = this.modalService.open(ConfirmPopupComponent);
+    let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
+    popupFields.title = "Delete Map";
+    popupFields.message = "Are you sure you want to delete project: '" + node.displayField + "'?";
+    popupFields.action = "Delete";
+    
+    pmodal.componentInstance.popupFields = popupFields;
+
+    pmodal.result
+      .then((r) => {
+        if (r) {
+          this.projectService.deleteProject(project.id).subscribe((res) => {
+            _.remove(this.projectsTree, (proj: any) => { return proj.id === project.id; });
+            this.tree.treeModel.update();
+          });
+        }
+      })
+      .catch((error) => console.log("Error deleting project!"))
+
+    
   }
 
   openContextMenu($event, node: TreeNode) {
@@ -237,17 +257,48 @@ export class MapExplorerComponent implements OnInit {
   }
 
   deleteMap(node: TreeNode) {
-    this.mapService.deleteMap(node.data.map.id).subscribe((res) => {
-      _.remove(node.parent.data.children, (map: any) => { return map.id === node.data.id; });
-      this.tree.treeModel.update();
-    });
+    const pmodal = this.modalService.open(ConfirmPopupComponent);
+    let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
+    popupFields.title = "Delete Map";
+    popupFields.message = "Are you sure you want to delete map: '" + node.displayField + "'?";
+    popupFields.action = "Delete";
+    
+    pmodal.componentInstance.popupFields = popupFields;
+
+    pmodal.result
+      .then((r) => {
+        if (r) {
+          this.mapService.deleteMap(node.data.map.id).subscribe((res) => {
+            _.remove(node.parent.data.children, (map: any) => { return map.id === node.data.id; });
+            this.tree.treeModel.update();
+          });
+        }
+      })
+      .catch((error) => console.log("Error deleting map!"))
+    
+    
   }
 
   deleteFolder(node: TreeNode) {
-    this.projectService.deleteFolder(node.data.id).subscribe((res) => {
-      _.remove(node.parent.data.children, (obj: any) => { return obj.id === node.data.id; });
-      this.tree.treeModel.update();
-    });
+    const pmodal = this.modalService.open(ConfirmPopupComponent);
+    let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
+    popupFields.title = "Delete Folder";
+    popupFields.message = "Are you sure you want to delete folder: '" + node.displayField + "'?";
+    popupFields.action = "Delete";
+    
+    pmodal.componentInstance.popupFields = popupFields;
+
+    pmodal.result
+      .then((r) => {
+        if (r) {
+          this.projectService.deleteFolder(node.data.id).subscribe((res) => {
+            _.remove(node.parent.data.children, (obj: any) => { return obj.id === node.data.id; });
+            this.tree.treeModel.update();
+          });
+        }
+      })
+      .catch((error) => console.log("Error deleting folder!"))
+   
   }
 
   isProject(node: TreeNode) {
