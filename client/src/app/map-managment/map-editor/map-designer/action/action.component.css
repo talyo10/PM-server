@@ -275,3 +275,7 @@
     font-weight: bold !important;
     font-size: 13px !important;
 }
+
+[role="handle"] {
+  cursor: move;
+}

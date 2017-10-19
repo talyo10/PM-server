@@ -1,6 +1,6 @@
-<div [draggable] role="popup" class="popup">
+<div ngDraggable [handle]="popupHandle" role="popup" class="popup">
   <header>
-    <h2> Servers </h2>
+    <h2 role="handle" #popupHandle> Servers </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <section class="pm-container">
