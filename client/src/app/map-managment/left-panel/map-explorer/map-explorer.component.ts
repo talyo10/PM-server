@@ -81,16 +81,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) { 
-    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-      .subscribe(
-        (tree) => {
-          this.projectsTree = tree;
-          this.tree.treeModel.update();
-        },
-        (error) => console.log(error)
-      );
-   }
+  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) {  }
 
   ngOnInit() {
     let user = this.authenticationService.getCurrentUser();
@@ -98,6 +89,15 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     if (!user || !user.id) {
       return;
     }
+
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+    .subscribe(
+      (tree) => {
+        this.projectsTree = tree;
+        this.tree.treeModel.update();
+      },
+      (error) => console.log(error)
+    );
     
     let actionMapping = this.actionMapping;
     this.treeOptions = {

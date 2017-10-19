@@ -13,8 +13,6 @@ import * as _ from 'lodash';
   selector: 'modal-content',
   styleUrls: ['new-folder.component.css'],
   templateUrl: 'new-folder.component.html',
-  providers: [ProjectService]
-
 })
 export class NewFolderComponentWindow {
   @Input() folder: any;

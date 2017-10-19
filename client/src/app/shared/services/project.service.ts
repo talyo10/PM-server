@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 import { Observable } from 'rxjs';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { ConstsService } from './consts.service';
 import { AuthenticationService } from './authentication.service';
@@ -10,10 +10,11 @@ import { AuthenticationService } from './authentication.service';
 @Injectable()
 export class ProjectService {
   private serverUrl: string;
-  private projectsTree: Subject<any> = new Subject<any>();
+  public bJProjectsTree = new BehaviorSubject<any>(null);
   private user: any;
 
   constructor(private http: Http, public options: RequestOptions, private constsService: ConstsService, private authService: AuthenticationService) {
+    console.log("PROJECTS SERVICE +++ HERE I AM");
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
     this.options.headers = headers;
     this.serverUrl = this.constsService.getServerUrl();
@@ -23,6 +24,7 @@ export class ProjectService {
 
     this.getJstreeProjectsByUser(this.user.id)
       .subscribe((tree) => {
+        console.log("got tree");
         this.setCurrentProjectTree(tree);
       },
       (error) => console.log(error)
@@ -58,8 +60,8 @@ export class ProjectService {
     return this.http.get(this.serverUrl + 'project/node/'+id, this.options).map(this.extractData);
   }
 
-  getCurrentProjectTree(): Observable<any> {
-    return this.projectsTree.asObservable();
+  getCurrentProjectTree() {
+    return this.bJProjectsTree;
   }
   
   getProjectsByUser(userId) {
@@ -67,7 +69,8 @@ export class ProjectService {
   }
   
   setCurrentProjectTree(tree) {
-    this.projectsTree.next(tree);
+    console.log("sending next tree", tree);
+    this.bJProjectsTree.next(tree);
   }
 
   renameFolder(id, name) {

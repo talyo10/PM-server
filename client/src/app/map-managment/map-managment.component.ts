@@ -15,8 +15,7 @@ declare var jQuery:any;
 @Component({
   selector: 'app-map-managment',
   templateUrl: './map-managment.component.html',
-  styleUrls: ['./map-managment.component.css'],
-  providers: [ProjectService]
+  styleUrls: ['./map-managment.component.css']
 })
 export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
 
@@ -45,19 +44,19 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   currentMapSubscription: Subscription;
   projectTreeSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {
-    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-      .subscribe(
-        (tree) => {
-          this.projectsTree = tree;
-        }
-      )
-  }
+  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {  }
 
   ngOnInit() {
     // getting the id from the url
     this.paramsReq = this.route.params
       .subscribe((p) => this.id = p.id);
+
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+    .subscribe(
+      (tree) => {
+        this.projectsTree = tree;
+      }
+    );
 
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
     .subscribe(

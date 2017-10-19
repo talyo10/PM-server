@@ -12,9 +12,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'modal-content',
   styleUrls: ['new-project.component.css'],
-  templateUrl: 'new-project.component.html',
-  providers: [ProjectService]
-
+  templateUrl: 'new-project.component.html'
 })
 export class NewProjectComponentWindow {
   @Input() project: any;

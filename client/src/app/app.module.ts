@@ -25,6 +25,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthenticationService } from './shared/services/authentication.service';
 import { AppRoutingModule } from './app.routing';
 import { ConstsService } from './shared/services/consts.service';
+import { ProjectService } from './shared/services/project.service';
 import { ServersService } from './shared/services/servers.service';
 
 import { AppComponent } from './app.component';
@@ -174,6 +175,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     AuthenticationService,
     LocalStorageService,
     ConstsService,
+    ProjectService,
     ServersService,
     ScheduleModule,
     Location,
