@@ -731,7 +731,7 @@ button.action-add-btn i {
   cursor: pointer !important;
 }
 
-.tree-node-active.tree-node-focused > .node-content-wrapper {
+.node-content-wrapper-active.node-content-wrapper-focused {
   background-color: #262829 !important;
   box-shadow: none !important;
 }
