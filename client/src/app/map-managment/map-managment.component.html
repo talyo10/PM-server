@@ -10,8 +10,7 @@
      role="left-bar" style="width:238px;" [ngSwitch]="leftPanelState">
       <app-left-panel (onMapSelect)="selectMap($event)" [projectsTree]="projectsTree" [graphProps]="designerOps"></app-left-panel>
     </aside>
-    <section #mapEditor [hidden]="!mapLoaded"
-        >
+    <section #mapEditor [hidden]="!mapLoaded">
       <header>
         <span *ngFor="let mapItem of mapService.openMaps; let mapIndex = index" (click)="changeMap(mapItem)" role="tab" [class.active]="mapItem.active"><span>{{ mapItem.name }} ({{ mapItem.versionIndex }})</span><i (click)="closeMap(mapIndex)" class="pmap-9"></i></span>
       </header>

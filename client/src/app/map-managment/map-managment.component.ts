@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
 import { ProjectService } from '../shared/services/project.service';
 import { MapService } from '../shared/services/map.service';
 import { AuthenticationService } from '../shared/services/authentication.service';
@@ -143,6 +143,23 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
 
   /* resizeable functions */
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event){
+    // called every screen resize to reset the panel size.
+    let leftPanel = jQuery(this.leftPanel.nativeElement);
+    let rightPanel = jQuery(this.rightPanel.nativeElement);
+    let mapControl = jQuery(this.mapControl.nativeElement);
+    let mapEditor = jQuery(this.mapEditor.nativeElement);
+    let mapMain = jQuery(this.mapMain.nativeElement);
+
+    rightPanel.width(this.minRightPanelWidh);
+    leftPanel.width(this.minLeftPanelWidth);
+    mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
+
+    let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
+    this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
+  }
+
   validateMessagesResize(event: ResizeEvent): boolean {
     if (event.rectangle.height < this.minMessageHeight) {
       return false;
@@ -180,6 +197,7 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
   }
 
   resizeLeftPanel(event: ResizeEvent): void {
+    console.log(event);
     let mapMain = jQuery(this.mapMain.nativeElement);
     let leftPanel = jQuery(this.leftPanel.nativeElement);
     let mapEditor = jQuery(this.mapEditor.nativeElement);
