@@ -1,6 +1,9 @@
 <div region="data-table">
   <header>
-    <input type="text" [(ngModel)]="search.text" ><button type="button"><i class="pmap-4"></i></button>
+      <div class="input-group">
+          <input id="searchtext" type="text" [(ngModel)]="search.text" class="form-control" placeholder="Search agent">
+          <label for="searchtext"><i class="pmap-4"></i></label>
+        </div>
   </header>
   <section>
     <div class="grid">
