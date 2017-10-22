@@ -151,6 +151,8 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
     let mapControl = jQuery(this.mapControl.nativeElement);
     let mapEditor = jQuery(this.mapEditor.nativeElement);
     let mapMain = jQuery(this.mapMain.nativeElement);
+    let messagesEl = jQuery(this.messagesEl.nativeElement);
+  
 
     rightPanel.width(this.minRightPanelWidh);
     leftPanel.width(this.minLeftPanelWidth);
@@ -158,6 +160,7 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
 
     let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
     this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
+    mapControl.height(mapMain.height() + 80 - messagesEl.height());
   }
 
   validateMessagesResize(event: ResizeEvent): boolean {
@@ -197,7 +200,6 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
   }
 
   resizeLeftPanel(event: ResizeEvent): void {
-    console.log(event);
     let mapMain = jQuery(this.mapMain.nativeElement);
     let leftPanel = jQuery(this.leftPanel.nativeElement);
     let mapEditor = jQuery(this.mapEditor.nativeElement);
