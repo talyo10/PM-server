@@ -157,6 +157,7 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
     rightPanel.width(this.minRightPanelWidh);
     leftPanel.width(this.minLeftPanelWidth);
     mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
+    messagesEl.height(this.minMessageHeight);
 
     let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
     this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
