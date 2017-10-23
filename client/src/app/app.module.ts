@@ -27,6 +27,7 @@ import { AppRoutingModule } from './app.routing';
 import { ConstsService } from './shared/services/consts.service';
 import { ProjectService } from './shared/services/project.service';
 import { ServersService } from './shared/services/servers.service';
+import { MapService } from './shared/services/map.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -176,6 +177,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     LocalStorageService,
     ConstsService,
     ProjectService,
+    MapService,
     ServersService,
     ScheduleModule,
     Location,

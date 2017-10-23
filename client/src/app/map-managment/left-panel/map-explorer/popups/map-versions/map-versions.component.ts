@@ -13,8 +13,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'modal-content',
   styleUrls: ['map-versions.component.css'],
-  templateUrl: 'map-versions.component.html',
-  providers: [MapService]
+  templateUrl: 'map-versions.component.html'
 })
 export class MapVersionsComponent {
   @Input() map: any;

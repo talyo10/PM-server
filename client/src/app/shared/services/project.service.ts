@@ -24,7 +24,6 @@ export class ProjectService {
 
     this.getJstreeProjectsByUser(this.user.id)
       .subscribe((tree) => {
-        console.log("got tree");
         this.setCurrentProjectTree(tree);
       },
       (error) => console.log(error)
@@ -69,7 +68,6 @@ export class ProjectService {
   }
   
   setCurrentProjectTree(tree) {
-    console.log("sending next tree", tree);
     this.bJProjectsTree.next(tree);
   }
 
