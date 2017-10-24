@@ -30,7 +30,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   public sideBarState: boolean = true;
   public projectsTree: any = [];
   public currentMap: any = {};
-  private openMaps: any[];
+  public openMaps: any[];
   public messages: any = [];
   public mapLoaded: boolean = false;
   public leftPanelState: any;
