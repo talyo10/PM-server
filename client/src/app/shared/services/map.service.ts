@@ -25,7 +25,7 @@ export class MapService {
 
   public openMaps: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   public maxOpenMaps: number = 4;
-  private map = new Subject<any>();
+  private map: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private http: Http, public options: RequestOptions, private constsService: ConstsService) {
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });

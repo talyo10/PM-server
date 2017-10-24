@@ -12,18 +12,19 @@
       <!-- <app-left-panel [projectsTree]="projectsTree" [graphProps]="designerOps"></app-left-panel> -->
     </aside>
     <section #mapEditor [hidden]="!mapLoaded">
-      <header *ngIf="openMaps">
-        <span *ngFor="let mapItem of openMaps; let mapIndex = index" (click)="changeMap(mapItem)" role="tab" [class.active]="mapItem.active"><span>{{ mapItem.name }} ({{ mapItem.versionIndex }})</span><i (click)="closeMap(mapIndex)" class="pmap-9"></i></span>
+      <header *ngIf="openMaps && openMaps.length > 0">
+        <span *ngFor="let mapItem of openMaps; let mapIndex = index" (click)="changeMap(mapItem)" role="tab" [class.active]="mapItem.active"><span>{{ mapItem.name }} ({{ mapItem.versionIndex }})</span><i (click)="closeMap(mapIndex, mapItem.id)" class="pmap-9"></i></span>
       </header>
-      <app-map-editor (informOuterLayer)="updateToolBox($event)" (onExecution)="mapExecuted($event)"></app-map-editor>
+      <app-map-editor (informOuterLayer)="updateToolBox($event)" (onExecution)="mapExecuted($event)" *ngIf=
+      "currentMap"></app-map-editor>
     </section>
-    <aside #rightPanel role="right-bar" style="width:317px;" [hidden]="!mapLoaded"
+    <aside #rightPanel role="right-bar" style="width:317px;" [hidden]="!currentMap"
      mwlResizable
      [resizeEdges]="{bottom: false, right: false, top: false, left: true}"
      (resize)="resizeRightPanel($event)"
      [validateResize]="validateRightPanelResize"
       >
-      <app-map-settings></app-map-settings>
+      <app-map-settings *ngIf="currentMap"></app-map-settings>
     </aside>
   </div>
   <div

@@ -99,6 +99,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     this.paramsReq.unsubscribe();
     this.currentMapSubscription.unsubscribe();
     this.projectTreeSubscription.unsubscribe();
+    this.openMapsSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -131,18 +132,22 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     this.currentMap.active = true;
   }
 
-  closeMap(index) {
-    let mapIndex = _.findIndex(this.openMaps, (map) => { return map.name === this.currentMap.name; });
-    this.openMaps.splice(index, 1);
-    if (this.openMaps.length > 0) {
-      if (mapIndex === index) {
-        this.mapService.setCurrentMap(this.mapService.openMaps[0]);
+  closeMap(index, mapId) {
+    this.mapLoaded = false;
+    if (mapId == this.currentMap.id) {
+      // if the map selected is the current one
+      this.currentMap = null;
+      this.mapService.setCurrentMap(null);
+      this.openMaps.splice(index, 1);
+      if (this.openMaps.length > 0) {
+        // if there are more openMaps
+        this.mapService.setCurrentMap(this.openMaps[0]);
       }
     } else {
-      this.currentMap = {};
-      this.mapService.setCurrentMap(null);
-      this.mapLoaded = false;
+      this.mapLoaded = true;
+      this.openMaps.splice(index, 1);
     }
+    this.mapService.setOpenMaps(this.openMaps);
   }
 
   /* resizeable functions */

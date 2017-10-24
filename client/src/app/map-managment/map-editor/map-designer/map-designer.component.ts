@@ -24,7 +24,7 @@ import {CombinedPopupComponent} from "./combined-popup/combined-popup.component"
               '../../../../../node_modules/jointjs/css/themes/default.css',
               './map-designer.component.css']
 })
-export class MapDesignerComponent implements OnInit, OnChanges {
+export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
 
   @Output() paperInit = new EventEmitter();
   @Input() width: number = 0;
@@ -55,119 +55,6 @@ export class MapDesignerComponent implements OnInit, OnChanges {
           this.loadMap();
         }
       );
-  }
-
-  openProcessesModal(link: any, src: any, dest: any) {
-    const modalRef = this.modalService.open(CombinedPopupComponent);
-    modalRef.componentInstance.link = link;
-    modalRef.componentInstance.src = src;
-    modalRef.componentInstance.dest = dest;
-    modalRef.componentInstance.currentProcess = null;
-  }
-
-  openNewProcessModal(link: any, src: any, dest: any) {
-    const pmodal = this.modalService.open(NewProcessComponentWindow);
-    pmodal.componentInstance.link = link;
-    pmodal.componentInstance.src = src;
-    pmodal.componentInstance.dest = dest;
-
-    pmodal.result
-      .then((created: any) => {
-          if (!created) {
-            let cell = this.graph.getCell(link.id);
-            var cellView = this.paper.findViewByModel(cell);
-            this.deleteCellView(cellView);
-          }
-        },
-        (error) => { console.log(error); });
-  }
-
-  openDeleteModal(cellView: any) {
-    let id = cellView.model.id;
-    let cell = this.graph.getCell(id);
-
-    const pmodal = this
-      .modalService
-      .open(DeleteNodeComponentWindow);
-
-    pmodal.componentInstance.name = cell.attributes.attrs['.label'].text;
-
-    pmodal.result
-      .then((removeCell: any) => {
-          if (removeCell) {
-            this.deleteCellView(cellView);
-          }
-        },
-        (error) => { console.log(error); });
-  }
-
-  openRenameModal(cellView: any) {
-    let id = cellView.model.id;
-    let cell = this.graph.getCell(id);
-
-    const pmodal = this
-      .modalService
-      .open(RenameNodeComponentWindow);
-
-    pmodal.componentInstance.name = cell.attributes.attrs['.label'].text;
-
-    pmodal.result
-      .then((name: any) => {
-          this.renameCellView(cell, name);
-        },
-        (error) => { console.log(error); });
-  }
-
-  getLink(linkId: any) {
-    let res = {};
-    res = _.find(this.map.mapView.links, (link: any) => { return link.id === linkId; });
-    return res;
-  }
-
-  svgCheckPort(portType, elem) {
-    return elem.getAttribute('port').startsWith(portType);
-  }
-
-  getNode(blockId) {
-    let res = {};
-    res = _.find(this.map.mapView.nodes, (node: any) => {
-      return node.id === blockId;
-    });
-    return res;
-  }
-
-  connectNodes(linkId: any, sourceId: any, targetId: any) {
-    let pLink = {
-      id: linkId,
-      sourceId: sourceId,
-      targetId: targetId,
-      processes: [],
-      result: '',
-      condition: false
-    };
-    this.map.mapView.links.push(pLink);
-    let mapLink = this.getLink(linkId);
-    let sourceBlock = this.getNode(sourceId);
-    let targetBlock = this.getNode(targetId);
-
-    this.openNewProcessModal(mapLink, sourceBlock, targetBlock);
-
-  }
-
-  addNode(id, name, type, node) {
-    let truncatedName = name.replace(' ', ''); /* TODO: replace all unallowed charcters */
-    let nameIndex = _.keys(this.map.mapView.nodes).length;
-    truncatedName = truncatedName + nameIndex;
-    this.map.mapView.nodes[truncatedName] = {
-      id: id,
-      type: type,
-      name: name,
-      serverUrl: "localhost:8100", /* Default address */
-      attributes: {}
-    };
-    node.attributes.attrs['.label'].text = name + '-' + nameIndex;
-    this.graph.addCell(node);
-    this.updateMapViewContentGraph();
   }
 
   ngOnInit() {
@@ -340,12 +227,130 @@ export class MapDesignerComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
-    console.log("--->", changes);
     // if (changes['map'].currentValue != null && this.graph != null) {
     //   console.log(this.graph);
     //   this.loadMap();
     // }
   }
+
+  ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
+  }
+
+  openProcessesModal(link: any, src: any, dest: any) {
+    const modalRef = this.modalService.open(CombinedPopupComponent);
+    modalRef.componentInstance.link = link;
+    modalRef.componentInstance.src = src;
+    modalRef.componentInstance.dest = dest;
+    modalRef.componentInstance.currentProcess = null;
+  }
+
+  openNewProcessModal(link: any, src: any, dest: any) {
+    const pmodal = this.modalService.open(NewProcessComponentWindow);
+    pmodal.componentInstance.link = link;
+    pmodal.componentInstance.src = src;
+    pmodal.componentInstance.dest = dest;
+
+    pmodal.result
+      .then((created: any) => {
+          if (!created) {
+            let cell = this.graph.getCell(link.id);
+            var cellView = this.paper.findViewByModel(cell);
+            this.deleteCellView(cellView);
+          }
+        },
+        (error) => { console.log(error); });
+  }
+
+  openDeleteModal(cellView: any) {
+    let id = cellView.model.id;
+    let cell = this.graph.getCell(id);
+
+    const pmodal = this
+      .modalService
+      .open(DeleteNodeComponentWindow);
+
+    pmodal.componentInstance.name = cell.attributes.attrs['.label'].text;
+
+    pmodal.result
+      .then((removeCell: any) => {
+          if (removeCell) {
+            this.deleteCellView(cellView);
+          }
+        },
+        (error) => { console.log(error); });
+  }
+
+  openRenameModal(cellView: any) {
+    let id = cellView.model.id;
+    let cell = this.graph.getCell(id);
+
+    const pmodal = this
+      .modalService
+      .open(RenameNodeComponentWindow);
+
+    pmodal.componentInstance.name = cell.attributes.attrs['.label'].text;
+
+    pmodal.result
+      .then((name: any) => {
+          this.renameCellView(cell, name);
+        },
+        (error) => { console.log(error); });
+  }
+
+  getLink(linkId: any) {
+    let res = {};
+    res = _.find(this.map.mapView.links, (link: any) => { return link.id === linkId; });
+    return res;
+  }
+
+  svgCheckPort(portType, elem) {
+    return elem.getAttribute('port').startsWith(portType);
+  }
+
+  getNode(blockId) {
+    let res = {};
+    res = _.find(this.map.mapView.nodes, (node: any) => {
+      return node.id === blockId;
+    });
+    return res;
+  }
+
+  connectNodes(linkId: any, sourceId: any, targetId: any) {
+    let pLink = {
+      id: linkId,
+      sourceId: sourceId,
+      targetId: targetId,
+      processes: [],
+      result: '',
+      condition: false
+    };
+    this.map.mapView.links.push(pLink);
+    let mapLink = this.getLink(linkId);
+    let sourceBlock = this.getNode(sourceId);
+    let targetBlock = this.getNode(targetId);
+
+    this.openNewProcessModal(mapLink, sourceBlock, targetBlock);
+
+  }
+
+  addNode(id, name, type, node) {
+    let truncatedName = name.replace(' ', ''); /* TODO: replace all unallowed charcters */
+    let nameIndex = _.keys(this.map.mapView.nodes).length;
+    truncatedName = truncatedName + nameIndex;
+    this.map.mapView.nodes[truncatedName] = {
+      id: id,
+      type: type,
+      name: name,
+      serverUrl: "localhost:8100", /* Default address */
+      attributes: {}
+    };
+    node.attributes.attrs['.label'].text = name + '-' + nameIndex;
+    this.graph.addCell(node);
+    this.updateMapViewContentGraph();
+  }
+
+   
 
   updatePaper() {
     this.paper.fitToContent({
@@ -359,24 +364,27 @@ export class MapDesignerComponent implements OnInit, OnChanges {
 
   loadMap() {
     // Clear the graph (Genius .__.)
-    this.graph.clear();
+    if (this.map && this.graph) {
+      this.graph.clear();
+    
 
-    try {
+      try {
 
-      // Wait 1s and add the cells
-      if (this.map && this.map.mapView && !this.map.mapView.content) {
-        console.log("no content");
-        console.log(this.map.mapView);
-        console.log("content");
-        return;
+        // Wait 1s and add the cells
+        if (this.map && this.map.mapView && !this.map.mapView.content) {
+          console.log("no content");
+          console.log(this.map.mapView);
+          console.log("content");
+          return;
+        }
+        this.graph.fromJSON(JSON.parse(this.map.mapView.content));
+
+      } catch (e) {
+        console.log("Error loading map", e);
       }
-      this.graph.fromJSON(JSON.parse(this.map.mapView.content));
 
-    } catch (e) {
-      console.log("Error loading map", e);
+      this.updatePaper();
     }
-
-    this.updatePaper();
   }
 
   /* when changing the graph we want to update the inner content that saves the graph json */

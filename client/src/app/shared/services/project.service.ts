@@ -14,7 +14,6 @@ export class ProjectService {
   private user: any;
 
   constructor(private http: Http, public options: RequestOptions, private constsService: ConstsService, private authService: AuthenticationService) {
-    console.log("PROJECTS SERVICE +++ HERE I AM");
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
     this.options.headers = headers;
     this.serverUrl = this.constsService.getServerUrl();

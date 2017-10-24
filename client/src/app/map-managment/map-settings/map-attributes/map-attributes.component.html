@@ -3,7 +3,7 @@
     <input type="text" [(ngModel)]="searchtext"><button type="button"><i class="pmap-4"></i></button>
   </header>
   <section>
-    <div class="grid" *ngIf="map.mapView && map.mapView.attributes">
+    <div class="grid" *ngIf="map && map.mapView && map.mapView.attributes">
       <app-map-attribute *ngFor="let attribute of map.mapView.attributes| filterBy: ['name']: searchtext; let attributeIndex = index" [attribute]="attribute" (deleteAttribute)="deleteAttribute($event, attributeIndex)"></app-map-attribute>
     </div>
   </section>
