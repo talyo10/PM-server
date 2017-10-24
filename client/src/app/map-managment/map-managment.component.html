@@ -13,7 +13,7 @@
     </aside>
     <section #mapEditor [hidden]="!mapLoaded">
       <header *ngIf="openMaps && openMaps.length > 0">
-        <span *ngFor="let mapItem of openMaps; let mapIndex = index" (click)="changeMap(mapItem)" role="tab" [class.active]="mapItem.active"><span>{{ mapItem.name }} ({{ mapItem.versionIndex }})</span><i (click)="closeMap(mapIndex, mapItem.id)" class="pmap-9"></i></span>
+        <span *ngFor="let mapItem of openMaps; let mapIndex = index" (click)="changeMap(mapItem)" role="tab" [class.active]="currentMap.id == mapItem.id"><span>{{ mapItem.name }} ({{ mapItem.versionIndex }})</span><i (click)="closeMap(mapIndex, mapItem.id)" class="pmap-9"></i></span>
       </header>
       <app-map-editor (informOuterLayer)="updateToolBox($event)" (onExecution)="mapExecuted($event)" *ngIf=
       "currentMap"></app-map-editor>
