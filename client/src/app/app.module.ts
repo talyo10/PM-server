@@ -23,9 +23,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularDraggableModule } from 'angular2-draggable';
 
 import { AuthenticationService } from './shared/services/authentication.service';
-import { routing, appRoutingProviders } from './app.routing';
+import { AppRoutingModule } from './app.routing';
 import { ConstsService } from './shared/services/consts.service';
+import { ProjectService } from './shared/services/project.service';
 import { ServersService } from './shared/services/servers.service';
+import { MapService } from './shared/services/map.service';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -149,6 +151,9 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
+
+    AppRoutingModule,
+    
     NgbModule.forRoot(),
     CalendarModule.forRoot(),
     ModalModule.forRoot(),
@@ -164,14 +169,14 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
             prefix: 'pm-app',
             storageType: 'localStorage'
         }),
-    routing,
     DatePickerModule
   ],
   providers: [
     AuthenticationService,
     LocalStorageService,
-    appRoutingProviders,
     ConstsService,
+    ProjectService,
+    MapService,
     ServersService,
     ScheduleModule,
     Location,

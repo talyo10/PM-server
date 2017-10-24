@@ -6,7 +6,7 @@
       </div>
   </header>
   <section>
-    <div class="grid">
+    <div class="grid" *ngIf="map && map.mapView && map.mapView.attributes">
       <app-map-attribute *ngFor="let attribute of map.mapView.attributes| filterBy: ['name']: searchtext; let attributeIndex = index" [attribute]="attribute" (deleteAttribute)="deleteAttribute($event, attributeIndex)"></app-map-attribute>
     </div>
   </section>

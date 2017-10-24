@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChange } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
-
 import { ServersPopupComponent } from '../../../shared/popups/servers-popup/servers-popup.component';
-
 import { ServersService } from '../../../shared/services/servers.service';
+import { MapService } from '../../../shared/services/map.service';
 
 import * as _ from 'lodash';
 
@@ -16,12 +16,18 @@ import * as _ from 'lodash';
 })
 export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() map: any;
+  map: any;
   servers: any[];
   search: any;
   interval: any;
+  currentMapSubscription: Subscription;
 
-  constructor(public modalService: NgbModal, public  serverService: ServersService) { }
+  constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) {
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+    .subscribe(
+      (map) => this.map = map
+    );
+  }
 
   ngOnInit() {
     this.search = {
@@ -40,7 +46,9 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
     clearInterval(this.interval);
+    
   }
 
   getAgents(serversComponent: MapServersComponent) {

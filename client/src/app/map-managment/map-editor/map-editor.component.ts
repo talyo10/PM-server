@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, Input, EventEmitter } from '@angular/core';
 import { NgSwitch, NgSwitchCase } from '@angular/common';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { MapService } from '../../shared/services/map.service';
 import { LibPMService } from '../../shared/services/libpm.service';
@@ -12,22 +14,42 @@ import * as _ from 'lodash';
   styleUrls: ['./map-editor.component.css'],
   providers: [LibPMService]
 })
-export class MapEditorComponent implements OnInit {
+export class MapEditorComponent implements OnInit, OnDestroy {
 
   @Output() informOuterLayer = new EventEmitter();
   @Output() onExecution = new EventEmitter();
-  @Input() map: any = {};
+  map: any;
 
   public currentPanel: number = 0;
   public executingMap: boolean = false;
   public savingMap: boolean = false;
+  private openMaps: any[];
+
+  currentMapSubscription: Subscription;
+  currentOpenMapsSubscription: Subscription;
 
   constructor(private mapService: MapService, private libpmService: LibPMService) {
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.map = map;
+        }
+      );
+    this.currentMapSubscription = this.mapService.getOpenMapsObservable()
+      .subscribe(
+        (maps) => {
+          this.openMaps = maps;
+        }
+      )
   }
 
   ngOnInit() {
     this.executingMap = false;
     this.savingMap = false;
+  }
+
+  ngOnDestroy() {
+    this.currentMapSubscription.unsubscribe();
   }
 
   selectPanel(panelId: number) {
@@ -80,16 +102,23 @@ export class MapEditorComponent implements OnInit {
 
   saveMap(map) {
     this.savingMap = true;
-    this.mapService.saveMap(map).subscribe((result) => {
-      if (result.date) {
-        map.versionIndex++;
-        map.mapView = result.structure;
-      }
-      console.log(result);
-      this.savingMap = false;
-    }, (err: any) => {
-      this.savingMap = false;
-    });
+    this.mapService.saveMap(map)
+      .subscribe(
+        (result) => {
+          if (result.date) {
+            map.versionIndex++;
+            map.mapView = result.structure;
+
+            // updating the open maps.
+            let mapIndex = _.findIndex(this.openMaps, (mapa) => { return mapa.id === map.id })
+            this.openMaps[mapIndex] = map;
+            this.mapService.setOpenMaps(this.openMaps);
+          }
+          this.savingMap = false;
+        }, (err: any) => {
+          this.savingMap = false;
+        }
+      );
   }
 
 }

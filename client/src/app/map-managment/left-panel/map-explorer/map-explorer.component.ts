@@ -1,10 +1,12 @@
-import { AuthenticationService } from '../../../shared/services/authentication.service';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { TreeComponent, TreeModel, TreeNode, TREE_ACTIONS, IActionMapping, KEYS } from 'angular-tree-component';
 import { ContextMenuService, ContextMenuComponent } from 'ngx-contextmenu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs/Subscription';
 
+import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { ProjectService } from '../../../shared/services/project.service';
 import { MapService } from '../../../shared/services/map.service';
 import { ExecutionReportComponent } from './execution-report/execution-report.component';
@@ -25,15 +27,18 @@ import * as _ from 'lodash';
   templateUrl: './map-explorer.component.html',
   styleUrls: ['./map-explorer.component.css']
 })
-export class MapExplorerComponent implements OnInit {
+export class MapExplorerComponent implements OnInit, OnDestroy {
 
-  @Input() projectsTree: any = [];
   @Input() searchtext: string = null;
-  @Output() onMapSelect: EventEmitter<any> = new EventEmitter();
   @ViewChild('tree') tree: TreeComponent;
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
+  
+  private parmasReq: any;
+  projectsTree: any = [];
+  projectTreeSubscription: Subscription;
+  id: string = null;
 
   treeOptions: any;
 
@@ -78,13 +83,51 @@ export class MapExplorerComponent implements OnInit {
     }
   };
 
-  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal) {
 
+  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) {  }
+
+  ngOnInit() {
+    let user = this.authenticationService.getCurrentUser();
+
+    if (!user || !user.id) {
+      return;
+    }
+
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+    .subscribe(
+      (tree) => {
+        this.projectsTree = tree;
+        this.tree.treeModel.update();
+      },
+      (error) => console.log(error)
+    );
+    
+    let actionMapping = this.actionMapping;
+    this.treeOptions = {
+      getChildren: (node:TreeNode) => {
+        return new Promise((resolve, reject) => {
+          this.projectService.getNode(node.id).subscribe((node) => {
+            _.map(node.childs, this.mapNode.bind(this));
+            return resolve(node.childs);
+          });
+        });
+      },
+      hasCustomContextMenu: true,
+      actionMapping
+    };
+
+    this.parmasReq = this.route.params.subscribe((params) => {
+      this.id = params['id'];
+    });
+  }
+
+  ngOnDestroy() {
+    this.projectTreeSubscription.unsubscribe();
   }
 
   selectMap(node: TreeNode) {
     if (this.isMap(node)) {
-      this.onMapSelect.emit(node.data.map);
+      this.mapService.selectMap(node.data.map);
     }
   }
 
@@ -323,35 +366,6 @@ export class MapExplorerComponent implements OnInit {
     } else {
       return;
     }
-  }
-
-
-  ngOnInit() {
-    
-    let user = this.authenticationService.getCurrentUser();
-
-    if (!user || !user.id) {
-      return;
-    }
-    
-    this.projectService.getJstreeProjectsByUser(user.id).subscribe((data) => {
-      this.projectsTree = data;
-      this.tree.treeModel.update();
-    });
-
-    let actionMapping = this.actionMapping;
-    this.treeOptions = {
-      getChildren: (node:TreeNode) => {
-        return new Promise((resolve, reject) => {
-          this.projectService.getNode(node.id).subscribe((node) => {
-            _.map(node.childs, this.mapNode.bind(this))
-            return resolve(node.childs);
-          });
-        });
-      },
-      hasCustomContextMenu: true,
-      actionMapping
-    };
   }
 
   showExecutions(node: TreeNode) {

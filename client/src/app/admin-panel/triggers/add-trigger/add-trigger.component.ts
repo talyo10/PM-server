@@ -13,7 +13,7 @@ import * as _ from 'lodash';
   selector: 'modal-content',
   templateUrl: './add-trigger.component.html',
   styleUrls: ['./add-trigger.component.css'],
-  providers: [ProjectService, TriggerService]
+  providers: [TriggerService]
 })
 export class AddTriggerComponentWindow {
   trigger: any = {

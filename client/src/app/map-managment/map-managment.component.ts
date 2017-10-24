@@ -1,9 +1,13 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { Subscription } from 'rxjs/Subscription';
+import { ResizeEvent } from 'angular2-resizable';
+
 import { ProjectService } from '../shared/services/project.service';
 import { MapService } from '../shared/services/map.service';
 import { AuthenticationService } from '../shared/services/authentication.service';
 import { CombinedPopupComponent } from './map-editor/map-designer/combined-popup/combined-popup.component';
-import { ResizeEvent } from 'angular2-resizable';
 
 import * as _ from 'lodash';
 declare var jQuery:any;
@@ -11,10 +15,9 @@ declare var jQuery:any;
 @Component({
   selector: 'app-map-managment',
   templateUrl: './map-managment.component.html',
-  styleUrls: ['./map-managment.component.css'],
-  providers: [ProjectService]
+  styleUrls: ['./map-managment.component.css']
 })
-export class MapManagmentComponent implements OnInit, AfterViewInit{
+export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
 
   @ViewChild('messagesEl') messagesEl: ElementRef;
   @ViewChild('mapControl') mapControl: ElementRef;
@@ -27,40 +30,53 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
   public sideBarState: boolean = true;
   public projectsTree: any = [];
   public currentMap: any = {};
+  private openMaps: any[];
   public messages: any = [];
   public mapLoaded: boolean = false;
   public leftPanelState: any;
-  private maxOpenMaps: number = 4;
   private minLeftPanelWidth: number = 0;
   private minRightPanelWidh: number = 0;
   private minMessageHeight: number = 0;
   private initialEditorWidth: number = 0;
 
+  private paramsReq: any;
+  id: string;
+  currentMapSubscription: Subscription;
+  projectTreeSubscription: Subscription;
+  openMapsSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService
-              ,private m_elementRef: ElementRef) {
-  }
+  constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {  }
 
   ngOnInit() {
+    // getting the id from the url
+    this.paramsReq = this.route.params
+      .subscribe((p) => this.id = p.id);
+
+    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
+      .subscribe(
+        (tree) => {
+          this.projectsTree = tree;
+        }
+      );
+
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+      .subscribe(
+        (map) => {
+          this.mapLoaded = true;
+          this.currentMap = map;
+        }
+      );
+
+    this.openMapsSubscription = this.mapService.getOpenMapsObservable()
+      .subscribe(
+        (maps) => {
+          this.openMaps = maps;
+        }
+      )
 
     let user = this.authenticationService.getCurrentUser();
     if (!user || !user.id) {
       return;
-    }
-    this.projectService.getJstreeProjectsByUser(user.id).subscribe((projects) => {
-      this.projectsTree = projects;
-    },
-      (error) => {
-        console.log(error);
-      });
-
-    if (this.mapService.openMaps.length === 0) {
-      this.mapLoaded = false;
-    } else {
-      this.currentMap = _.find(this.mapService.openMaps, (mp: any) => {
-        return mp.active;
-      })
-      this.mapLoaded = true;
     }
 
     this.resizeMessages({
@@ -77,6 +93,13 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
       }
     })
 
+  }
+
+  ngOnDestroy() {
+    this.paramsReq.unsubscribe();
+    this.currentMapSubscription.unsubscribe();
+    this.projectTreeSubscription.unsubscribe();
+    this.openMapsSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -103,42 +126,26 @@ export class MapManagmentComponent implements OnInit, AfterViewInit{
     this.messages.unshift(JSON.parse($event));
   }
 
-  selectMap($event) {
-    this.currentMap.active = false;
-    let mapIndex = _.findIndex(this.mapService.openMaps, (map) => { return map.name === $event.name; });
-    if (mapIndex < 0) {
-      this.mapLoaded = true;
-      this.currentMap = $event;
-
-      if (this.mapService.openMaps.length < this.maxOpenMaps) {
-        this.mapService.openMaps.push(this.currentMap);
-      } else {
-        this.mapService.openMaps[this.maxOpenMaps - 1] = this.currentMap;
-      }
-    } else {
-      this.currentMap = this.mapService.openMaps[mapIndex];
-    }
-    this.currentMap.active = true;
-  }
-
   changeMap($event) {
-    this.currentMap.active = false;
-    this.currentMap = $event;
-    this.currentMap.active = true;
+    this.mapService.selectMap($event);
   }
 
-  closeMap(ind) {
-    let mapIndex = _.findIndex(this.mapService.openMaps, (map) => { return map.name === this.currentMap.name; });
-    this.mapService.openMaps.splice(ind, 1);
-    if (this.mapService.openMaps.length > 0) {
-      if (mapIndex === ind) {
-        this.currentMap = this.mapService.openMaps[0];
-        this.currentMap.active = true;
+  closeMap(index, mapId) {
+    this.mapLoaded = false;
+    if (mapId == this.currentMap.id) {
+      // if the map selected is the current one
+      this.currentMap = null;
+      this.mapService.setCurrentMap(null);
+      this.openMaps.splice(index, 1);
+      if (this.openMaps.length > 0) {
+        // if there are more openMaps
+        this.mapService.setCurrentMap(this.openMaps[0]);
       }
     } else {
-      this.currentMap = {};
-      this.mapLoaded = false;
+      this.mapLoaded = true;
+      this.openMaps.splice(index, 1);
     }
+    this.mapService.setOpenMaps(this.openMaps);
   }
 
   /* resizeable functions */

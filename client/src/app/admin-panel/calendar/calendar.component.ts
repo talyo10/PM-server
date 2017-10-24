@@ -60,7 +60,7 @@ const colors: any = {
   templateUrl: './calendar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./calendar.component.css'],
-  providers: [JobsService, ProjectService]
+  providers: [JobsService]
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 

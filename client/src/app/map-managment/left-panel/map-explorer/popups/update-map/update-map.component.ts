@@ -12,8 +12,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'modal-content',
   styleUrls: ['update-map.component.css'],
-  templateUrl: 'update-map.component.html',
-  providers: [MapService]
+  templateUrl: 'update-map.component.html'
 })
 export class UpdateMapComponentWindow {
   public currProject: any;

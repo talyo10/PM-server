@@ -12,9 +12,7 @@ import 'chart.js';
   selector: 'app-execution-report',
   templateUrl: './execution-report.component.html',
   styleUrls: ['./execution-report.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [MapService]
-
+  encapsulation: ViewEncapsulation.None
 })
 export class ExecutionReportComponent implements OnInit, AfterViewInit {
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
 import { MapDesignerComponent } from '../../map-editor/map-designer/map-designer.component';
 import { AgentsService } from '../../../shared/services/agents.service';
 
@@ -14,7 +14,7 @@ import * as joint from 'jointjs';
   styleUrls: ['./map-toolbox.component.css'],
   providers: [AgentsService]
 })
-export class MapToolboxComponent implements OnInit, OnChanges {
+export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() paper: any;
   @Input() graph: any;
@@ -24,6 +24,8 @@ export class MapToolboxComponent implements OnInit, OnChanges {
   private stencilGraph: any;
   private stencilPaper: any;
   private agentsBlocks: any[];
+
+  req: any;
 
   constructor(private agentsService: AgentsService) {
   }
@@ -130,11 +132,16 @@ export class MapToolboxComponent implements OnInit, OnChanges {
       }, joint.shapes.basic.Generic.prototype.defaults)
     });
 
-    console.log('get all services');
-    this.agentsService.all(false).subscribe((data) => {
+    this.req = this.agentsService.all(false).subscribe((data) => {
       this.agentsBlocks = _.cloneDeep(data.blocks);
       this.initDragPanel(this.stencilGraph)(data.blocks);
     });
+  }
+
+  ngOnDestroy() {
+    if(this.req) {
+      this.req.unsubscribe()
+    }
   }
 
   getFlyCell(cellView: any): any {
