@@ -1,6 +1,9 @@
 <div region="data-table">
   <header>
-    <input type="text" [(ngModel)]="searchtext"><button type="button"><i class="pmap-4"></i></button>
+      <div class="input-group">
+        <input id="searchtext" type="text" [(ngModel)]="searchtext" class="form-control" placeholder="Search for..">
+        <label for="searchtext"><i class="pmap-4"></i></label>
+      </div>
   </header>
   <section>
     <div class="grid" *ngIf="map && map.mapView && map.mapView.attributes">

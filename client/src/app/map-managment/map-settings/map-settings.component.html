@@ -2,7 +2,7 @@
   <h2><span>MAP SETTINGS</span><i class="pmap-custom r-resize"></i></h2>
   <div role="map-settings-buttons">
     <button type="button" [class.active]="currentPanel == 0" (click)="selectPanel(0)">Attributes</button>
-    <button type="button" [class.active]="currentPanel == 1" (click)="selectPanel(1)">Servers</button>
+    <button type="button" [class.active]="currentPanel == 1" (click)="selectPanel(1)">Agents</button>
   </div>
 </header>
 <section [ngSwitch]="currentPanel">

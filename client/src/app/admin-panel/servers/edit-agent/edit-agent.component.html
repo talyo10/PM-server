@@ -1,6 +1,6 @@
-<div [draggable] role="small-popup-edit-agent" class="small-popup-edit-agent">
+<div ngDraggable [handle]="popupHandle" role="small-popup-edit-agent" class="small-popup-edit-agent">
   <header>
-    <h2> {{ agent.name }} </h2>
+    <h2 role="handle" #popupHandle> {{ agent.name }} </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <section class="procces-section">

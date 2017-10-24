@@ -18,6 +18,9 @@
   vertical-align: top !important;
 }
 
+.agents-title i {
+  color: #f1f1f1;
+}
 
 [role="triggers"] .pmap-table {
   margin-bottom: 10px;

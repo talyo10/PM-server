@@ -1,6 +1,7 @@
 .form-control, .form-label {
     font-size: 13px;
     color: #bbbbbb;
+    height: 26px;
 }
 
 input.form-control:focus, select.form-control:focus, textarea.form-control:focus  {

@@ -177,3 +177,7 @@
 .small-popup-processes[role="small-popup-processes"] section .form-group:last-child {
   margin-bottom: 0;
 }
+
+[role="handle"] {
+  cursor: move;
+}

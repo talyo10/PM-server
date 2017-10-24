@@ -1,6 +1,6 @@
-<div [draggable] role="small-popup-install-agent" class="small-popup-install-agent">
+<div ngDraggable [handle]="popupHandle" role="small-popup-install-agent" class="small-popup-install-agent">
   <header>
-    <h2> Install Base Agent </h2>
+    <h2 role="handle" #popupHandle> Install Base Agent </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
     <div [hidden]="!installing" class="loader"></div>

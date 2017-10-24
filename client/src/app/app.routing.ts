@@ -15,7 +15,7 @@ import { RegisterComponent } from './register/register.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/app/map', pathMatch: 'full' },
-    { path: 'app/admin', redirectTo: '/app/admin/servers', pathMatch: 'full' },
+    { path: 'app/admin', redirectTo: '/app/admin/agents', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     {
@@ -28,8 +28,8 @@ const appRoutes: Routes = [
                 component: AdminPanelComponent,
                 children: [
                     { path: 'calendar', component: CalendarComponent },
-                    { path: 'dedicatedAgents', component: DedicatedAgentsComponent },
-                    { path: 'servers', component: ServersComponent },
+                    { path: 'plugins', component: DedicatedAgentsComponent },
+                    { path: 'agents', component: ServersComponent },
                     { path: 'triggers', component: TriggersComponent },
                     { path: 'SystemHooks', component: SystemHooksComponent}
                 ]

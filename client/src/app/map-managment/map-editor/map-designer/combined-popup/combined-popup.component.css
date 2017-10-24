@@ -209,3 +209,7 @@
 .text-light {
   color: #bbbbbb;
 }
+
+[role="handle"] {
+  cursor: move;
+}

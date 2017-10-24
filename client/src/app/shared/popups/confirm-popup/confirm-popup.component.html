@@ -1,6 +1,7 @@
-<div [draggable] role="small-popup-processes" class="small-popup-processes">
+<div ngDraggable [handle]="popupHandle" role="small-popup-processes" class="small-popup-processes">
     <header>
-      <h2>{{ popupFields.title }}</h2>
+      <!-- <span >DRAG ME FROM HERE</span> -->
+      <h2 #popupHandle role="handle">{{ popupFields.title }}</h2>
       <i role="closing" class="pmap-15" (click)="closeWindow(false)"></i>
     </header>
     <section>

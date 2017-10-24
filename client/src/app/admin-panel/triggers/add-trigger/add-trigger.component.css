@@ -269,3 +269,7 @@
 .small-popup-triggers[role="small-popup-add-trigger"] section:last-of-type h2 + table tbody tr:last-child td {
   border-bottom: none;
 }
+
+[role="handle"] {
+  cursor: move;
+}

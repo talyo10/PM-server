@@ -41,9 +41,9 @@
   max-width: 40px;
 }
 
-/* .agents-title i {
+.agents-title i {
   color: #f1f1f1;
-} */
+}
 
 h2.agents-title {
   color: #f1f1f1;
@@ -63,4 +63,8 @@ h2.agents-title {
 
 .pmap-table .thead {
   color: #02a7c7 !important;
+}
+
+.pmap-3 {
+  font-weight: bolder;
 }

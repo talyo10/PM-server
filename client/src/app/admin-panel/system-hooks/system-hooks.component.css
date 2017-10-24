@@ -47,6 +47,10 @@ h2.agents-title {
   font-weight: 300;
 }
 
+.agents-title i {
+  color: #f1f1f1;
+}
+
 .pmap-table .thead .tr {
   font-weight: bold;
   color: #02a7c7;

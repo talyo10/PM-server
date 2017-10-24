@@ -14,21 +14,6 @@
   border-bottom: 1px solid #4a4e50;
 }
 
-[region="data-table"] header input {
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-  font-size: 14px;
-  color: #bbb;
-  padding: 0 10px;
-}
-
-[region="data-table"] header input:active, [region="data-table"] header input:focus, [region="data-table"] header input:hover {
-  background-color: #383a3d;
-  color: #FFF;
-}
 
 [region="data-table"] header button {
   position: absolute;
@@ -172,4 +157,15 @@
 [region="data-table"] footer button:hover, [region="data-table"] footer button:active, [region="data-table"] footer button.active, [region="data-table"] footer button:focus {
   background-color: #4b4f51;
   color: #bbb;
+}
+
+.input-group label{
+  margin: 0 0 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+label {
+  margin: 4px;
 }

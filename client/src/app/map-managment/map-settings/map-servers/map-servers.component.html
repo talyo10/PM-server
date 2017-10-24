@@ -1,6 +1,9 @@
 <div region="data-table">
   <header>
-    <input type="text" [(ngModel)]="search.text" ><button type="button"><i class="pmap-4"></i></button>
+      <div class="input-group">
+          <input id="searchtext" type="text" [(ngModel)]="search.text" class="form-control" placeholder="Search agent">
+          <label for="searchtext"><i class="pmap-4"></i></label>
+        </div>
   </header>
   <section>
     <div class="grid">
@@ -16,9 +19,9 @@
     <div class="form-group has-checkbox">
       <label for="action-chx-1" class="form-checkbox">
           <input type="checkbox" id="action-chx-1" [(ngModel)]="map.deleteData"><i></i>
-          <span class="form-label">delete execution data after execution.</span>
+          <span class="form-label">Delete execution data after execution.</span>
       </label>
     </div>
-    <button type="button" (click)="addServer()"><i class="pmap-25"></i>Select servers</button>
+    <button type="button" (click)="addServer()"><i class="pmap-25"></i>Select agents</button>
   </footer>
 </div>

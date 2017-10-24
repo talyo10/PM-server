@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
@@ -149,6 +149,27 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   /* resizeable functions */
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event){
+    // called every screen resize to reset the panel size.
+    let leftPanel = jQuery(this.leftPanel.nativeElement);
+    let rightPanel = jQuery(this.rightPanel.nativeElement);
+    let mapControl = jQuery(this.mapControl.nativeElement);
+    let mapEditor = jQuery(this.mapEditor.nativeElement);
+    let mapMain = jQuery(this.mapMain.nativeElement);
+    let messagesEl = jQuery(this.messagesEl.nativeElement);
+  
+
+    rightPanel.width(this.minRightPanelWidh);
+    leftPanel.width(this.minLeftPanelWidth);
+    mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
+    messagesEl.height(this.minMessageHeight);
+
+    let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
+    this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
+    mapControl.height(mapMain.height() + 80 - messagesEl.height());
+  }
 
   validateMessagesResize(event: ResizeEvent): boolean {
     if (event.rectangle.height < this.minMessageHeight) {

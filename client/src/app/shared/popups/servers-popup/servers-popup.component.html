@@ -1,6 +1,6 @@
-<div [draggable] role="popup" class="popup">
+<div ngDraggable [handle]="popupHandle" role="popup" class="popup">
   <header>
-    <h2> Servers </h2>
+    <h2 role="handle" #popupHandle> Agents </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <section class="pm-container">
@@ -110,13 +110,13 @@
       <div class="form-group has-checkbox checkbox-text">
         <label for="selected-only" class="form-checkbox">
             <input type="checkbox" id="selected-only" [ngModel]="selected" (ngModelChange)="showSelected()"><i></i>
-            <span class="form-label">show selected servers</span>
+            <span class="form-label">Show selected agents</span>
         </label>
       </div>
       <div class="form-group has-checkbox checkbox-text">
         <label for="unselected-only" class="form-checkbox">
             <input type="checkbox" id="unselected-only" [ngModel]="unselected" (ngModelChange)="showUnSelected()"><i></i>
-            <span class="form-label">show unselected servers</span>
+            <span class="form-label">Show unselected agents</span>
         </label>
       </div>
     </div>

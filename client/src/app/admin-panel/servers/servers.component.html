@@ -1,5 +1,5 @@
 <section>
-  <h2><i class="pmap-1 noHover"></i>Plugins</h2>
+  <h2 class="agents-title"><i class="pmap-1 noHover"></i>Agents</h2>
 
   <div class="pmap-table search-bar pm-font">
     <div class="tbody-wrapper filter-bar">
@@ -144,9 +144,9 @@
 </context-menu>
 <context-menu #serverCtx>
   <ng-template contextMenuItem (execute)="editAgent($event.item.data.data)">
-    Edit Server
+    Edit Agent
   </ng-template>
   <ng-template contextMenuItem (execute)="deleteAgent($event.item.data)">
-    Delete Server
+    Delete Agent
   </ng-template>
 </context-menu>

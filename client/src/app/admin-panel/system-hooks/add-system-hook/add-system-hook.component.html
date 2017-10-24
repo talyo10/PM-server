@@ -1,6 +1,6 @@
-<div [draggable] role="small-popup-add-agent" class="small-popup-add-agent">
+<div ngDraggable [handle]="popupHandle" role="small-popup-add-agent" class="small-popup-add-agent">
   <header>
-    <h2>Add System Hook</h2>
+    <h2 role="handle" #popupHandle>Add System Hook</h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <section class="procces-section">
