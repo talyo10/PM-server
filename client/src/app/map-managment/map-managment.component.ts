@@ -127,9 +127,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   changeMap($event) {
-    this.currentMap.active = null;
     this.mapService.selectMap($event);
-    this.currentMap.active = true;
   }
 
   closeMap(index, mapId) {

@@ -32,6 +32,16 @@ export class MapService {
     this.options.headers = headers;
     this.serverUrl = this.constsService.getServerUrl();
     this.versions = {};
+
+    if (localStorage.getItem('openMaps') && localStorage.getItem('openMaps') !== "null") {
+      let maps = JSON.parse(localStorage.getItem('openMaps'));
+      if (Array.isArray(maps)) {
+        this.setOpenMaps(maps);
+        this.setCurrentMap(maps[0]);
+      } else {
+        localStorage.removeItem('openMaps');
+      }      
+    }
   }
 
   connectTest() {
@@ -88,6 +98,11 @@ export class MapService {
   }
 
   setOpenMaps(maps) {
+    if (!maps) {
+      localStorage.removeItem('openMaps');
+    } else {
+      localStorage.setItem('openMaps', JSON.stringify(maps));
+    }
     this.openMaps.next(maps);
   }
 
