@@ -6,15 +6,10 @@ module.exports = {
     project.hasChildren = true;
     let children = [];
     project.nodes.forEach(function (node) {
-      if (node.type == "map") {
-        if (node.map.isActive !== false) {
-          JstreeService.MapToItem(node);
-          children.push(node);
-        }
-      } else if (node.type == "folder" && node.isActive) {
-        JstreeService.FolderToItem(node);
-        children.push(node);
+      if (node.type == 'folder') {
+        node.hasChildren = true;
       }
+      children.push(node);
     });
     project.children = children;
   },

@@ -59,57 +59,22 @@ module.exports = {
         });
     },
     getProjectById: function(projectId, cb) {
-        return Project.findOne(projectId).populate('nodes').exec(function(err, model){
-            let childs = [];
-            async.each(model.nodes, function(child, callback) {
-                if (child.type == "map") {
-                    TNode.findOne(child.id).populate('map').exec(function(err, node) {
-                        if (err) {
-                            callback(err);    
-                        }
-                        if (node.map.isActive) {
-                            childs.push(node);
-                        }
-                        callback();
-                    });
-                } else {
-                    if(child.isActive) {
-                        childs.push(child);
-                    }
-                    callback();
-                }
-            }, function(err) {
-                model.nodes = childs;
-                cb(err, model);
-            });
+        return Project.findOne(projectId).populate('nodes', { where: { isActive: true }, sort: 'type' }).exec(function(err, project){
+            cb(err, project);
         });
     },
     getNode: function(id, cb) {
-        return TNode.findOne(id).populate('childs').exec(function(err, model){
+        return TNode.findOne(id).populate('childs', { where: { isActive: true }, sort: 'type' }).exec(function(err, node){
             let childs = [];
-            async.each(model.childs, function(child, callback) {
-                if (child.type == "map") {
-                    TNode.findOne(child.id).populate('map').exec(function(err, node) {
-                        if (err) {
-                            callback(err);    
-                        }
-                        if (node.map.isActive) {
-                            JstreeService.MapToItem(node);
-                            childs.push(node);
-                        }
-                        callback();
-                    });
-                } else if(child.type == "folder") {
-                    if(child.isActive) {
-                        JstreeService.FolderToItem(child);
-                        childs.push(child);
-                        callback();
-                    }
+            node.childs.forEach(function(child) {
+                if(child.type == 'folder') {
+                    JstreeService.FolderToItem(child);
                 }
-            }, function(err) {
-                model.childs = childs;
-                cb(err, model);
+                childs.push(child);
+
             });
+            node.childs = childs;
+            cb(err, node);
         });
     },
     getProjectByUser: function(userId, cb) {
