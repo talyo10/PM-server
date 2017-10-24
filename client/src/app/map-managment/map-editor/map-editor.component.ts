@@ -101,7 +101,6 @@ export class MapEditorComponent implements OnInit, OnDestroy {
   }
 
   saveMap(map) {
-    console.log(map);
     this.savingMap = true;
     this.mapService.saveMap(map)
       .subscribe(
@@ -115,7 +114,6 @@ export class MapEditorComponent implements OnInit, OnDestroy {
             this.openMaps[mapIndex] = map;
             this.mapService.setOpenMaps(this.openMaps);
           }
-          console.log(result);
           this.savingMap = false;
         }, (err: any) => {
           this.savingMap = false;
