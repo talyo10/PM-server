@@ -66,7 +66,7 @@ module.exports.routes = {
     'POST /project/deleteFolder': 'ProjectController.deleteFolder',
     'get /project/node/:id': 'ProjectController.getNode',
 
-    'get /map/getMapById/:id': 'MapController.getMapById',
+    'get /map/:id': 'MapController.getMapById',
     'get /map/deleteMap/:id': 'MapController.deleteMap',
     'get /map/updateMapProject/:mapId/:projectId': 'MapController.updateMapProject',
     'POST /map/updateMapProject': 'MapController.updateMap',
