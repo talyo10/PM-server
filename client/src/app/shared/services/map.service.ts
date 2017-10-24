@@ -3,6 +3,7 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { ConstsService } from './consts.service';
 
@@ -22,7 +23,7 @@ export class MapService {
         NeverRun: 6
   };
 
-  public openMaps = [];
+  public openMaps: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   public maxOpenMaps: number = 4;
   private map = new Subject<any>();
 
@@ -86,6 +87,14 @@ export class MapService {
     this.map.next(map);
   }
 
+  setOpenMaps(maps) {
+    this.openMaps.next(maps);
+  }
+
+  getOpenMapsObservable(): Observable<any[]>{
+    return this.openMaps.asObservable();
+  }
+
   getCurrentMapObservable(): Observable<any> {
     /* return the map subject as an observable */
     return this.map.asObservable();
@@ -97,15 +106,23 @@ export class MapService {
 
   selectMap(selectedMap) {
     /* change the selected map */
-    let mapIndex = _.findIndex(this.openMaps, (map) => { return map.id === selectedMap.id; });
     this.setCurrentMap(selectedMap);
-    if (mapIndex === -1) {
-      if (this.openMaps.length < this.maxOpenMaps) {
-        this.openMaps.push(selectedMap);
-      } else {
-        this.openMaps[this.maxOpenMaps - 1] = selectedMap;
+    let openMaps = this.openMaps.getValue();
+    if(!openMaps) {
+      openMaps = [selectedMap];
+      this.setOpenMaps(openMaps);
+    } else {
+      let mapIndex = _.findIndex(openMaps, (map) => { return map['id'] === selectedMap.id; });
+      if (mapIndex === -1) {
+        if (openMaps.length < this.maxOpenMaps) {
+          openMaps.push(selectedMap);
+        } else {
+          openMaps[this.maxOpenMaps - 1] = selectedMap;
+        }
+        this.setOpenMaps(openMaps);
       }
     }
+    
   }
   
   updateMapProject(MapId, ProjectId) {

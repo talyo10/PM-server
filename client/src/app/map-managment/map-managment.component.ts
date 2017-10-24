@@ -30,10 +30,10 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   public sideBarState: boolean = true;
   public projectsTree: any = [];
   public currentMap: any = {};
+  private openMaps: any[];
   public messages: any = [];
   public mapLoaded: boolean = false;
   public leftPanelState: any;
-  private maxOpenMaps: number = 4;
   private minLeftPanelWidth: number = 0;
   private minRightPanelWidh: number = 0;
   private minMessageHeight: number = 0;
@@ -43,6 +43,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   id: string;
   currentMapSubscription: Subscription;
   projectTreeSubscription: Subscription;
+  openMapsSubscription: Subscription;
 
   constructor(private projectService: ProjectService, private authenticationService: AuthenticationService, public mapService: MapService, private m_elementRef: ElementRef, private router: Router, private route: ActivatedRoute) {  }
 
@@ -52,34 +53,30 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
       .subscribe((p) => this.id = p.id);
 
     this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-    .subscribe(
-      (tree) => {
-        this.projectsTree = tree;
-      }
-    );
+      .subscribe(
+        (tree) => {
+          this.projectsTree = tree;
+        }
+      );
 
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
-    .subscribe(
-      (map) => {
-        this.mapLoaded = true;
-        this.currentMap = map;
-        
-        // router.navigate([map.id], {relativeTo: this.route})
-      }
-    );
+      .subscribe(
+        (map) => {
+          this.mapLoaded = true;
+          this.currentMap = map;
+        }
+      );
+
+    this.openMapsSubscription = this.mapService.getOpenMapsObservable()
+      .subscribe(
+        (maps) => {
+          this.openMaps = maps;
+        }
+      )
 
     let user = this.authenticationService.getCurrentUser();
     if (!user || !user.id) {
       return;
-    }
-
-    if (this.mapService.openMaps.length === 0) {
-      this.mapLoaded = false;
-    } else {
-      this.currentMap = _.find(this.mapService.openMaps, (mp: any) => {
-        return mp.active;
-      })
-      this.mapLoaded = true;
     }
 
     this.resizeMessages({
@@ -134,16 +131,16 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     this.currentMap.active = true;
   }
 
-  closeMap(ind) {
-    let mapIndex = _.findIndex(this.mapService.openMaps, (map) => { return map.name === this.currentMap.name; });
-    this.mapService.openMaps.splice(ind, 1);
-    if (this.mapService.openMaps.length > 0) {
-      if (mapIndex === ind) {
-        this.currentMap = this.mapService.openMaps[0];
-        this.currentMap.active = true;
+  closeMap(index) {
+    let mapIndex = _.findIndex(this.openMaps, (map) => { return map.name === this.currentMap.name; });
+    this.openMaps.splice(index, 1);
+    if (this.openMaps.length > 0) {
+      if (mapIndex === index) {
+        this.mapService.setCurrentMap(this.mapService.openMaps[0]);
       }
     } else {
       this.currentMap = {};
+      this.mapService.setCurrentMap(null);
       this.mapLoaded = false;
     }
   }
