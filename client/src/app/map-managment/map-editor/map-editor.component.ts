@@ -18,13 +18,15 @@ export class MapEditorComponent implements OnInit, OnDestroy {
 
   @Output() informOuterLayer = new EventEmitter();
   @Output() onExecution = new EventEmitter();
-  map: any = {};
+  map: any;
 
   public currentPanel: number = 0;
   public executingMap: boolean = false;
   public savingMap: boolean = false;
+  private openMaps: any[];
 
   currentMapSubscription: Subscription;
+  currentOpenMapsSubscription: Subscription;
 
   constructor(private mapService: MapService, private libpmService: LibPMService) {
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
@@ -33,6 +35,12 @@ export class MapEditorComponent implements OnInit, OnDestroy {
           this.map = map;
         }
       );
+    this.currentMapSubscription = this.mapService.getOpenMapsObservable()
+      .subscribe(
+        (maps) => {
+          this.openMaps = maps;
+        }
+      )
   }
 
   ngOnInit() {
@@ -93,17 +101,26 @@ export class MapEditorComponent implements OnInit, OnDestroy {
   }
 
   saveMap(map) {
+    console.log(map);
     this.savingMap = true;
-    this.mapService.saveMap(map).subscribe((result) => {
-      if (result.date) {
-        map.versionIndex++;
-        map.mapView = result.structure;
-      }
-      console.log(result);
-      this.savingMap = false;
-    }, (err: any) => {
-      this.savingMap = false;
-    });
+    this.mapService.saveMap(map)
+      .subscribe(
+        (result) => {
+          if (result.date) {
+            map.versionIndex++;
+            map.mapView = result.structure;
+
+            // updating the open maps.
+            let mapIndex = _.findIndex(this.openMaps, (mapa) => { return mapa.id === map.id })
+            this.openMaps[mapIndex] = map;
+            this.mapService.setOpenMaps(this.openMaps);
+          }
+          console.log(result);
+          this.savingMap = false;
+        }, (err: any) => {
+          this.savingMap = false;
+        }
+      );
   }
 
 }
