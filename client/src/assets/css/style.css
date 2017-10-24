@@ -654,11 +654,10 @@ textarea.form-control {
   font-size: 17px;
 }
 
-.tree-node-leaf:not(.tree-node-level-1) > .node-content-wrapper:before {
+.tree-node-leaf .node-content-wrapper:before {
   display: inline-block;
   content: '\e916';
   font-family: 'productionmap';
-  color: #d4b64f;
   font-style: normal;
   vertical-align: middle;
   margin-right: 6px;
