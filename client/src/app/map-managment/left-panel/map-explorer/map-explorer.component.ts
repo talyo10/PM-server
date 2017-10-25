@@ -38,6 +38,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   private parmasReq: any;
   projectsTree: any = [];
   projectTreeSubscription: Subscription;
+  mapReq: Subscription;
   id: string = null;
 
   treeOptions: any;
@@ -94,13 +95,13 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     }
 
     this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-    .subscribe(
-      (tree) => {
-        this.projectsTree = tree;
-        this.tree.treeModel.update();
-      },
-      (error) => console.log(error)
-    );
+      .subscribe(
+        (tree) => {
+          this.projectsTree = tree;
+          this.tree.treeModel.update();
+        },
+        (error) => console.log(error)
+      );
     
     let actionMapping = this.actionMapping;
     this.treeOptions = {
@@ -123,12 +124,19 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.projectTreeSubscription.unsubscribe();
+    if (this.mapReq) {
+      this.mapReq.unsubscribe();
+    }
   }
 
   selectMap(node: TreeNode) {
-    if (this.isMap(node)) {
-      this.mapService.selectMap(node.data.map);
-    }
+    this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
+      (map) => {
+        console.log(map);
+        this.mapService.selectMap(map);
+      }
+    )
+    
   }
 
   mapToItem(map) {

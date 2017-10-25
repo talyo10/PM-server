@@ -73,7 +73,7 @@ export class MapService {
   }
 
   getMapById(mapId) {
-    return this.http.get(this.serverUrl + 'map/' + mapId, this.options).map(this.extractData);
+    return this.http.get(this.serverUrl + 'map/' + mapId + '/render', this.options).map(this.extractData);
   }
 
   getMapVersions(mapId) {
