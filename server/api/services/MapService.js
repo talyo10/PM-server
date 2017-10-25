@@ -910,9 +910,15 @@ module.exports = {
             }
         });
     },
-    getMapById: function (mapId, cb) {
-        getMap(mapId).then(function (map, err) {
-            cb(map, err);
+    getMapById: function (mapId, callback) {
+        getMap(mapId).then(function(map, error) {
+            callback(map, error);
+        });
+    },
+    getRenderedMapById: function (mapId, callback) {
+        getMap(mapId).then(function (map, error) {
+            MapService.MapToItem(map);
+            callback(map, error);
         });
     },
     getVersions: function (mapId, cb) {
@@ -1216,5 +1222,14 @@ module.exports = {
             return cb(err, updatedMap);
         });
     },
+    MapToItem: function (map) {
+        map.text = map.name;
+        map.type = 'map';
+        map.hasChildren = false;
+        map.versionIndex = map.versions.length - 1;
+        map.mapView = _.cloneDeep(map.versions[map.versionIndex].structure);
+        delete map.versions;
+        delete map.inspect;
+      },
     'runningMaps': runningMaps
 };
