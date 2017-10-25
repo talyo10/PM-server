@@ -1,16 +1,9 @@
 var hooks = require('./HooksService').hooks;
 
 module.exports = {
-
+    
     createProject: function(req, name) {
-        return Project.create({ name: name })
-            .then(
-                (project) => {
-                    project.users.add(req.user.id);
-                    project.save();
-                    return project
-                }
-            )
+        return Project.create({ name: name, users: [req.user.id] })
             .catch(
                 (error) => {
                     sails.log.error("Error creating new project", error);
