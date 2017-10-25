@@ -12,17 +12,15 @@ var hooks = require('../services/HooksService').hooks;
 
 module.exports = {
     createProject: function (req, res) {
-        ProjectService.createProject(req.body.name, req, function (err, project) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.ProjectToItem(project);
-                hooks.addProject(req.user, project);
-                res.json(project);
-            }
-
-        });
+        return ProjectService.createProject(req, req.body.name)
+            .then(
+                (project) => {
+                    JstreeService.ProjectToItem(project);
+                    hooks.addProject(req.user, project);
+                    res.json(project);
+                }
+            )
+            .catch((err) => res.badRequest());
     },
     addFolder: function (req, res) {
         ProjectService.addFolder(req.body.projectId, req.body.parentId, req.body.name, req, function (err, folder) {

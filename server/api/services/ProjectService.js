@@ -2,13 +2,22 @@ var hooks = require('./HooksService').hooks;
 
 module.exports = {
 
-    createProject: function(name,req, cb) {
-        Project.create({name:name},function(err,model){
-            model.users.add(req.user.id);
-            model.save(function(err){
-                cb(err,model);
-            });
-        });
+    createProject: function(req, name) {
+        return Project.create({ name: name })
+            .then(
+                (project) => {
+                    project.users.add(req.user.id);
+                    project.save();
+                    return project
+                }
+            )
+            .catch(
+                (error) => {
+                    sails.log.error("Error creating new project", error);
+                    return error
+                }
+            )
+        
     },
     renameFolder: function(folderId, folderName, cb) {
         TNode.findOne({id: folderId} ,function(err, folder) {
