@@ -36,8 +36,11 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
   
   private parmasReq: any;
+  private openMaps: any[];
   projectsTree: any = [];
   projectTreeSubscription: Subscription;
+  openMapsSubscription: Subscription;
+  mapReq: Subscription;
   id: string = null;
 
   treeOptions: any;
@@ -94,14 +97,21 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     }
 
     this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-    .subscribe(
-      (tree) => {
-        this.projectsTree = tree;
-        this.tree.treeModel.update();
-      },
-      (error) => console.log(error)
-    );
+      .subscribe(
+        (tree) => {
+          this.projectsTree = tree;
+          this.tree.treeModel.update();
+        },
+        (error) => console.log(error)
+      );
     
+    this.openMapsSubscription = this.mapService.getOpenMapsObservable()
+      .subscribe(
+        (maps) => {
+          console.log("OPEN MAPS", maps);
+          this.openMaps = maps
+        }
+      )
     let actionMapping = this.actionMapping;
     this.treeOptions = {
       getChildren: (node:TreeNode) => {
@@ -123,11 +133,29 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.projectTreeSubscription.unsubscribe();
+    if (this.mapReq) {
+      this.mapReq.unsubscribe();
+    }
   }
 
   selectMap(node: TreeNode) {
-    if (this.isMap(node)) {
-      this.mapService.selectMap(node.data.map);
+    if(this.isMap(node)) {
+      let mapIndex = null;
+      if (this.openMaps) {
+        mapIndex = _.findIndex(this.openMaps, (map) => { 
+          return map.id == node.data.map
+         });
+      }
+      if (mapIndex > -1) {
+        this.mapService.selectMap(this.openMaps[mapIndex]);
+      } else {
+        this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
+          (map) => {
+            this.mapService.selectMap(map);
+          }
+        );
+      }
+      
     }
   }
 
