@@ -108,7 +108,6 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     this.openMapsSubscription = this.mapService.getOpenMapsObservable()
       .subscribe(
         (maps) => {
-          console.log("OPEN MAPS", maps);
           this.openMaps = maps
         }
       )
