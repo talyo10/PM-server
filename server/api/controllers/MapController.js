@@ -14,11 +14,11 @@ module.exports = {
                 res.ok();
         });
     },
-    getMapById: function (req, res) {
-        MapService.getMapById(req.param('id'), function (map, err) {
-            if (err)
+    getRenderedMapById: function (req, res) {
+        MapService.getRenderedMapById(req.param('id'), function (map, error) {
+            if (error)
             {
-                sails.log.error("failed *******8" + err);
+                sails.log.error("Failed loading map", error);
                 res.badRequest();
             }
             else
