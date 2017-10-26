@@ -49,9 +49,6 @@ module.exports = {
         });
     },
     updateMapProject : function (req,res) {
-      var mapId = req.param('mapId'),
-          projectId = req.param('projectId');
-
       MapService.updateMapProject(req.param('mapId'), req.param('projectId')).then((map) => res.ok()).catch((error) => {
           sails.log.error("Error updating map", error)
           res.badRequest();
