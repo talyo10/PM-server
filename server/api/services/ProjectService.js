@@ -34,12 +34,9 @@ module.exports = {
                     return error
                 }
             )
-        
     },
-    deleteProject: function(projectId, cb) {
-        Project.destroy({id:projectId},function(err) {
-            cb(null);
-        });
+    deleteProject: function(projectId) {
+        return Project.destroy(projectId)
     },
     getProjectById: function(projectId, cb) {
         return Project.findOne(projectId).populate('nodes', { where: { isActive: true }, sort: 'type' }).exec(function(err, project){

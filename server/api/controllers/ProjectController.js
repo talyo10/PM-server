@@ -57,14 +57,13 @@ module.exports = {
             .catch((err) => res.badRequest());
     },
     deleteProject: function (req, res) {
-        ProjectService.deleteProject(req.param('id'), function (err) {
-            if (err)
-                res.badRequest();
-            else {
-                hooks.deleteProject(req.user, {name: req.param('id')});
-                res.ok();
-            }
-        });
+        ProjectService.deleteProject(req.param('id')).then(() => {
+            hooks.deleteProject(req.user, { name: req.param('id')});
+            res.ok();
+        }).catch((error) => {
+            sails.log.error("Error deleting project");
+            res.badRequest();
+        })
     },
     getProjectById: function (req, res) {
         ProjectService.getProjectById(req.param('id'), function (err, project) {
