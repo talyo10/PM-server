@@ -11,6 +11,21 @@ var hooks = require('../services/HooksService').hooks;
 
 
 module.exports = {
+    addFolder: function (req, res) {
+        return ProjectService.addFolder(req.body.projectId, req.body.parentId, req.body.name)
+            .then(
+                (folder) => {
+                    JstreeService.FolderToItem(folder);
+                    sails.log.info(folder);
+                    hooks.addFolder(req.user, folder);
+                    res.json(folder);
+                }
+            )
+            .catch((error) => {
+                sails.log.error("Error creating new Folder \n", error)
+                res.badRequest();
+            });
+    },
     createProject: function (req, res) {
         return ProjectService.createProject(req, req.body.name)
             .then(
@@ -21,19 +36,6 @@ module.exports = {
                 }
             )
             .catch((err) => res.badRequest());
-    },
-    addFolder: function (req, res) {
-        ProjectService.addFolder(req.body.projectId, req.body.parentId, req.body.name, req, function (err, folder) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder)
-                hooks.addFolder(req.user, user);
-                res.json(folder);
-            }
-
-        });
     },
     renameFolder: function (req, res) {
         ProjectService.renameFolder(req.body.id, req.body.name, function (err, folder) {

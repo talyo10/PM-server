@@ -167,6 +167,9 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   folderToItem(folder) {
     folder.hasChildren = true;
     folder.type = 'folder';
+    if (!folder.children) {
+      folder.children = [];
+    }
   }
 
   projectToItem(project) {
@@ -211,11 +214,13 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
     pmodal.result
       .then((folder: any) => {
-          if (!folder) return;
-          console.log('created');
-          this.folderToItem(folder);
-          node.data.children.push(folder);
-          this.tree.treeModel.update();
+        console.log(folder);
+        if (!folder) return;
+        this.folderToItem(folder);
+        node.data.children.unshift(folder);
+        this.tree.treeModel.update();
+        node.expand();
+        node.ensureVisible();
         },
         (error) => { console.log(error); });
   }

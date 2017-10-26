@@ -1,7 +1,30 @@
 var hooks = require('./HooksService').hooks;
 
 module.exports = {
-    
+    addFolder: function(projectId, parentId, name) {
+        return TNode.create({ name: name, type: 'folder' })
+            .then((folder) => {
+                if (projectId == -1) {
+                    return [TNode.findOne(parentId), folder]
+                }
+                return [Project.findOne(projectId), folder];
+            }).spread((parent, folder) => {
+                if(parent.type == 'folder') {
+                    sails.log.debug(parent);
+                    parent.childs.add(folder);
+                }
+                else {
+                    parent.nodes.add(folder);
+                }
+                parent.save();
+                return folder
+            }).catch((error) => sails.log.error("Error creating new folder", error));
+    },
+    deleteProject: function(projectId, cb) {
+        Project.destroy({id:projectId},function(err) {
+            cb(null);
+        });
+    },
     createProject: function(req, name) {
         return Project.create({ name: name, users: [req.user.id] })
             .catch(
@@ -32,32 +55,6 @@ module.exports = {
             folder.save(function (err) {
                 cb(err, folder);
             });
-        });
-    },
-    addFolder: function(projectId, parentId, name, req, cb) {
-        TNode.create({name: name, type: 'folder'}, function(err, model) {
-            if (projectId == -1) {
-                TNode.findOne({id: parentId}, function(err, parent) {
-                    parent.childs.add(model.id);
-                    parent.save(function(err){
-                        model.parent = parentId;
-                        cb(err, model);
-                    });
-                });
-            } else {
-                Project.findOne({id: projectId}, function(err, project) {
-                    project.nodes.add(model);
-                    project.save(function(err){
-                        model.project = project;
-                        cb(err, model);
-                    });
-                });
-            }
-        });
-    },
-    deleteProject: function(projectId, cb) {
-        Project.destroy({id:projectId},function(err) {
-            cb(null);
         });
     },
     getProjectById: function(projectId, cb) {
