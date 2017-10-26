@@ -943,10 +943,8 @@ module.exports = {
         });
     },
     addMapVersion: addNewMapVersion,
-    deleteMap: function (mapId, cb) {
-        Map.update({ id: mapId }, { isActive: false }).exec(function (err, updatedMap) {
-            cb(err);
-        });
+    deleteMap: function (mapId) {
+        return TNode.update({map: mapId}, {isActive: false}).then(() => Map.update(mapId, { isActive: false }));
     },
     addNewMap: function (parentId, map, cb) {
         Map.create(map, function (err, model) {

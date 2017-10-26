@@ -341,7 +341,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     pmodal.result
       .then((r) => {
         if (r) {
-          this.mapService.deleteMap(node.data.map.id).subscribe((res) => {
+          this.mapService.deleteMap(node.data.map).subscribe((res) => {
             _.remove(node.parent.data.children, (map: any) => { return map.id === node.data.id; });
             this.tree.treeModel.update();
           });
