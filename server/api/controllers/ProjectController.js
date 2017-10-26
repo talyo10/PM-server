@@ -26,6 +26,16 @@ module.exports = {
                 res.badRequest();
             });
     },
+    deleteFolder: function (req, res) {
+        ProjectService.deleteFolder(req.body.id).then((folder) => {
+            JstreeService.FolderToItem(folder);
+            hooks.deleteFolder(req.user, folder);
+            res.json(folder);
+        }).catch((error) => {
+            res.badRequest();
+            console.log("Error deleting folder", error);
+        });
+    },
     createProject: function (req, res) {
         return ProjectService.createProject(req, req.body.name)
             .then(
@@ -46,19 +56,6 @@ module.exports = {
                 JstreeService.FolderToItem(folder);
                 res.json(folder);
             }
-        });
-    },
-    deleteFolder: function (req, res) {
-        ProjectService.deleteFolder(req.body.id, function (err, folder) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder);
-                hooks.deleteFolder(req.user, folder);
-                res.json(folder);
-            }
-
         });
     },
     deleteProject: function (req, res) {

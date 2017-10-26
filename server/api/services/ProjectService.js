@@ -20,10 +20,8 @@ module.exports = {
                 return folder
             }).catch((error) => sails.log.error("Error creating new folder", error));
     },
-    deleteProject: function(projectId, cb) {
-        Project.destroy({id:projectId},function(err) {
-            cb(null);
-        });
+    deleteFolder: function(folderId) {
+        return TNode.update(folderId, { isActive: false });
     },
     createProject: function(req, name) {
         return Project.create({ name: name, users: [req.user.id] })
@@ -35,23 +33,17 @@ module.exports = {
             )
         
     },
+    deleteProject: function(projectId, cb) {
+        Project.destroy({id:projectId},function(err) {
+            cb(null);
+        });
+    },
     renameFolder: function(folderId, folderName, cb) {
         TNode.findOne({id: folderId} ,function(err, folder) {
             if (err) {
                 return cb(err, folder);
             }
             folder.name = folderName;
-            folder.save(function (err) {
-                cb(err, folder);
-            });
-        });
-    },
-    deleteFolder: function(folderId, cb) {
-        TNode.findOne({id: folderId} ,function(err, folder) {
-            if (err) {
-                return cb(err, folder);
-            }
-            folder.isActive = false;
             folder.save(function (err) {
                 cb(err, folder);
             });
