@@ -927,16 +927,8 @@ module.exports = {
         })
     },
     getVersion: function (mapId, vid, cb) {
-        getMap(mapId).then(function (map, err) {
-            if (err) {
-                return cb(err, null);
-            }
-
-            else if (vid < 0 || vid > map.versions.length - 1) {
-                return cb("version index invalid", null);
-            }
-
-            return cb(null, map.versions[vid]);
+        return Map.findOne(mapId).then((map) => {
+            return map.versions[vid]
         });
     },
     addMapVersion: addNewMapVersion,
