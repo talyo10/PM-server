@@ -214,7 +214,6 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
     pmodal.result
       .then((folder: any) => {
-        console.log(folder);
         if (!folder) return;
         this.folderToItem(folder);
         node.data.children.unshift(folder);
