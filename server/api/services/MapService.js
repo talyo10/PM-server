@@ -54,7 +54,7 @@ var jsonpatch = require('fast-json-patch'),
         return map_graph;
     },
     getMap = function (mapId) {
-        return Map.findOne({ id: mapId });
+        return Map.findOne(mapId);
     },
     updateMap = function (map) {
         return Map.update({ id: map.id }, map);
@@ -915,11 +915,11 @@ module.exports = {
             callback(map, error);
         });
     },
-    getRenderedMapById: function (mapId, callback) {
-        getMap(mapId).then(function (map, error) {
+    getRenderedMapById: function (mapId) {
+        return getMap(mapId).then((map) => {
             MapService.MapToItem(map);
-            callback(map, error);
-        });
+            return map;
+        })
     },
     getVersions: function (mapId, cb) {
         getMap(mapId).then(function (map, err) {

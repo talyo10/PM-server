@@ -13,15 +13,12 @@ module.exports = {
         });
     },
     getRenderedMapById: function (req, res) {
-        MapService.getRenderedMapById(req.param('id'), function (map, error) {
-            if (error)
-            {
-                sails.log.error("Failed loading map", error);
-                res.badRequest();
-            }
-            else
-                res.json(map);
-        });
+        MapService.getRenderedMapById(req.param('id')).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Failed loading map", error);
+            res.badRequest();
+        })
     },
     addMapVersion: function (req, res) {
         MapService.addMapVersion(req.body, function (err, version, map) {
