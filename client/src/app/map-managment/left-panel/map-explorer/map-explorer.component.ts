@@ -326,8 +326,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
             this.tree.treeModel.update();
           });
         },
-        (error) => { console.log(error);
-      });
+        (error) => console.log(error));
   }
 
   deleteMap(node: TreeNode) {

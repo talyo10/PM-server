@@ -33,7 +33,16 @@ module.exports = {
             res.json(folder);
         }).catch((error) => {
             res.badRequest();
-            console.log("Error deleting folder", error);
+            sails.log.error("Error deleting folder", error);
+        });
+    },
+    renameFolder: function (req, res) {
+        ProjectService.renameFolder(req.body.id, req.body.name).then((folder) => {
+            JstreeService.FolderToItem(folder);
+            res.json(folder);
+        }).catch((error) => {
+            sails.log.error("Error renaming folder", error);
+            res.badRequest();
         });
     },
     createProject: function (req, res) {
@@ -46,17 +55,6 @@ module.exports = {
                 }
             )
             .catch((err) => res.badRequest());
-    },
-    renameFolder: function (req, res) {
-        ProjectService.renameFolder(req.body.id, req.body.name, function (err, folder) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder);
-                res.json(folder);
-            }
-        });
     },
     deleteProject: function (req, res) {
         ProjectService.deleteProject(req.param('id'), function (err) {

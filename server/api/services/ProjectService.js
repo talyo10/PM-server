@@ -23,6 +23,9 @@ module.exports = {
     deleteFolder: function(folderId) {
         return TNode.update(folderId, { isActive: false });
     },
+    renameFolder: function(folderId, folderName) {
+        return TNode.update(folderId, { name: folderName })
+    },
     createProject: function(req, name) {
         return Project.create({ name: name, users: [req.user.id] })
             .catch(
@@ -36,17 +39,6 @@ module.exports = {
     deleteProject: function(projectId, cb) {
         Project.destroy({id:projectId},function(err) {
             cb(null);
-        });
-    },
-    renameFolder: function(folderId, folderName, cb) {
-        TNode.findOne({id: folderId} ,function(err, folder) {
-            if (err) {
-                return cb(err, folder);
-            }
-            folder.name = folderName;
-            folder.save(function (err) {
-                cb(err, folder);
-            });
         });
     },
     getProjectById: function(projectId, cb) {
