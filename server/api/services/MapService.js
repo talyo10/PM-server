@@ -1029,16 +1029,13 @@ module.exports = {
             });
         });
     },
-    updateMap: function (map, cb) {
-        updateMap(map).exec(function (err, updatedMap) {
-            if (!cb) {
-                return;
-            }
-            else if (updatedMap.length > 0) {
+    updateMap: function (map) {
+        return Map.update(map.id, map).then((updatedMap) => {
+            if (updatedMap.length > 0) {
                 updatedMap = updatedMap[0];
             }
-            return cb(err, updatedMap);
-        });
+            return updatedMap
+        })
     },
     updateVersionStatus: function (mapId, versionIndex, status, cb) {
         getMap(mapId).then(function (map, err) {

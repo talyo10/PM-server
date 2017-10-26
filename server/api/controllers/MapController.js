@@ -58,13 +58,11 @@ module.exports = {
       })
     },
     updateMap : function (req,res) {
-      var map = req.body.map;
-      MapService.updateMap(map, function(err, resMap){
-        if (err)
-          res.badRequest();
-        else
-          res.json(resMap);
-      });
+        MapService.updateMap(req.body.map).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Error updating map", map);
+        })
     },
     duplicateMap: function (req, res) {
         var mapId = req.param('mapId');
