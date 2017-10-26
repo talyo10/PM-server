@@ -1076,9 +1076,7 @@ module.exports = {
     },
     executeMap: executeMapById,
     updateMapProject: function (mapId, projectId, cb) {
-        Map.update({ id: mapId }, { Project: projectId }).exec(function (err, updatedMap) {
-            cb(err);
-        });
+        return Map.update(mapId, { project: projectId })
     },
     duplicateMap: function (map, dmapId, cb) {
         Map.create(map, function (err, model) {
