@@ -77,15 +77,12 @@ module.exports = {
         });
     },
     getVersions: function (req, res) {
-        var mapId = req.param('mapId');
-        MapService.getVersions(mapId, function (err, versions) {
-            if (err)
-                res.badRequest();
-            else {
-                res.json(versions);
-            }
-
-        });
+        MapService.getVersions(req.params('mapId')).then((versions) => {
+            res.json(version);
+        }).catch((error) => {
+            sails.log.error("Error getting versions");
+            res.badRequest();
+        })
     },
     getVersion: function (req, res) {
         var mapId = req.param('mapId');

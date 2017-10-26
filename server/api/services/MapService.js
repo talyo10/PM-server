@@ -921,13 +921,10 @@ module.exports = {
             return map;
         })
     },
-    getVersions: function (mapId, cb) {
-        getMap(mapId).then(function (map, err) {
-            if (err) {
-                return cb(err, null);
-            }
-            return cb(null, map.versions);
-        });
+    getVersions: function (mapId) {
+        return Map.findOne(mapId).then((map) => {
+            return map.versions
+        })
     },
     getVersion: function (mapId, vid, cb) {
         getMap(mapId).then(function (map, err) {
