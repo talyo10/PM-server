@@ -29,13 +29,11 @@ module.exports = {
         });
     },
     addNewMap: function (req, res) {
-        MapService.addNewMap(req.body.parentId, req.body.map, function (err, map) {
-            if (err)
-                res.badRequest();
-            else {
-                JstreeService.MapToItem(map);
-                res.json(map);
-            }
+        MapService.addNewMap(req.body.parentId, req.body.map).then((node) => {
+            res.json(node);
+        }).catch((error) => {
+            sails.log.error("Error creating new map", error);
+            res.badRequest()
         });
     },
     updateVersionStatus:function(req,res){

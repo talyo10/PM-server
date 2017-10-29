@@ -680,16 +680,12 @@ fs.readFile(__dirname + '/../../assets/libs/lib_production_map.js', 'utf8', func
     libpm = data;
 });
 
-function addNewMapVersion(map, cb) {
-    getMap(map.id).then(function (mapResult, err) {
-        sails.log(mapResult);
-        if (err || !mapResult || mapResult === "") {
-            sails.log.error(err);
-            return cb(err, mapResult);
+function addNewMapVersion(map) {
+    return getMap(map.id).then((oldMap) => {
+        if (!oldMap || oldMap === "") {
+            sails.log.error("Problem loading map");
         }
-
-        var latestStructure = generateVersion(mapResult, mapResult.versions.length - 1);
-
+        var latestStructure = generateVersion(oldMap, oldMap.versions.length -1);
         var diff = jsonpatch.compare(latestStructure, map.mapView);
 
         if (diff.length > 0) {
@@ -698,13 +694,13 @@ function addNewMapVersion(map, cb) {
                 structure: map.mapView,
                 executions: []
             };
-            mapResult.versions.push(version);
+            oldMap.versions.push(version);
         }
 
-        mapResult.activeServers = map.activeServers;
-        updateMap(mapResult).exec(function (err, updatedMap) {
-            cb(err, version, updatedMap);
-        });
+        oldMap.activeServers = map.activeServers;
+        return updateMap(oldMap)
+    }).then((savedMap) => {
+        return savedMap
     });
 }
 
@@ -935,19 +931,22 @@ module.exports = {
     deleteMap: function (mapId) {
         return TNode.update({map: mapId}, {isActive: false}).then(() => Map.update(mapId, { isActive: false }));
     },
-    addNewMap: function (parentId, map, cb) {
-        Map.create(map, function (err, model) {
-            if (err) {
-                return cb(err, model);
-            }
-            model.mapView = JSON.parse(JSON.stringify(model.structure));
-            model.mapView.nodes.Start = {
+    addNewMap: function (parentId, map) {
+        var node = null;
+        var resultMap = null;
+        return Map.create(map).then((newMap) => {
+            newMap.mapView = JSON.parse(JSON.stringify(newMap.structure));
+
+            // create a start node
+            newMap.mapView.nodes.Start = {
                 id: startID,
                 name: "Start",
                 type: "startNode",
                 serverUrl: '',
                 attributes: {}
             };
+
+            // set default map content
             var content = {
                 "cells": [
                     {
@@ -989,33 +988,37 @@ module.exports = {
                     }
                 ]
             };
+            newMap.mapView.content = JSON.stringify(content);
 
-            model.mapView.content = JSON.stringify(content);
-            addNewMapVersion(model, function (err, version, updatedMap) {
-                sails.log.info(updatedMap);
-                if (updatedMap.length > 0) {
-                    updatedMap = updatedMap[0];
-                }
-                TNode.create({name: map.name, type: 'map', map: updatedMap}, function(err, model) {
-                    TNode.findOne({id: model.id}).populate('map').exec(function(err, populatedModel) {
-                        Project.findOne({id: parentId}).populate('nodes').exec(function(err, project) {
-                            if (err || !project) {
-                                TNode.findOne({id: parentId}).populate('childs').exec(function(err, parent) {
-                                    parent.childs.add(populatedModel.id);
-                                    parent.save(function(err) {
-                                        return cb(err, populatedModel);
-                                    });
-                                });   
-                            } else {
-                                project.nodes.add(populatedModel.id);
-                                project.save(function(err) {
-                                    return cb(err, populatedModel);
-                                });
-                            }
-                        });       
-                    });
-                });
-            });
+            return addNewMapVersion(newMap)
+
+        }).then((updatedMap) => {
+            resultMap = updatedMap;
+            if (updatedMap.length > 0) {
+                updatedMap = updatedMap[0];
+            }
+            // creating a new node for the map.
+            return TNode.create({ name: map.name, type: 'map', map: updatedMap })
+        }).then((newNode) => {
+            node = newNode;
+            return Project.findOne({ id: parentId })
+        }).then((project) => {
+            if (!project) {
+                TNode.findOne({ id: parentId }).then((parentNode) => {
+                    parentNode.childs.add(resultMap.id);
+                    node.parent = parentId;
+                    parentNode.childs.add(resultMap.id)
+                    return TNode.update({ id: node.id }, node);
+                    // Map.update({ id: resultMap.id }, resultMap);
+                })
+            } else {
+                project.nodes.add(node);
+                project.save();
+            }
+            return node;
+        }).then((newNode) => {
+            node = newNode;
+            return node;
         });
     },
     updateMap: function (map) {
