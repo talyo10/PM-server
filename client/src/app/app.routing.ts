@@ -33,6 +33,7 @@ const appRoutes: Routes = [
             {
                 path: 'admin',
                 component: AdminPanelComponent,
+                canActivateChild: [AuthGuard],
                 children: [
                     { path: 'calendar', component: CalendarComponent },
                     { path: 'plugins', component: DedicatedAgentsComponent },
