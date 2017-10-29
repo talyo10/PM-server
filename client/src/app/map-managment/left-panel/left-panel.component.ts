@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChange, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -21,6 +21,7 @@ export class LeftPanelComponent implements OnInit {
   public leftPanelTitle: string;
   public searchtext: string = null;
   public panelsTitles: any;
+  @ViewChild('agents') agentsElement: ElementRef;
 
   constructor(private mapService: MapService, private projectService: ProjectService) {
     this.panelsTitles = [
@@ -29,8 +30,10 @@ export class LeftPanelComponent implements OnInit {
     ];
   }
 
+
   ngOnInit() {
     this.selectPanel(0);
+    this.agentsElement.nativeElement.style.maxHeight = (this.agentsElement.nativeElement.clientHeight - 72) + 'px';
   }
 
   selectPanel(panelId: number) {

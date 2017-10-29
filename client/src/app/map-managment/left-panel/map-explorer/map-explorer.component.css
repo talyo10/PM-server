@@ -105,3 +105,17 @@ nav[region="hierarchy"] .file > i:before {
 *::-moz-selection {
   background: #262829; /* Gecko Browsers */
 }
+
+.side-bar-left-btn {
+  position: absolute;
+  bottom: 0;
+  height: 37px;
+  padding-right: 50px;
+  margin-bottom: 1px;
+  width: 100%;
+  border-top: 1px solid;
+}
+
+.action-add-btn {
+  width: 100%;
+}
