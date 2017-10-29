@@ -140,21 +140,22 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   selectMap(node: TreeNode) {
     if(this.isMap(node)) {
       let mapIndex = null;
-      if (this.openMaps) {
+      if (this.openMaps && this.openMaps.length > 0) {
         mapIndex = _.findIndex(this.openMaps, (map) => { 
           return map.id == node.data.map
-         });
+        });
       }
-      if (mapIndex > -1) {
+
+      if (mapIndex !== null && mapIndex > -1) {
         this.mapService.selectMap(this.openMaps[mapIndex]);
-      } else {
+      } 
+      else {
         this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
           (map) => {
             this.mapService.selectMap(map);
           }
         );
       }
-      
     }
   }
 
