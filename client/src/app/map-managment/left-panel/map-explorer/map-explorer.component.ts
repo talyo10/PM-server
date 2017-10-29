@@ -178,6 +178,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
   addMap(node: TreeNode) {
+    node.expand();
+    node.ensureVisible();
     let project = -1;
     if (this.isProject(node)) {
       project = node.data.id;
