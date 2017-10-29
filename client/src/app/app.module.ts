@@ -1,12 +1,12 @@
 import { AddSystemHookComponentWindow } from './admin-panel/system-hooks/add-system-hook/add-system-hook.component';
 import { SystemHooksComponent } from './admin-panel/system-hooks/system-hooks.component';
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CommonModule, HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CommonModule, HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
 
 import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
