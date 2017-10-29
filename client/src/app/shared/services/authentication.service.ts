@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { Response } from '@angular/http';
 import { ConstsService } from './consts.service';
+
+import { Observable } from 'rxjs/Observable';
 
 import { LocalStorageService } from 'angular-2-local-storage';
 import * as _ from 'lodash';
@@ -13,7 +16,7 @@ export class AuthenticationService {
   private userKeyName: string = 'pm-user';
   private serverUrl: string;
 
-  constructor(private http: Http, public options: RequestOptions, private localStorageService: LocalStorageService, private constsService: ConstsService) {
+  constructor(private http: Http, private httpClient: HttpClient, public options: RequestOptions, private localStorageService: LocalStorageService, private constsService: ConstsService) {
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
     this.options = new RequestOptions({ headers: headers });
     this.serverUrl = this.constsService.getServerUrl();
@@ -26,15 +29,26 @@ export class AuthenticationService {
     };
   }
 
-  isLoggedIn() {
-    return this.http.get(this.serverUrl + 'isLoggedIn').map((result) => {
-      this.currentUser = this.localStorageService.get(this.userKeyName);
-      this.currentUser = JSON.parse(this.currentUser);
-      if (_.isEmpty(this.currentUser)) {
-        return false;
+  isLoggedIn(): Promise<boolean> {
+    /* checking if user is logged in */
+    return new Promise((res, rej) => {
+      if (this.localStorageService.get(this.userKeyName)) {
+        // check if there is a user in local storage
+        this.currentUser = JSON.parse(this.localStorageService.get(this.userKeyName))
       }
-      return true;
-    });
+      if(this.currentUser && !_.isEmpty(this.currentUser)) {
+        return res(true);
+      }
+      
+      this.httpClient.get(this.serverUrl + 'isLoggedIn').subscribe(
+        (r) => {
+          return res(true)
+        },
+        (error) => {
+          return rej(error);
+        }
+      )
+    })
   }
 
   login(username, password) {
