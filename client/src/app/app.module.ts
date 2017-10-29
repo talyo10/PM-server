@@ -4,9 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
+import { CommonModule, HashLocationStrategy, Location, LocationStrategy} from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
 
 import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
@@ -22,6 +22,7 @@ import { CalendarModule } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularDraggableModule } from 'angular2-draggable';
 
+import { AuthGuard } from './shared/services/auth.guard';
 import { AuthenticationService } from './shared/services/authentication.service';
 import { AppRoutingModule } from './app.routing';
 import { ConstsService } from './shared/services/consts.service';
@@ -150,6 +151,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     CommonModule,
     FormsModule,
     HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
 
     AppRoutingModule,
@@ -172,6 +174,7 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     DatePickerModule
   ],
   providers: [
+    AuthGuard,
     AuthenticationService,
     LocalStorageService,
     ConstsService,
