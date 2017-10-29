@@ -1,6 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { AuthGuard } from './shared/services/auth.guard';
 import { SystemHooksComponent } from './admin-panel/system-hooks/system-hooks.component';
 import { LoginComponent } from './login/login.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -19,13 +20,20 @@ const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     {
-        path: 'app', component: MapsRootComponent,
+        path: 'app', component: MapsRootComponent, canActivate: [AuthGuard],
         children: [
-            { path: 'map', component: MapManagmentComponent },
-            { path: 'map/:id', component: MapManagmentComponent },
+            {
+                path: '',
+                canActivateChild: [AuthGuard],
+                children: [
+                    { path: 'map', component: MapManagmentComponent },
+                    { path: 'map/:id', component: MapManagmentComponent },
+                ]
+            },            
             {
                 path: 'admin',
                 component: AdminPanelComponent,
+                canActivateChild: [AuthGuard],
                 children: [
                     { path: 'calendar', component: CalendarComponent },
                     { path: 'plugins', component: DedicatedAgentsComponent },
