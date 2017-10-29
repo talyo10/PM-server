@@ -61,15 +61,15 @@ module.exports = {
     },
     duplicateMap: function (req, res) {
         var mapId = req.param('mapId');
-        MapService.duplicateMap(req.body, mapId, function (err, map) {
-            if (err) {
-                res.badRequest();
-            }
-            else {
-                JstreeService.MapToItem(map);
-                res.json(map);
-            }
-        });
+
+
+        MapService.duplicateMap(req.body, mapId).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Error duplicating map", error);
+            res.badRequest();
+        })
+
     },
     getVersions: function (req, res) {
         MapService.getVersions(req.param('mapId')).then((versions) => {

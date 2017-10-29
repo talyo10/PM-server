@@ -1067,82 +1067,18 @@ module.exports = {
     updateMapProject: function (mapId, projectId, cb) {
         return Map.update(mapId, { project: projectId })
     },
-    duplicateMap: function (map, dmapId, cb) {
-        Map.create(map, function (err, model) {
-            if (err) {
-                return cb(err, model);
-            }
-            model.mapView = JSON.parse(JSON.stringify(model.structure));
-            model.mapView.nodes.Start = {
-                    id: "fd1000fc-11cc-4261-9dcd-b2b9a53a3131",
-                name: "Start",
-                type: "startNode",
-                serverUrl: '',
-                attributes: {}
-            };
-            var content = {
-                "cells": [
-                    {
-                        "type": "devs.PMStartPoint",
-                        "size": {
-                            "width": 40,
-                            "height": 39
-                        },
-                        "outPorts": [
-                            ""
-                        ],
-                        "inPorts": [
-
-                        ],
-                        "position": {
-                            "x": 40,
-                            "y": 30
-                        },
-                        "angle": 0,
-                        "id": "fd1000fc-11cc-4261-9dcd-b2b9a53a3131",
-                        "embeds": "",
-                        "z": 1,
-                        "attrs": {
-                            ".outPorts>.port0>.port-label": {
-                                "text": ""
-                            },
-                            ".outPorts>.port0>.port-body": {
-                                "port": {
-                                    "id": "out6",
-                                    "type": "out"
-                                }
-                            },
-                            ".outPorts>.port0": {
-                                "ref": ".body",
-                                "ref-y": 0.5,
-                                "ref-dx": 0
-                            }
-                        }
-                    }
-                ]
-            };
-            model.mapView.content = JSON.stringify(content);
-            addNewMapVersion(model, function (err, version, updatedMap) {
-                sails.log.info(updatedMap);
-                if (updatedMap.length > 0) {
-                    updatedMap = updatedMap[0];
-                    sails.log("dmapId ---> " + dmapId);
-                    MapService.getMapById(dmapId, function (mapResult, err) {
-                        var latestStructure = generateVersion(mapResult, mapResult.versions.length - 1);
-                        updatedMap.mapView = latestStructure;
-                        addNewMapVersion(updatedMap, function (err, version, updatedResMap) {
-                            if (updatedResMap.length > 0) {
-                                updatedResMap = updatedResMap[0];
-                            }
-                            cb(err, updatedResMap);
-                        });
-                    });
-                }
-                else {
-                    cb(err, updatedMap);
-                }
-            });
-        });
+    duplicateMap: function (map, dmapId) {
+        dmap = null;
+        // get the map we want to duplicate
+        Map.findOne({ id: dmapId }).then((map) => {
+            dmap = map;
+            return Map.create(map)
+        }).then((newMap) => {
+            // copy structure and versions from the map to duplicate.
+            newMap.structure = dmap.structure;
+            newMap.versions = dmap.versions;
+            return Map.update({ id: newMap.id }, newMap)
+        })
     },
     addMapAttr: function (map, name, value, type, cb) {
         var latestStructure = generateVersion(map, map.versions.length - 1);
