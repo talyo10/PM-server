@@ -79,12 +79,12 @@ module.exports = {
 	},
 
 	getHooks: function(req, res) {
-		SystemHook.find({}).exec(function(err, hooks) {
-			if (err) {
-				return res.badRequest('cant get hooks ' + error);
-			}
-			return res.json(hooks);
-		});
+		SystemHook.find({}).then((hooks) => {
+				res.json(hooks);
+			}).catch((error) => {
+				sails.log.error("Error loading system hooks", error);
+				res.badRequest();
+			});
 	},
 
 	installAgents: function (req, res) {
