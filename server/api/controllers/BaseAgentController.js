@@ -38,15 +38,9 @@ module.exports = {
     },
     getAgentsState: function(req, res) {
         sails.log.debug("get agent state");
-        BaseAgentsService.getAgentsState(function (agents) {
-            var resAgents = {};
-            for(var prop in agents){
-                var agent = agents[prop];
-                resAgents[prop] = {alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime};
-            }
-            res.status(200);
-            res.send(resAgents);
-        });
+        var agents = BaseAgentsService.getAgentsState()
+        res.status(200);
+        res.send(agents);
     },
     addAgent: function (req, res) {
         BaseAgentsService.addBaseAgent(req.body, function (err, agent) {

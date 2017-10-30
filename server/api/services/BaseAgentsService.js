@@ -368,8 +368,14 @@ module.exports = {
             cb(err,agents);
         })
     },
-    getAgentsState: function(cb) {
-        return cb(agents);
+    getAgentsState: function() {
+        var resAgents = {};
+        for(var prop in agents){
+            var agent = agents[prop];
+            sails.log.info(prop);
+            resAgents[prop] = {alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime};
+        }
+        return resAgents
     },
     modulesPath: modulesPath,
     installPluginsOnAgent: installPluginsOnAgent,
