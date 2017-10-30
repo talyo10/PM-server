@@ -27,14 +27,14 @@ module.exports = {
 
   },
   updateJob: function (job, cb) {
-    ScheduledJob.update({id: job.id}, job).exec(function (err, updatedJob) {
+    return ScheduledJob.update({id: job.id}, job).then((job) => {
       SchedultJobsService.removeJob(job.id);
-      ScheduledJob.findOne({id: job.id}).populate('Map').exec(function (err, populatedJob) {
-        SchedultJobsService.addScheduledJob(populatedJob);
-        if (!cb) return;
-        else cb(err, populatedJob);
-      });
-    })
+      return ScheduledJob.findOne({id: job.id}).populate('Map')
+    }).then((populatedJob) => {
+      SchedultJobsService.addScheduledJob(populatedJob);
+      return populatedJob
+    });
+
   },
   removeJob: function (jobId) {
     if (!SchedultJobsService.jobs[jobId])

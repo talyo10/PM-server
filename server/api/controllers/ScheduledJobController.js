@@ -26,17 +26,17 @@ module.exports = {
         SchedultJobsService.deleteJob(req.param('id')).then(() => {
             res.ok();
         }).catch((error) => {
-            sails.log.error("Error deletting job");
+            sails.log.error("Error deleting job");
             res.badRequest();
         });
     },
     updateJob: function (req, res) {
-        SchedultJobsService.updateJob(req.body,function(err,updatedJob){
-            if(err)
+        SchedultJobsService.updateJob(req.body).then((job) => {
+                res.send(job[0]);
+            }).catch((error) => {
+                sails.log.error("Error updating job");
                 res.badRequest();
-            else
-                res.send(updatedJob[0]);
-        });
+            });
     }
 };
 
