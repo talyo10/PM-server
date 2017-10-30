@@ -274,9 +274,7 @@ module.exports = {
         return deleteNode(nodeId);
     },
     updateGroup: function (snode, cb) {
-        SNode.update({id: snode.id }, snode).exec(function(err, node) {
-            return cb(err, node);
-        })
+        return SNode.update({id: snode.id }, snode)
     },
     updateBaseAgent: function (parentId, baseAgent) {
         return SNode.findOne({ data: baseAgent.id }).then((node) => {

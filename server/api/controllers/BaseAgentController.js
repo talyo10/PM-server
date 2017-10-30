@@ -62,12 +62,12 @@ module.exports = {
             });
     },
     updateGroup:function(req,res){
-        BaseAgentsService.updateGroup(req.body, function (err, snode) {
-            if (err)
+        BaseAgentsService.updateGroup(req.body).then((node) => {
+                res.send(node);
+            }).catch((error) => {
+                sails.log.error("Error updating agent", error);
                 res.badRequest();
-            else
-                res.send(snode);
-        });
+            })
     },
     getNode: function (req, res) {
         BaseAgentsService.getNode(req.param('id'), function (err, node) {
