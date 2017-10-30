@@ -225,6 +225,7 @@ module.exports = {
     },
     addBaseAgent: function (baseAgent) {
         var newAgent = null;
+        sails.log.debug("AGENT \n", baseAgent);
             // tring to find a base agent with the same key
         return BaseAgent.findOne({ key: baseAgent.key }).then((agent) => {
                 if(!agent) {
@@ -235,6 +236,9 @@ module.exports = {
                     return BaseAgent.update({ key: baseAgent.key }, baseAgent)
                 }
             }).then((agent) => {
+                if (Array.isArray(agent)) {
+                    agent = agent[0];
+                }
                 if (!BaseAgentsService.baseAgent.id) {
                     BaseAgentsService.baseAgent = agent;
                     SchedultJobsService.loadJobs();
@@ -244,17 +248,13 @@ module.exports = {
 
                 agent.alive = true;
                 newAgent = agent;
-                return SNode.findOne({ data: agent.id })
+                return SNode.findOne({ data: newAgent.id })
             }).then((node) => {
                 if (!node) {
                     // if it is an new agent, create a SNode record for it.
                     return SNode.create({ hasChildren: false, data: newAgent.id })
-                } else {
-                    // if it isnt a new agent
-                    // update function return an array of updated records.
-                    newAgent = newAgent[0];
-                    return ;
-                }
+                } 
+                return ;
             }).then((node) => {
                 if(node) {
                     BaseAgentsService.installPluginsOnAgent(newAgent, function() {
