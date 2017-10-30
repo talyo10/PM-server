@@ -151,35 +151,32 @@ module.exports = {
 	},
 
 	getAllAgents: function (req, res) {
-		sails.log.info("get all");
-        DedicatedAgent.find().populate('methods').exec(function (err, agents) {
-            if (err)
-                res.badRequest(err);
-            else {
-                async.map(agents, function(agent, agentsback) {
-                	async.map(agent.methods, function(method, methodback) {
-	                	Method.findOne({id: method.id}).populate('params').exec(function(err, methodObj){
-	                		methodback(err, methodObj);
-	                	});
-	                }, function(err, results){
-					    if (err) {
-					    	return res.badRequest(err);
-					    }
-					    var nAgent = JSON.parse(JSON.stringify(agent));
-					    nAgent.methods = results;
-					    agentsback(null, nAgent);
+		sails.log.info("Get all agents");
+		DedicatedAgent.find().populate('methods').then((agents) => {
+				async.map(agents, function(agent, agentsback) {
+					async.map(agent.methods, function(method, methodback) {
+						Method.findOne({id: method.id}).populate('params').exec(function(err, methodObj){
+							methodback(err, methodObj);
+						});
+					}, function(err, results){
+						if (err) {
+							return res.badRequest(err);
+						}
+						var nAgent = JSON.parse(JSON.stringify(agent));
+						nAgent.methods = results;
+						agentsback(null, nAgent);
 					});
-                }, function(err, results){
-				    if (err) {
-				    	return res.badRequest(err);
-				    }
-				    sails.log.info('********************************************************8');
-		        	sails.log.info(results);
-		        	sails.log.info('********************************************************8');
-				    return res.json(results);
+				}, function(err, results){
+					if (err) {
+						return res.badRequest(err);
+					}
+					res.json(results);
 				});
-            }
-        });
+			}).catch((error) => {
+				sails.log.error("Error getting agents", error);
+				res.badRequest();
+			});
+
     }
 };
 
