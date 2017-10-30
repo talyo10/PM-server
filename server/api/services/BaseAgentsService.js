@@ -315,24 +315,25 @@ module.exports = {
             });
         }));
     },
-    getAgents: function(cb){
-        SNode.find({parent: "-1"}).populate('data').populate('children').exec(function (err, agentsTree) {
+    getAgents: function(){
+        return SNode.find({parent: "-1"}).populate('data').populate('children').then((nodes) => new Promise((res, rej) => {
             let trees = [];
-            if (err) {
-                return cb(err);
-            }
-            async.each(agentsTree, function(node, callback) {
-                populateTree(node, function(err, res) {
+            async.each(nodes, function(node, callback) {
+                populateTree(node, function(err, populatedNode) {
                     if (err) {
                         return callback(err);
                     }
-                    trees.push(res);
+                    trees.push(populatedNode);
                     callback();
                 });
             }, function(err) {
-                cb(err, trees);
+                if (err) {
+                    rej(err);
+                } else {
+                    res(trees);
+                }
             });
-        });
+        }));
     },
     listenOnAgents: function () {
         BaseAgentsService.getAgents(function (err, agents) {

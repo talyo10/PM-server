@@ -71,21 +71,21 @@ module.exports = {
     },
     getNode: function (req, res) {
         BaseAgentsService.getNode(req.param('id')).then((node) => {
-            res.json(node);
-            
-        }).catch((error) => {
-            sails.log.error("Error gettin node data", error);
-            res.badRequest();
-        })
+                res.json(node);
+                
+            }).catch((error) => {
+                sails.log.error("Error getting node data", error);
+                res.badRequest();
+            });
 
     },
     getAgents:function(req,res){
-        BaseAgentsService.getAgents(function (err, agents) {
-            if (err)
+        BaseAgentsService.getAgents().then((nodes) => {
+                res.send(nodes);
+            }).catch((error) => {
+                sails.log.error("Error getting nodes", error);
                 res.badRequest();
-            else
-                res.send(agents);
-        });
+            });
     },
     installAgent:function(req,res){
         BaseAgentsService.installAgent(req, req.body, function (err) {
