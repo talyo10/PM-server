@@ -146,6 +146,7 @@ var jsonpatch = require('fast-json-patch'),
             vm.runInNewContext(libpm + "\n" + mapObj.code, context); // fill context with map context
             return 0;
         } catch (error) {
+            sails.log.error("Error creating context: ", error);
             return error;
         }
     },
@@ -696,17 +697,17 @@ function addNewMapVersion(map) {
             };
             oldMap.versions.push(version);
         }
-
+        
         oldMap.activeServers = map.activeServers;
-        return updateMap(oldMap)
-    }).then((savedMap) => {
-        return savedMap
+        return Map.update({ id: map.id }, oldMap)
+    }).then((updatedMap) => {
+        return updatedMap
     });
 }
 
 function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace, cb) {
     var socket = sails.io;
-    sails.log.warn("executing map! *******************");
+    sails.log.warn("executing map!");
     sails.log.info("map version " + versionIndex);
     User.find({ id: userId }).then(function (users, err) {
         var msg;
@@ -749,7 +750,6 @@ function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace, 
             executionResult.startDate = (new Date()).toString();
 
             var mapVersionStructure = generateVersion(map, versionIndex);
-
             var executionContext = {
                 map: {
                     name: map.name,
@@ -1029,10 +1029,10 @@ module.exports = {
             return updatedMap
         })
     },
-    updateVersionStatus: function (mapId, versionIndex, status, cb) {
-        getMap(mapId).then(function (map, err) {
+    updateVersionStatus: function (mapId, versionIndex, status) {
+        return getMap(mapId).then(map => new Promise((res, rej) => {
             runningMaps[mapId] = status;
-            if (status === sails.config.constants.runStatuses.Stopped) {
+            if (status == sails.config.constants.runStatuses.Stopped) {
                 async.each(BaseAgentsService.liveAgents,
                     function(agent, callback) {
                         if (agent.runningMaps && agent.runningMaps[mapId]) {
@@ -1046,7 +1046,7 @@ module.exports = {
                                     }
                                 },
                                 function (error, response, body) {
-                                    callback(error);
+                                    rej();
                                 }
                             );
                         } else {
@@ -1054,14 +1054,17 @@ module.exports = {
                         }
                     },
                     function (err) {
-                        cb(err);
+                        if (err) {
+                            rej(err);
+                        }
+                        res();
                     }
                 );
             }
-            else {
-                cb(null);
-            }
-        });
+            })).then(() => { return true }).catch(
+                (error) => {
+                    sails.log.error("Error updating status", error);
+                });
     },
     executeMap: executeMapById,
     updateMapProject: function (mapId, projectId, cb) {
