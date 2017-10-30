@@ -53,12 +53,13 @@ module.exports = {
        
     },
     updateAgent:function(req,res){
-        BaseAgentsService.updateBaseAgent(req.body.parentId, req.body.agent, function (err, agent) {
-            if (err)
-                res.badRequest();
-            else
+        BaseAgentsService.updateBaseAgent(req.body.parentId, req.body.agent).then((agent) => {
                 res.ok();
-        });
+            }).catch((error) => {
+                sails.log.error("Error updating agent", error);
+                res.badRequest();
+                
+            });
     },
     updateGroup:function(req,res){
         BaseAgentsService.updateGroup(req.body, function (err, snode) {

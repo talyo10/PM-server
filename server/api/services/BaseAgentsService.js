@@ -257,7 +257,7 @@ module.exports = {
                 }
             }).then((node) => {
                 if(node) {
-                    BaseAgentsService.installPluginsOnAgent(agent, function() {
+                    BaseAgentsService.installPluginsOnAgent(newAgent, function() {
                     });
                 }
                 
@@ -278,29 +278,18 @@ module.exports = {
             return cb(err, node);
         })
     },
-    updateBaseAgent: function (parentId, baseAgent, cb) {
-        SNode.findOne({data: baseAgent.id}).exec(function(err, node) {
-            if (err) {
-                cb(err);
-            }
+    updateBaseAgent: function (parentId, baseAgent) {
+        return SNode.findOne({ data: baseAgent.id }).then((node) => {
             node.parent = parentId;
-            SNode.update({id: node.id}, node).exec(function(err, updateNode) {
-                if (err) {
-                    cb(err);
-                }   
-                BaseAgent.update({id: baseAgent.id}, baseAgent).exec(function (err, updatedAgent) {
-                    if (BaseAgentsService.baseAgent.id == updatedAgent.id)
-                        BaseAgentsService.baseAgent = updatedAgent;
-
-                    if (!cb) {
-                        return;
-                    }
-                    else {
-                        cb(err, updatedAgent);
-                    }
-                });
-            });
-        });
+            return SNode.update({ id: node.id }, node);
+        }).then((node) => {
+            return BaseAgent.update({ id: baseAgent.id }, baseAgent)
+        }).then((agent) => {
+            if (BaseAgentsService.baseAgent.id == agent.id) {
+                BaseAgentsService.baseAgent = agent;
+            }
+            return agent
+        })
     },
     getNode: function(id, cb) {
         return SNode.findOne(id).populate('children').exec(function(err, model){
