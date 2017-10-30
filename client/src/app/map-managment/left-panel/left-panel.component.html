@@ -13,7 +13,7 @@
   </div>
 </header>
 <section class="agents" [ngSwitch]="currentPanel" >
-  <div class="projects-tree" #agents>
+  <div class="projects-tree" #tree>
     <app-map-explorer [searchtext]="searchtext" *ngSwitchCase="0"></app-map-explorer>
   </div>
   <!-- <app-map-explorer [searchtext]="searchtext" *ngSwitchCase="0" [projectsTree]="projectsTree"></app-map-explorer> -->
