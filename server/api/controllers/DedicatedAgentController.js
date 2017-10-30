@@ -15,13 +15,12 @@ var path = require('path');
 module.exports = {
 
 	deleteHook: function(req, res) {
-		HooksService.deleteHook(req.param('id'), function(err) {
-			if (err) {
-				return res.badRequest("error when deleting, " + err);
-			} else {
-				return res.ok();
-			}
-		});
+		HooksService.deleteHook(req.param('id')).then(() => {
+				res.ok()
+			}).catch((error) => {
+				sails.log.error("Error deleting hook", error);
+				res.badRequest();
+			});
 	},
 
 	addHooks: function(req, res) {
