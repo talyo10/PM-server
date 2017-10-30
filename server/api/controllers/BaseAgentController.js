@@ -9,13 +9,12 @@ var hooks = require('../services/HooksService').hooks;
 
 module.exports = {
     deleteAgent: function (req, res) {
-        BaseAgentsService.deleteBaseAgent(req.param('id'), function (err) {
-            if (err)
-                res.badRequest(err);
-            else {
-                hooks.deleteServer(req.user, {name: req.param('id')});   
-                res.ok();
-            }
+        BaseAgentsService.deleteBaseAgent(req.param('id')).then(() => {
+            hooks.deleteServer(req.user, {name: req.param('id')});   
+            res.ok();
+        }).catch((error) => {
+            sails.log.error("Error deleting agent", error);
+            res.badRequest(err);
         });
     },
     deleteGroup: function (req, res) {

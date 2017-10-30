@@ -42,34 +42,20 @@ var installPluginsOnAgent = function(agent, callback){
         }
     };
 
-var deleteNode = function(nodeId, cb) {
-    SNode.findOne({ id: nodeId }).populate('children').exec(function(err, node) {
-        if (err) {
-            return cb(err);
-        }
-
+var deleteNode = function(nodeId) {
+    return SNode.findOne({ id: nodeId }).populate('children').then((node) => {
         if (node.hasChildren) {
-            async.each(node.children, function(child, callback) {
-                deleteNode(child.id, callback);
-            }, function(err) {
-                if (err) {
-                    return cb(err);
-                }
-                SNode.destroy({id: nodeId}, function (err) {
-                    return cb(err);
-                });
-            });
-        } else if (!node.hasChildren) {
-            BaseAgent.destroy({id: node.data}, function (err) {
-                if (err) {
-                    return cb(err);
-                }
-                SNode.destroy({id: nodeId}, function (err) {
-                    return cb(err);
-                });
-            });
+            // iterate through all node children and delete them
+            node.children.forEach((child) => {
+                deleteNode(child.id);
+            })
+            // Delete the node
+            return SNode.destroy(nodeId);
+        } else {
+            // if it doesnt has children than its a base agent
+            return BaseAgent.destroy({ id: node.data })
         }
-    });
+    })
 }
 
 
@@ -283,8 +269,8 @@ module.exports = {
             }
         });
     },
-    deleteBaseAgent: function (nodeId, cb) {
-        return deleteNode(nodeId, cb);
+    deleteBaseAgent: function (nodeId) {
+        return deleteNode(nodeId);
     },
     addGroup: function (parentId, name, cb) {
         SNode.create({hasChildren: true, name: name, parent: parentId}, function(err, node) {
