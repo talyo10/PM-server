@@ -242,16 +242,16 @@ module.exports = {
                     BaseAgentsService.baseAgent = agent;
                 }
 
-                listenOnAgent(agent);
                 agent.alive = true;
                 newAgent = agent;
                 return SNode.findOne({ data: agent.id })
             }).then((node) => {
                 if (!node) {
                     // if it is an new agent, create a SNode record for it.
-                    return SNode.create({hasChildren: false, data: newAgent.id})
+                    return SNode.create({ hasChildren: false, data: newAgent.id })
                 } else {
                     // if it isnt a new agent
+                    // update function return an array of updated records.
                     newAgent = newAgent[0];
                     return ;
                 }
@@ -260,7 +260,7 @@ module.exports = {
                     BaseAgentsService.installPluginsOnAgent(newAgent, function() {
                     });
                 }
-                
+                listenOnAgent(newAgent);
                 return newAgent
             });
     },
@@ -352,7 +352,6 @@ module.exports = {
         var resAgents = {};
         for(var prop in agents){
             var agent = agents[prop];
-            sails.log.info(prop);
             resAgents[prop] = {alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime};
         }
         return resAgents
