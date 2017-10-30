@@ -1,12 +1,12 @@
 module.exports = {
   jobs: {},
   scheduler: require('node-schedule'),
-  addJob: function (job, cb) {
-    ScheduledJob.create(job, function (err, job) {
-      ScheduledJob.findOne({id: job.id}).populate('Map').exec(function (err, populatedJob) {
-        SchedultJobsService.addScheduledJob(populatedJob);
-        cb(err, populatedJob);
-      });
+  addJob: function (job) {
+    return ScheduledJob.create(job).then((job) => {
+      return ScheduledJob.findOne({id: job.id}).populate('Map')
+    }).then((populatedJob) => {
+      return SchedultJobsService.addScheduledJob(populatedJob);
+      return populatedJob
     })
   },
   getFutureJobs: function (cb) {

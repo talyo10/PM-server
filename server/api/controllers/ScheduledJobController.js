@@ -7,12 +7,12 @@
 
 module.exports = {
     addJob: function (req, res) {
-        SchedultJobsService.addJob(req.body, function(err,job){
-            if(err)
-                res.badRequest();
-            else
+        SchedultJobsService.addJob(req.body).then((job) => {
                 res.send(job);
-        })
+            }).catch((error) => {
+                sails.log.error("Error adding job");
+                res.badRequest();
+            });
     },
     getFutureJobs: function (req, res) {
         SchedultJobsService.getFutureJobs(function(err,jobs){
