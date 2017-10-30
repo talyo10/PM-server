@@ -21,10 +21,10 @@ module.exports = {
     }).populate('Map')
   },
   deleteJob: function (jobId, cb) {
-    ScheduledJob.destroy({id: jobId}, function (err) {
-      SchedultJobsService.removeJob(jobId);
-      cb(err);
-    });
+    SchedultJobsService.removeJob(jobId);
+    
+    return ScheduledJob.destroy({id: jobId});
+
   },
   updateJob: function (job, cb) {
     ScheduledJob.update({id: job.id}, job).exec(function (err, updatedJob) {

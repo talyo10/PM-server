@@ -23,12 +23,12 @@ module.exports = {
             });
     },
     deleteJob: function (req, res) {
-        SchedultJobsService.deleteJob(req.param('id'), function(err){
-            if(err)
-                res.badRequest();
-            else
-                res.ok();
-        })
+        SchedultJobsService.deleteJob(req.param('id')).then(() => {
+            res.ok();
+        }).catch((error) => {
+            sails.log.error("Error deletting job");
+            res.badRequest();
+        });
     },
     updateJob: function (req, res) {
         SchedultJobsService.updateJob(req.body,function(err,updatedJob){
