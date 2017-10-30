@@ -55,12 +55,14 @@ module.exports = {
     sails.log.info('Adding scheduled job for map : ' + job.Map.name + ' - ' + dateString);
   },
   loadJobs: function () {
-    SchedultJobsService.getFutureJobs(function (err, jobs) {
-      if (err) return;
+    SchedultJobsService.getFutureJobs().then((jobs) => {
       sails.log.info('Loading scheduled jobs');
       jobs.forEach(function (job) {
         SchedultJobsService.addScheduledJob(job);
       });
-    });
+    }).catch((error) => {
+      sails.log.error("Error loading jobs", error);
+    })
+    
   }
 };
