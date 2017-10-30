@@ -43,15 +43,14 @@ module.exports = {
         res.send(agents);
     },
     addAgent: function (req, res) {
-        BaseAgentsService.addBaseAgent(req.body, function (err, agent) {
-            sails.log.error(err);
-            if (err)
-                res.badRequest(err);
-            else {
-                hooks.addServer(req.user, agent);
-                res.send(agent);
-            }
-        });
+        BaseAgentsService.addBaseAgent(req.body).then((agent) => {
+            hooks.addServer(req.user, agent);
+            res.send(agent);
+        }).catch((error) => {
+            sails.log.error(error);
+            res.badRequest();
+        })
+       
     },
     updateAgent:function(req,res){
         BaseAgentsService.updateBaseAgent(req.body.parentId, req.body.agent, function (err, agent) {
