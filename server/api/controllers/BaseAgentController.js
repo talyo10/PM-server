@@ -70,12 +70,14 @@ module.exports = {
             })
     },
     getNode: function (req, res) {
-        BaseAgentsService.getNode(req.param('id'), function (err, node) {
-            if (err)
-                res.badRequest();
-            else
-                res.json(node);
-        });
+        BaseAgentsService.getNode(req.param('id')).then((node) => {
+            res.json(node);
+            
+        }).catch((error) => {
+            sails.log.error("Error gettin node data", error);
+            res.badRequest();
+        })
+
     },
     getAgents:function(req,res){
         BaseAgentsService.getAgents(function (err, agents) {

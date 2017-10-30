@@ -290,9 +290,9 @@ module.exports = {
         })
     },
     getNode: function(id, cb) {
-        return SNode.findOne(id).populate('children').exec(function(err, model){
+        return SNode.findOne(id).populate('children').then((node) => new Promise((res, rej) =>{
             let childs = [];
-            async.each(model.children, function(child, callback) {
+            async.each(node.children, function(child, callback) {
                 if (!child.hasChildren) {
                     SNode.findOne(child.id).populate('data').exec(function(err, node) {
                         if (err) {
@@ -301,15 +301,19 @@ module.exports = {
                         childs.push(node);
                         callback();
                     });
-                } else if(child.hasChildren) {
+                } else {
                     childs.push(child);
                     callback();
                 }
             }, function(err) {
-                model.children = childs;
-                cb(err, model);
+                if (err) {
+                    rej();
+                } else {
+                    node.children = childs;
+                    res(node)
+                }
             });
-        });
+        }));
     },
     getAgents: function(cb){
         SNode.find({parent: "-1"}).populate('data').populate('children').exec(function (err, agentsTree) {
