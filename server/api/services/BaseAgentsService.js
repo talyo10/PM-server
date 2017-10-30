@@ -43,18 +43,20 @@ var installPluginsOnAgent = function(agent, callback){
     };
 
 var deleteNode = function(nodeId) {
-    return SNode.findOne({ id: nodeId }).populate('children').then((node) => {
+    return SNode.findOne({ id: nodeId }).populate('children').then((node) => new Promise((res, rej) => {
         if (node.hasChildren) {
             // iterate through all node children and delete them
             node.children.forEach((child) => {
                 deleteNode(child.id);
-            })
-            // Delete the node
-            return SNode.destroy(nodeId);
+            });
+            res();
         } else {
             // if it doesnt has children than its a base agent
-            return BaseAgent.destroy({ id: node.data })
+            res(BaseAgent.destroy({ id: node.data }));
         }
+        
+    })).then(() => {
+        return SNode.destroy({ id: nodeId });
     })
 }
 
@@ -277,8 +279,8 @@ module.exports = {
             cb(err, node);
         });
     },
-    deleteGroup: function (nodeId, cb) {
-        return deleteNode(nodeId, cb);
+    deleteGroup: function (nodeId) {
+        return deleteNode(nodeId);
     },
     updateGroup: function (snode, cb) {
         SNode.update({id: snode.id }, snode).exec(function(err, node) {
