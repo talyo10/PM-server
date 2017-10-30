@@ -15,12 +15,12 @@ module.exports = {
             });
     },
     getFutureJobs: function (req, res) {
-        SchedultJobsService.getFutureJobs(function(err,jobs){
-            if(err)
-                res.badRequest();
-            else
+        SchedultJobsService.getFutureJobs().then((jobs) => {
                 res.send(jobs);
-        });
+            }).catch((error) => {
+                sails.log.error("Error getting future jobs");
+                res.badRequest();
+            });
     },
     deleteJob: function (req, res) {
         SchedultJobsService.deleteJob(req.param('id'), function(err){

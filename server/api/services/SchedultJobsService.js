@@ -10,8 +10,7 @@ module.exports = {
     })
   },
   getFutureJobs: function (cb) {
-
-    var query = ScheduledJob.find().where({
+    return ScheduledJob.find().where({
       or: [
         {
           startAt: {'>=': new Date()},
@@ -19,11 +18,7 @@ module.exports = {
         },
         {isCron: true}
       ]
-    }).populate('Map');
-
-    query.exec(function (err, jobs) {
-      cb(err, jobs);
-    });
+    }).populate('Map')
   },
   deleteJob: function (jobId, cb) {
     ScheduledJob.destroy({id: jobId}, function (err) {
