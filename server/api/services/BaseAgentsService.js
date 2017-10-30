@@ -274,10 +274,8 @@ module.exports = {
     deleteBaseAgent: function (nodeId) {
         return deleteNode(nodeId);
     },
-    addGroup: function (parentId, name, cb) {
-        SNode.create({hasChildren: true, name: name, parent: parentId}, function(err, node) {
-            cb(err, node);
-        });
+    addGroup: function (parentId, name) {
+        return SNode.create({hasChildren: true, name: name, parent: parentId});
     },
     deleteGroup: function (nodeId) {
         return deleteNode(nodeId);

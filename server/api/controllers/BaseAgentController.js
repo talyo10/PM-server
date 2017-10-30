@@ -27,14 +27,14 @@ module.exports = {
             })
     },
     addGroup: function (req, res) {
-        BaseAgentsService.addGroup(req.body.parentId, req.body.name, function (err, node) {
-            if (err)
-                res.badRequest(err);
-            else {
+        BaseAgentsService.addGroup(req.body.parentId, req.body.name).then((node) => {
                 hooks.addServerGroup(req.user, node);   
                 res.send(node);
-            }
-        });
+            }).catch((error) => {
+                sails.log.error("Error creating group", error);
+                res.badRequest(error);
+                
+            });
     },
     getAgentsState: function(req, res) {
         sails.log.debug("get agent state");
