@@ -995,6 +995,7 @@ module.exports = {
             if (status == sails.config.constants.runStatuses.Stopped) {
                 async.each(BaseAgentsService.liveAgents,
                     function(agent, callback) {
+                        sails.log.warn(agent.url);
                         if (agent.runningMaps && agent.runningMaps[mapId]) {
                             request.post(
                                 agent.url + '/task/unregister',
@@ -1006,7 +1007,7 @@ module.exports = {
                                     }
                                 },
                                 function (error, response, body) {
-                                    rej();
+                                    callback(error);
                                 }
                             );
                         } else {
@@ -1021,10 +1022,7 @@ module.exports = {
                     }
                 );
             }
-            })).then(() => { return true }).catch(
-                (error) => {
-                    sails.log.error("Error updating status", error);
-                });
+            })).then(() => { return true })
     },
     executeMap: executeMapById,
     updateMapProject: function (mapId, projectId) {
