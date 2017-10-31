@@ -114,29 +114,33 @@ var listenOnAgent = function(agent) {
     agents[agent.key] = {intervalId: iid, alive: false};
 };
 
-function populateTree(agentsTree, cb) {
+function populateTree(agentsTree) {
     let children = [];
-    async.each(agentsTree.children, function(child, callback) {
-        if (!child.hasChildren) {
-            SNode.findOne({id: child.id}).populate('data').exec(function (err, data) {
-                if (err) {
-                    return callback(err);
-                }
-                children.push(data);
-                callback();
-            });
-        } else if (child.hasChildren) {
-            SNode.findOne({id: child.id}).populate('children').exec(function (err, data) {
-                if (err) {
-                    return callback(err);
-                }
-                children.push(data);
-                callback();
-            });
-        }
-    }, function(err) {
-        agentsTree.children = children;
-        cb(err, agentsTree);
+    return new Promise((resolve, reject) => {async.each(agentsTree.children, function(child, callback) {
+            if (!child.hasChildren) {
+                SNode.findOne({id: child.id}).populate('data').exec(function (err, data) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    children.push(data);
+                    callback();
+                });
+            } else if (child.hasChildren) {
+                SNode.findOne({id: child.id}).populate('children').exec(function (err, data) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    children.push(data);
+                    callback();
+                });
+            }
+        }, function(err) {
+            if(err) { 
+                reject(err)
+            }
+            agentsTree.children = children;
+            resolve(agentsTree);
+        });
     });
 }
 
@@ -319,13 +323,12 @@ module.exports = {
         return SNode.find({parent: "-1"}).populate('data').populate('children').then((nodes) => new Promise((res, rej) => {
             let trees = [];
             async.each(nodes, function(node, callback) {
-                populateTree(node, function(err, populatedNode) {
-                    if (err) {
-                        return callback(err);
-                    }
+                populateTree(node).then((populatedNode) => {
                     trees.push(populatedNode);
                     callback();
-                });
+                }).catch((error) => {
+                    return callback(err);
+                })
             }, function(err) {
                 if (err) {
                     rej(err);
