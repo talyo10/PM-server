@@ -58,12 +58,12 @@ module.exports = {
     },
     deleteProject: function (req, res) {
         ProjectService.deleteProject(req.param('id')).then(() => {
-            hooks.deleteProject(req.user, { name: req.param('id')});
-            res.ok();
-        }).catch((error) => {
-            sails.log.error("Error deleting project");
-            res.badRequest();
-        })
+                hooks.deleteProject(req.user, { name: req.param('id')});
+                res.ok();
+            }).catch((error) => {
+                sails.log.error("Error deleting project");
+                res.badRequest();
+            })
     },
     getProjectById: function (req, res) {
         ProjectService.getProjectById(req.param('id')).then((project) => {
@@ -84,10 +84,10 @@ module.exports = {
     },
     getProjectByUser: function (req, res) {
         ProjectService.getProjectByUser(req.param('id')).then((project) => {
-            res.json(project);
-        }).catch((error) => {
-            sails.log.error("Error getting project", error);
-        });
+                res.json(project);
+            }).catch((error) => {
+                sails.log.error("Error getting project", error);
+            });
     },
     getJstreeProjectsByUser: function (req, res) {
         ProjectService.getProjectByUser(req.param('id')).then((projects) => new Promise((resolve, reject) =>{

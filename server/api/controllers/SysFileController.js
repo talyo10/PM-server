@@ -169,16 +169,15 @@ module.exports = {
 			return;
 		}
 		MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Running;
-        MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData, function(result, text){
-           	if (!result){
-				MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
-               	res.badRequest();
-		   	}
-        	else{
-				MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
-                res.json(text);
-			}
-        });
+		MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData).then((result) => {
+			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
+			res.json(result);
+		}).catch((error) => {
+			sails.log.error("Error executing map", error);
+			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
+			res.badRequest();
+		})
+       
 		/*var mapObj = req.body;
 		sandbox = {
 					map: {

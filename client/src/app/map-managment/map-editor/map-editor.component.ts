@@ -88,7 +88,7 @@ export class MapEditorComponent implements OnInit, OnDestroy {
       this.mapService.executeMap(map, []).subscribe((mapResult) => {
         let res = '';
         let vid = map.versionIndex;
-        let eid = mapResult.resObj.resObj.executionId;
+        let eid = mapResult.resObj.executionId;  
         if (mapResult.res) {
           res = mapResult.res;
         } else if (mapResult.error) {
