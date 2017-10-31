@@ -11,109 +11,108 @@ var hooks = require('../services/HooksService').hooks;
 
 
 module.exports = {
-    createProject: function (req, res) {
-        ProjectService.createProject(req.body.name, req, function (err, project) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.ProjectToItem(project);
-                hooks.addProject(req.user, project);
-                res.json(project);
-            }
-
-        });
-    },
     addFolder: function (req, res) {
-        ProjectService.addFolder(req.body.projectId, req.body.parentId, req.body.name, req, function (err, folder) {
-            if (err)
+        return ProjectService.addFolder(req.body.projectId, req.body.parentId, req.body.name)
+            .then(
+                (folder) => {
+                    JstreeService.FolderToItem(folder);
+                    sails.log.info(folder);
+                    hooks.addFolder(req.user, folder);
+                    res.json(folder);
+                }
+            )
+            .catch((error) => {
+                sails.log.error("Error creating new Folder \n", error)
                 res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder)
-                hooks.addFolder(req.user, user);
-                res.json(folder);
-            }
-
+            });
+    },
+    deleteFolder: function (req, res) {
+        ProjectService.deleteFolder(req.body.id).then((folder) => {
+            JstreeService.FolderToItem(folder);
+            hooks.deleteFolder(req.user, folder);
+            res.json(folder);
+        }).catch((error) => {
+            res.badRequest();
+            sails.log.error("Error deleting folder", error);
         });
     },
     renameFolder: function (req, res) {
-        ProjectService.renameFolder(req.body.id, req.body.name, function (err, folder) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder);
-                res.json(folder);
-            }
+        ProjectService.renameFolder(req.body.id, req.body.name).then((folder) => {
+            JstreeService.FolderToItem(folder);
+            res.json(folder);
+        }).catch((error) => {
+            sails.log.error("Error renaming folder", error);
+            res.badRequest();
         });
     },
-    deleteFolder: function (req, res) {
-        ProjectService.deleteFolder(req.body.id, function (err, folder) {
-            if (err)
-                res.badRequest();
-            else
-            {
-                JstreeService.FolderToItem(folder);
-                hooks.deleteFolder(req.user, folder);
-                res.json(folder);
-            }
-
-        });
+    createProject: function (req, res) {
+        return ProjectService.createProject(req, req.body.name)
+            .then(
+                (project) => {
+                    JstreeService.ProjectToItem(project);
+                    hooks.addProject(req.user, project);
+                    res.json(project);
+                }
+            )
+            .catch((err) => res.badRequest());
     },
     deleteProject: function (req, res) {
-        ProjectService.deleteProject(req.param('id'), function (err) {
-            if (err)
-                res.badRequest();
-            else {
-                hooks.deleteProject(req.user, {name: req.param('id')});
+        ProjectService.deleteProject(req.param('id')).then(() => {
+                hooks.deleteProject(req.user, { name: req.param('id')});
                 res.ok();
-            }
-        });
+            }).catch((error) => {
+                sails.log.error("Error deleting project");
+                res.badRequest();
+            })
     },
     getProjectById: function (req, res) {
-        ProjectService.getProjectById(req.param('id'), function (err, project) {
-            if (err)
-                res.badRequest();
-            else
+        ProjectService.getProjectById(req.param('id')).then((project) => {
                 res.json(project);
-        });
+            }).catch((error) => {
+                sails.log.error("Error finding project", error);
+                res.badRequest();
+                
+            })
     },
     getNode: function (req, res) {
-        ProjectService.getNode(req.param('id'), function (err, node) {
-            if (err)
-                res.badRequest();
-            else
+        ProjectService.getNode(req.param('id')).then((node) => {
                 res.json(node);
-        });
+            }).catch((error) => {
+                sails.log.error("Error getting node", error);
+                res.badRequest();
+            });
     },
     getProjectByUser: function (req, res) {
-        ProjectService.getProjectByUser(req.param('id'), function (err, user) {
-            if (err)
-                res.badRequest();
-            else
-                res.json(user.projects);
-        });
+        ProjectService.getProjectByUser(req.param('id')).then((project) => {
+                res.json(project);
+            }).catch((error) => {
+                sails.log.error("Error getting project", error);
+            });
     },
     getJstreeProjectsByUser: function (req, res) {
-        ProjectService.getProjectByUser(req.param('id'), function (err, projects) {
-            if (err) {
-                res.badRequest();
-                return;
-            }
-            var jstreeProjects = [];
-            async.each(projects, function(project, callback) {
-                ProjectService.getProjectById(project.id, function(err, fullProject){
-                    if (fullProject.isActive !== false) {
-                        JstreeService.ProjectToItem(fullProject);
-                        jstreeProjects.push(fullProject);
-                    }
-                    callback();
+        ProjectService.getProjectByUser(req.param('id')).then((projects) => new Promise((resolve, reject) =>{
+                var jstreeProjects = [];
+                async.each(projects, function(project, callback) {
+                    ProjectService.getProjectById(project.id).then((populatedProject) => {
+                        if (populatedProject.isActive !== false) {
+                            JstreeService.ProjectToItem(populatedProject);
+                            
+                            jstreeProjects.push(populatedProject);
+                        }
+                        callback();
+                    });
+                }, function(err) {
+                    if (err) {
+                        reject();
+                    } 
+                    resolve(_.orderBy(jstreeProjects, ['name'], ['asc']));
                 });
-            }, function(err) {
-                res.json(_.orderBy(jstreeProjects, ['name'], ['asc']));
-            });
-        });
+            })).then((tree) => {
+                res.json(tree);
+            }).catch((error) => {
+                sails.log.error("Error finding project", error);
+                res.badRequest();
+            })
     }
 };
 

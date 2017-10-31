@@ -1,17 +1,16 @@
 module.exports = {
   jobs: {},
   scheduler: require('node-schedule'),
-  addJob: function (job, cb) {
-    ScheduledJob.create(job, function (err, job) {
-      ScheduledJob.findOne({id: job.id}).populate('Map').exec(function (err, populatedJob) {
-        SchedultJobsService.addScheduledJob(populatedJob);
-        cb(err, populatedJob);
-      });
+  addJob: function (job) {
+    return ScheduledJob.create(job).then((job) => {
+      return ScheduledJob.findOne({id: job.id}).populate('Map')
+    }).then((populatedJob) => {
+      return SchedultJobsService.addScheduledJob(populatedJob);
+      return populatedJob
     })
   },
-  getFutureJobs: function (cb) {
-
-    var query = ScheduledJob.find().where({
+  getFutureJobs: function () {
+    return ScheduledJob.find().where({
       or: [
         {
           startAt: {'>=': new Date()},
@@ -19,27 +18,23 @@ module.exports = {
         },
         {isCron: true}
       ]
-    }).populate('Map');
+    }).populate('Map')
+  },
+  deleteJob: function (jobId) {
+    SchedultJobsService.removeJob(jobId);
+    
+    return ScheduledJob.destroy({id: jobId});
 
-    query.exec(function (err, jobs) {
-      cb(err, jobs);
-    });
   },
-  deleteJob: function (jobId, cb) {
-    ScheduledJob.destroy({id: jobId}, function (err) {
-      SchedultJobsService.removeJob(jobId);
-      cb(err);
-    });
-  },
-  updateJob: function (job, cb) {
-    ScheduledJob.update({id: job.id}, job).exec(function (err, updatedJob) {
+  updateJob: function (job) {
+    return ScheduledJob.update({id: job.id}, job).then((job) => {
       SchedultJobsService.removeJob(job.id);
-      ScheduledJob.findOne({id: job.id}).populate('Map').exec(function (err, populatedJob) {
-        SchedultJobsService.addScheduledJob(populatedJob);
-        if (!cb) return;
-        else cb(err, populatedJob);
-      });
-    })
+      return ScheduledJob.findOne({id: job.id}).populate('Map')
+    }).then((populatedJob) => {
+      SchedultJobsService.addScheduledJob(populatedJob);
+      return populatedJob
+    });
+
   },
   removeJob: function (jobId) {
     if (!SchedultJobsService.jobs[jobId])
@@ -60,12 +55,14 @@ module.exports = {
     sails.log.info('Adding scheduled job for map : ' + job.Map.name + ' - ' + dateString);
   },
   loadJobs: function () {
-    SchedultJobsService.getFutureJobs(function (err, jobs) {
-      if (err) return;
+    SchedultJobsService.getFutureJobs().then((jobs) => {
       sails.log.info('Loading scheduled jobs');
       jobs.forEach(function (job) {
         SchedultJobsService.addScheduledJob(job);
       });
-    });
+    }).catch((error) => {
+      sails.log.error("Error loading jobs", error);
+    })
+    
   }
 };

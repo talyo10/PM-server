@@ -15,13 +15,12 @@ var path = require('path');
 module.exports = {
 
 	deleteHook: function(req, res) {
-		HooksService.deleteHook(req.param('id'), function(err) {
-			if (err) {
-				return res.badRequest("error when deleting, " + err);
-			} else {
-				return res.ok();
-			}
-		});
+		HooksService.deleteHook(req.param('id')).then(() => {
+				res.ok()
+			}).catch((error) => {
+				sails.log.error("Error deleting hook", error);
+				res.badRequest();
+			});
 	},
 
 	addHooks: function(req, res) {
@@ -80,12 +79,12 @@ module.exports = {
 	},
 
 	getHooks: function(req, res) {
-		SystemHook.find({}).exec(function(err, hooks) {
-			if (err) {
-				return res.badRequest('cant get hooks ' + error);
-			}
-			return res.json(hooks);
-		});
+		SystemHook.find({}).then((hooks) => {
+				res.json(hooks);
+			}).catch((error) => {
+				sails.log.error("Error loading system hooks", error);
+				res.badRequest();
+			});
 	},
 
 	installAgents: function (req, res) {
@@ -152,35 +151,32 @@ module.exports = {
 	},
 
 	getAllAgents: function (req, res) {
-		sails.log.info("get all");
-        DedicatedAgent.find().populate('methods').exec(function (err, agents) {
-            if (err)
-                res.badRequest(err);
-            else {
-                async.map(agents, function(agent, agentsback) {
-                	async.map(agent.methods, function(method, methodback) {
-	                	Method.findOne({id: method.id}).populate('params').exec(function(err, methodObj){
-	                		methodback(err, methodObj);
-	                	});
-	                }, function(err, results){
-					    if (err) {
-					    	return res.badRequest(err);
-					    }
-					    var nAgent = JSON.parse(JSON.stringify(agent));
-					    nAgent.methods = results;
-					    agentsback(null, nAgent);
+		sails.log.info("Get all agents");
+		DedicatedAgent.find().populate('methods').then((agents) => {
+				async.map(agents, function(agent, agentsback) {
+					async.map(agent.methods, function(method, methodback) {
+						Method.findOne({id: method.id}).populate('params').exec(function(err, methodObj){
+							methodback(err, methodObj);
+						});
+					}, function(err, results){
+						if (err) {
+							return res.badRequest(err);
+						}
+						var nAgent = JSON.parse(JSON.stringify(agent));
+						nAgent.methods = results;
+						agentsback(null, nAgent);
 					});
-                }, function(err, results){
-				    if (err) {
-				    	return res.badRequest(err);
-				    }
-				    sails.log.info('********************************************************8');
-		        	sails.log.info(results);
-		        	sails.log.info('********************************************************8');
-				    return res.json(results);
+				}, function(err, results){
+					if (err) {
+						return res.badRequest(err);
+					}
+					res.json(results);
 				});
-            }
-        });
+			}).catch((error) => {
+				sails.log.error("Error getting agents", error);
+				res.badRequest();
+			});
+
     }
 };
 

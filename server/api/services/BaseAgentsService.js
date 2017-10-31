@@ -42,34 +42,22 @@ var installPluginsOnAgent = function(agent, callback){
         }
     };
 
-var deleteNode = function(nodeId, cb) {
-    SNode.findOne({ id: nodeId }).populate('children').exec(function(err, node) {
-        if (err) {
-            return cb(err);
-        }
-
+var deleteNode = function(nodeId) {
+    return SNode.findOne({ id: nodeId }).populate('children').then((node) => new Promise((res, rej) => {
         if (node.hasChildren) {
-            async.each(node.children, function(child, callback) {
-                deleteNode(child.id, callback);
-            }, function(err) {
-                if (err) {
-                    return cb(err);
-                }
-                SNode.destroy({id: nodeId}, function (err) {
-                    return cb(err);
-                });
+            // iterate through all node children and delete them
+            node.children.forEach((child) => {
+                deleteNode(child.id);
             });
-        } else if (!node.hasChildren) {
-            BaseAgent.destroy({id: node.data}, function (err) {
-                if (err) {
-                    return cb(err);
-                }
-                SNode.destroy({id: nodeId}, function (err) {
-                    return cb(err);
-                });
-            });
+            res();
+        } else {
+            // if it doesnt has children than its a base agent
+            res(BaseAgent.destroy({ id: node.data }));
         }
-    });
+        
+    })).then(() => {
+        return SNode.destroy({ id: nodeId });
+    })
 }
 
 
@@ -126,29 +114,33 @@ var listenOnAgent = function(agent) {
     agents[agent.key] = {intervalId: iid, alive: false};
 };
 
-function populateTree(agentsTree, cb) {
+function populateTree(agentsTree) {
     let children = [];
-    async.each(agentsTree.children, function(child, callback) {
-        if (!child.hasChildren) {
-            SNode.findOne({id: child.id}).populate('data').exec(function (err, data) {
-                if (err) {
-                    return callback(err);
-                }
-                children.push(data);
-                callback();
-            });
-        } else if (child.hasChildren) {
-            SNode.findOne({id: child.id}).populate('children').exec(function (err, data) {
-                if (err) {
-                    return callback(err);
-                }
-                children.push(data);
-                callback();
-            });
-        }
-    }, function(err) {
-        agentsTree.children = children;
-        cb(err, agentsTree);
+    return new Promise((resolve, reject) => {async.each(agentsTree.children, function(child, callback) {
+            if (!child.hasChildren) {
+                SNode.findOne({id: child.id}).populate('data').exec(function (err, data) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    children.push(data);
+                    callback();
+                });
+            } else if (child.hasChildren) {
+                SNode.findOne({id: child.id}).populate('children').exec(function (err, data) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    children.push(data);
+                    callback();
+                });
+            }
+        }, function(err) {
+            if(err) { 
+                reject(err)
+            }
+            agentsTree.children = children;
+            resolve(agentsTree);
+        });
     });
 }
 
@@ -235,98 +227,76 @@ module.exports = {
 
 
     },
-    addBaseAgent: function (baseAgent, cb) {
-        BaseAgent.findOne({key: baseAgent.key}).then(function (agent, err) {
-            sails.log.debug(
-                `****************
-                agent: ${JSON.stringify(agent,null, 2)}
-                err: ${JSON.stringify(err, null, 2)}
-                *****************`);
-            if(err) {
-                return cb(err, agent);
-            }
-            else if(!agent) {
-                BaseAgent.create(baseAgent, function (err, agent) {
-                    if (!BaseAgentsService.baseAgent.id){
-                        BaseAgentsService.baseAgent = agent;
-                        SchedultJobsService.loadJobs();
-                    }
-                    listenOnAgent(agent);
-                    agent.alive = true;
-                    SNode.create({hasChildren: false, data: agent.id}, function(err, node) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        BaseAgentsService.installPluginsOnAgent(agent, function() {
-                            return cb(null, agent);
-                        });
-                    });
-                });
-            }
-            else {
-                BaseAgent.update({key: baseAgent.key}, baseAgent).exec(function (err, updatedAgent) {
-                    if(!err){
-                        updatedAgent = updatedAgent[0];
-                    }
-                    if (BaseAgentsService.baseAgent.id == updatedAgent.id)
-                        BaseAgentsService.baseAgent = updatedAgent;
+    addBaseAgent: function (baseAgent) {
+        var newAgent = null;
+        sails.log.debug("AGENT \n", baseAgent);
+            // tring to find a base agent with the same key
+        return BaseAgent.findOne({ key: baseAgent.key }).then((agent) => {
+                if(!agent) {
+                    // if there isn't an agent create it
+                    return BaseAgent.create(baseAgent)
+                } else {
+                    // otherwise update the agent
+                    return BaseAgent.update({ key: baseAgent.key }, baseAgent)
+                }
+            }).then((agent) => {
+                if (Array.isArray(agent)) {
+                    agent = agent[0];
+                }
+                if (!BaseAgentsService.baseAgent.id) {
+                    BaseAgentsService.baseAgent = agent;
+                    SchedultJobsService.loadJobs();
+                } else if (BaseAgentsService.baseAgent.id == agent.id){
+                    BaseAgentsService.baseAgent = agent;
+                }
 
-                    sails.log.debug(`url before listen ${JSON.stringify(updatedAgent, null, 2)}`);
-                    listenOnAgent(updatedAgent);
-                    if (!cb) {
-                        return;
-                    }
-                    else {
-                        return cb(err, updatedAgent);
-                    }
-                });
+                agent.alive = true;
+                newAgent = agent;
+                return SNode.findOne({ data: newAgent.id })
+            }).then((node) => {
+                if (!node) {
+                    // if it is an new agent, create a SNode record for it.
+                    return SNode.create({ hasChildren: false, data: newAgent.id })
+                } 
+                return ;
+            }).then((node) => {
+                if(node) {
+                    BaseAgentsService.installPluginsOnAgent(newAgent, function() {
+                    });
+                }
+                listenOnAgent(newAgent);
+                return newAgent
+            });
+    },
+    deleteBaseAgent: function (nodeId) {
+        return deleteNode(nodeId);
+    },
+    addGroup: function (parentId, name) {
+        return SNode.create({hasChildren: true, name: name, parent: parentId});
+    },
+    deleteGroup: function (nodeId) {
+        return deleteNode(nodeId);
+    },
+    updateGroup: function (snode) {
+        return SNode.update({id: snode.id }, snode)
+    },
+    updateBaseAgent: function (parentId, baseAgent) {
+        return SNode.findOne({ data: baseAgent.id }).then((node) => {
+            node.parent = parentId;
+            return SNode.update({ id: node.id }, node);
+        }).then((node) => {
+            return BaseAgent.update({ id: baseAgent.id }, baseAgent)
+        }).then((agent) => {
+            if (BaseAgentsService.baseAgent.id == agent.id) {
+                BaseAgentsService.baseAgent = agent;
             }
-        });
-    },
-    deleteBaseAgent: function (nodeId, cb) {
-        return deleteNode(nodeId, cb);
-    },
-    addGroup: function (parentId, name, cb) {
-        SNode.create({hasChildren: true, name: name, parent: parentId}, function(err, node) {
-            cb(err, node);
-        });
-    },
-    deleteGroup: function (nodeId, cb) {
-        return deleteNode(nodeId, cb);
-    },
-    updateGroup: function (snode, cb) {
-        SNode.update({id: snode.id }, snode).exec(function(err, node) {
-            return cb(err, node);
+            return agent
         })
     },
-    updateBaseAgent: function (parentId, baseAgent, cb) {
-        SNode.findOne({data: baseAgent.id}).exec(function(err, node) {
-            if (err) {
-                cb(err);
-            }
-            node.parent = parentId;
-            SNode.update({id: node.id}, node).exec(function(err, updateNode) {
-                if (err) {
-                    cb(err);
-                }   
-                BaseAgent.update({id: baseAgent.id}, baseAgent).exec(function (err, updatedAgent) {
-                    if (BaseAgentsService.baseAgent.id == updatedAgent.id)
-                        BaseAgentsService.baseAgent = updatedAgent;
-
-                    if (!cb) {
-                        return;
-                    }
-                    else {
-                        cb(err, updatedAgent);
-                    }
-                });
-            });
-        });
-    },
-    getNode: function(id, cb) {
-        return SNode.findOne(id).populate('children').exec(function(err, model){
+    getNode: function(id) {
+        return SNode.findOne(id).populate('children').then((node) => new Promise((res, rej) =>{
             let childs = [];
-            async.each(model.children, function(child, callback) {
+            async.each(node.children, function(child, callback) {
                 if (!child.hasChildren) {
                     SNode.findOne(child.id).populate('data').exec(function(err, node) {
                         if (err) {
@@ -335,55 +305,62 @@ module.exports = {
                         childs.push(node);
                         callback();
                     });
-                } else if(child.hasChildren) {
+                } else {
                     childs.push(child);
                     callback();
                 }
             }, function(err) {
-                model.children = childs;
-                cb(err, model);
+                if (err) {
+                    rej();
+                } else {
+                    node.children = childs;
+                    res(node)
+                }
             });
-        });
+        }));
     },
-    getAgents: function(cb){
-        SNode.find({parent: "-1"}).populate('data').populate('children').exec(function (err, agentsTree) {
+    getAgents: function(){
+        return SNode.find({parent: "-1"}).populate('data').populate('children').then((nodes) => new Promise((res, rej) => {
             let trees = [];
-            if (err) {
-                return cb(err);
-            }
-            async.each(agentsTree, function(node, callback) {
-                populateTree(node, function(err, res) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    trees.push(res);
+            async.each(nodes, function(node, callback) {
+                populateTree(node).then((populatedNode) => {
+                    trees.push(populatedNode);
                     callback();
-                });
+                }).catch((error) => {
+                    return callback(err);
+                })
             }, function(err) {
-                cb(err, trees);
+                if (err) {
+                    rej(err);
+                } else {
+                    res(trees);
+                }
             });
-        });
+        }));
     },
     listenOnAgents: function () {
-        BaseAgentsService.getAgents(function (err, agents) {
-            if (agents && agents.length>0)
+        BaseAgentsService.getAgents().then((agents) => {
+            if (agents && agents.length > 0)
             {
                 agents.forEach(function(agent) {
                     listenOnAgent(agent);
                 }, this);
             }
-        });
-    },
-    loadBaseAgent: function (cb) {
-        BaseAgentsService.getAgents(function (err, agents) {
-            if (agents && agents.length>0)
-                BaseAgentsService.baseAgent = agents[0];
-
-            cb(err,agents);
         })
     },
-    getAgentsState: function(cb) {
-        return cb(agents);
+    loadBaseAgent: function () {
+        return BaseAgentsService.getAgents().then((agents) => {
+            if (agents && agents.length > 0)
+                BaseAgentsService.baseAgent = agents[0];
+        })
+    },
+    getAgentsState: function() {
+        var resAgents = {};
+        for(var prop in agents){
+            var agent = agents[prop];
+            resAgents[prop] = {alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime};
+        }
+        return resAgents
     },
     modulesPath: modulesPath,
     installPluginsOnAgent: installPluginsOnAgent,

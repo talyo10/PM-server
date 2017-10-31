@@ -7,103 +7,89 @@
 
 module.exports = {
     deleteMap: function (req, res) {
-        MapService.deleteMap(req.param('id'), function (err) {
-            if (err)
-                res.badRequest();
-            else
-                res.ok();
+        MapService.deleteMap(req.param('id')).then(res.ok()).catch((error) => {
+            sails.log.error("Error deleting map", error);
+            res.badRequest();
         });
     },
     getRenderedMapById: function (req, res) {
-        MapService.getRenderedMapById(req.param('id'), function (map, error) {
-            if (error)
-            {
-                sails.log.error("Failed loading map", error);
-                res.badRequest();
-            }
-            else
-                res.json(map);
-        });
+        MapService.getRenderedMapById(req.param('id')).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Failed loading map", error);
+            res.badRequest();
+        })
     },
     addMapVersion: function (req, res) {
-        MapService.addMapVersion(req.body, function (err, version, map) {
-            if (err)
-                res.badRequest();
-            else
+        MapService.addMapVersion(req.body).then((version) => {
                 res.json(version);
-        });
+            }).catch((error) => {
+                sails.log.error("Error adding map version", error);
+                res.badRequest();
+            })
+
     },
     addNewMap: function (req, res) {
-        MapService.addNewMap(req.body.parentId, req.body.map, function (err, map) {
-            if (err)
-                res.badRequest();
-            else {
-                JstreeService.MapToItem(map);
-                res.json(map);
-            }
+        MapService.addNewMap(req.body.parentId, req.body.map).then((node) => {
+            res.json(node);
+        }).catch((error) => {
+            sails.log.error("Error creating new map", error);
+            res.badRequest()
         });
     },
     updateVersionStatus:function(req,res){
-        var mapId = req.body.map.id,
-            versionIndex = req.body.map.versionIndex;
-        MapService.updateVersionStatus(mapId, versionIndex, req.body.status, function (err) {
-            if (err)
-                res.badRequest();
-            else
+        var mapId = req.body.map.id;
+        var versionIndex = req.body.map.versionIndex;
+
+        MapService.updateVersionStatus(mapId, versionIndex, req.body.status).then((result) => {
+            if(result === true) {
                 res.ok();
+            } else {
+                res.badRequest();
+            }
+        }).catch((error) => {
+            sails.log.error("Error updating status", error);
+            res.badRequest();
         });
     },
     updateMapProject : function (req,res) {
-      var mapId = req.param('mapId'),
-          projectId = req.param('projectId');
-
-      MapService.updateMapProject(mapId, projectId,function(err){
-        if (err)
+      MapService.updateMapProject(req.param('mapId'), req.param('projectId')).then((map) => res.ok()).catch((error) => {
+          sails.log.error("Error updating map", error)
           res.badRequest();
-        else
-          res.ok();
-      });
+      })
     },
     updateMap : function (req,res) {
-      var map = req.body.map;
-      MapService.updateMap(map, function(err, resMap){
-        if (err)
-          res.badRequest();
-        else
-          res.json(resMap);
-      });
+        MapService.updateMap(req.body.map).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Error updating map", map);
+        })
     },
     duplicateMap: function (req, res) {
         var mapId = req.param('mapId');
-        MapService.duplicateMap(req.body, mapId, function (err, map) {
-            if (err) {
-                res.badRequest();
-            }
-            else {
-                JstreeService.MapToItem(map);
-                res.json(map);
-            }
-        });
+
+        MapService.duplicateMap(req.body, mapId).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Error duplicating map", error);
+            res.badRequest();
+        })
+
     },
     getVersions: function (req, res) {
-        var mapId = req.param('mapId');
-        MapService.getVersions(mapId, function (err, versions) {
-            if (err)
-                res.badRequest();
-            else {
-                res.json(versions);
-            }
-
-        });
+        MapService.getVersions(req.param('mapId')).then((versions) => {
+            res.json(version);
+        }).catch((error) => {
+            sails.log.error("Error getting versions");
+            res.badRequest();
+        })
     },
     getVersion: function (req, res) {
-        var mapId = req.param('mapId');
-        var versionId = req.param('versionId');
-        MapService.getVersion(mapId, versionId, function (err, version) {
-            if (err)
-                res.badRequest();
-            else
-                res.json(version);
+        MapService.getVersion(req.param('mapId', req.param('versionId'))).then((version) => {
+            res.json(version);
+        }).catch((error) => {
+            sails.log.error("Error getting version", error);
+            res.badRequest();
         });
     }
 };

@@ -245,18 +245,14 @@ module.exports = {
     loadHooks: function () {
         LoadModules(mpath, sails.config.appPath);
     },
-    deleteHook: function(id, cb) {
-        SystemHook.findOne({id: id}).then(function(hook, err) {
-            if (err) {
-                return cb(err);
-            }
+    deleteHook: function(id) {
+        return SystemHook.findOne(id).then((hook) => {
             rimraf(path.join(mpath, hook.developer + "." + hook.name),
-                function () {
-                    SystemHook.destroy({id: id}, function (err) {
-                        return cb(err);
-                    }); 
-                }
-            );
-        });
+                    function () {
+                        SystemHook.destroy(id); 
+                    }
+                );
+        })
+        
     }
 }

@@ -169,16 +169,15 @@ module.exports = {
 			return;
 		}
 		MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Running;
-        MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData, function(result, text){
-           	if (!result){
-				MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
-               	res.badRequest();
-		   	}
-        	else{
-				MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
-                res.json(text);
-			}
-        });
+		MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData).then((result) => {
+			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
+			res.json(result);
+		}).catch((error) => {
+			sails.log.error("Error executing map", error);
+			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
+			res.badRequest();
+		})
+       
 		/*var mapObj = req.body;
 		sandbox = {
 					map: {
@@ -236,8 +235,8 @@ module.exports = {
             }
         };
 
-        MapService.getMapById(mapId, function(map, err){
-            if (!map || map.versions.length-1 < mapObj.versionIndex)
+		MapService.getMapById(mapId).then((map) => {
+			if (!map || map.versions.length-1 < mapObj.versionIndex)
             {
                 socket.emit('update', 'Map or map version Not Found');
                 res.badRequest();
@@ -257,15 +256,16 @@ module.exports = {
             for (var i = map.versions[mapObj.versionIndex].lastRunLink; i < links.length; i++) {
                 var myLink = links[i];
                 processesFuncs.push(runProcess(myLink, sails.io, mapObj.id, mapObj.versionIndex, i));
-            };
-            async.series(processesFuncs, function(err, myres){
+			};
+			
+			async.series(processesFuncs, function(err, myres){
                 // if any of the file processing produced an error, err would equal that error
                 if( err ) {
                     map.versions[mapObj.versionIndex].status = sails.config.constants.runStatuses.Failed;
                     // One of the iterations produced an error.
                     // All processing will now stop.
-                    MapService.updateMap(map, function(err, updatedMap){
-                        res.send('Error:'+err);
+                    MapService.updateMap(map).then((updatedMap) => {
+						sails.log.info("Map updated")
                     });
                 } else {
                     var totalResult = "";
@@ -273,12 +273,16 @@ module.exports = {
                         totalResult = totalResult + myres[i] + "\n";
                     }
                     map.versions[mapObj.versionIndex].status = sails.config.constants.runStatuses.Done;
-                    MapService.updateMap(map, function(err, updatedMap){
+                    MapService.updateMap(map).then((updatedMap) =>{
                         res.send(totalResult);
                     });
                 }
             });
-        });
+		}).catch((error) => {
+			sails.log.error("Error resuming map", error);
+			res.badRequest();
+		})
+
     },
 	testProcess: function(req, res){
 		var mapObj = req.body.map;
@@ -368,18 +372,14 @@ module.exports = {
 			mapVersionIndex = 0;
 		}
 		sails.log.debug("Executing map: %s proj: %s index: %s", mapName, projectName, mapVersionIndex);
-		Map.findOne({name: mapName}).populate("Project", {name: projectName}).then(function (map, err) {
-            if(err){
-            	sails.log.error(err);
-            	return res.badRequest('"Error": no such map or peoject ' + err);
-            }
-            MapService.executeMap(userId, map.id, mapVersionIndex, [], function(result, text){
-	           if (!result)
-	               res.badRequest();
-	            else
-	                res.json(text);
-	        });
-        });
+		Map.findOne({name: mapName}).populate("Project", {name: projectName}).then((map) => {
+            return MapService.executeMap(userId, map.id, mapVersionIndex, [])
+        }).then((result) => {
+			res.json(text);
+		}).catch((error) => {
+			sails.log.error("Error executing map");
+			res.badRequest();
+		});
 	},
 	updateByName: function(req, res){
 		var projectName 	= req.body.project;
@@ -395,21 +395,15 @@ module.exports = {
 			sails.log.error("not enough parameters");
 			return res.badRequest("Not enough parameters");
 		}
-		Map.findOne({name: mapName}).populate("Project", {name: projectName, user: userId}).then(function (map, err) {
-            if(err || !map){
-            	sails.log.error(err);
-            	return res.badRequest('"Error": no such map or peoject ' + err);
-            }
+		Map.findOne({name: mapName}).populate("Project", {name: projectName, user: userId}).then((map) => {
             sails.log.debug("map --- >");
             sails.log.debug(JSON.stringify(map));
-            MapService.addMapAttr(map, name, value, type, function(err, updatedMap){
-            	if(!err){
+            return MapService.addMapAttr(map, name, value, type).then((updatedMap) => {
             		res.json(updatedMap);
-            	}
-            	else{
-            		res.badRequest();
-            	}
-            });
+            }).catch((error) => {
+				sails.log.error("Error updating map", error);
+				res.badRequest();
+			});
         });
 	}
 };

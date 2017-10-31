@@ -7,36 +7,36 @@
 
 module.exports = {
     addJob: function (req, res) {
-        SchedultJobsService.addJob(req.body, function(err,job){
-            if(err)
-                res.badRequest();
-            else
+        SchedultJobsService.addJob(req.body).then((job) => {
                 res.send(job);
-        })
+            }).catch((error) => {
+                sails.log.error("Error adding job");
+                res.badRequest();
+            });
     },
     getFutureJobs: function (req, res) {
-        SchedultJobsService.getFutureJobs(function(err,jobs){
-            if(err)
-                res.badRequest();
-            else
+        SchedultJobsService.getFutureJobs().then((jobs) => {
                 res.send(jobs);
-        });
+            }).catch((error) => {
+                sails.log.error("Error getting future jobs");
+                res.badRequest();
+            });
     },
     deleteJob: function (req, res) {
-        SchedultJobsService.deleteJob(req.param('id'), function(err){
-            if(err)
-                res.badRequest();
-            else
-                res.ok();
-        })
+        SchedultJobsService.deleteJob(req.param('id')).then(() => {
+            res.ok();
+        }).catch((error) => {
+            sails.log.error("Error deleting job");
+            res.badRequest();
+        });
     },
     updateJob: function (req, res) {
-        SchedultJobsService.updateJob(req.body,function(err,updatedJob){
-            if(err)
+        SchedultJobsService.updateJob(req.body).then((job) => {
+                res.send(job[0]);
+            }).catch((error) => {
+                sails.log.error("Error updating job");
                 res.badRequest();
-            else
-                res.send(updatedJob[0]);
-        });
+            });
     }
 };
 
