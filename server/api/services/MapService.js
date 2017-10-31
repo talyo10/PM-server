@@ -838,35 +838,33 @@ function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace, 
 
 module.exports = {
     listenMapTrigger: function () {
-        Trigger.find({ on: true }).then(function (triggers, err) {
-            if (err) {
-                sails.log.error("Triggers error: " + err);
-            }
-            else {
-                sails.log.info("Triggers!");
-                async.each(triggers, function (trigger, callback) {
-                    console.log(trigger.params.branch.text + "asdfasdf");
-                    gitrepo.branchChanged(trigger.folder, trigger.params.branch.text, function (obj) {
-                        sails.log.debug("branch changed return " + JSON.stringify(obj));
-                        if (obj.res) {
-                            if (obj.res === true) {
-                                sails.log.debug(trigger.map + "   <--->asdfasdfsdf");
-                                executeMapById("-1", trigger.map, 0, 0, function (result, text) {
-                                    callback();
-                                });
-                            }
+        Trigger.find({ on: true }).then((triggers) => new Promise((resolve, reject) => {
+            sails.log.info("Triggers!");
+            async.each(triggers, function (trigger, callback) {
+                console.log(trigger.params.branch.text + "asdfasdf");
+                gitrepo.branchChanged(trigger.folder, trigger.params.branch.text, function (obj) {
+                    sails.log.debug("branch changed return " + JSON.stringify(obj));
+                    if (obj.res) {
+                        if (obj.res === true) {
+                            sails.log.debug(trigger.map + "   <--->asdfasdfsdf");
+                            executeMapById("-1", trigger.map, 0, 0, function (result, text) {
+                                callback();
+                            });
                         }
-                    });
-                }, function (err) {
-                    if (err) {
-                        //do something
-                    }
-                    else {
-                        //do something else
                     }
                 });
-            }
-        });
+            }, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    //do something else
+                }
+            });
+        })).catch((error) => {
+            sails.log.error("Error listenning triggers", error);
+        })
+
     },
     getMapById: function (mapId, callback) {
         getMap(mapId).then(function(map, error) {
