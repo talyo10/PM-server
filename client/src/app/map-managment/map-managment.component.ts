@@ -8,6 +8,7 @@ import { ProjectService } from '../shared/services/project.service';
 import { MapService } from '../shared/services/map.service';
 import { AuthenticationService } from '../shared/services/authentication.service';
 import { CombinedPopupComponent } from './map-editor/map-designer/combined-popup/combined-popup.component';
+import { LeftPanelComponent } from './left-panel/left-panel.component';
 
 import * as _ from 'lodash';
 declare var jQuery:any;
@@ -25,6 +26,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   @ViewChild('leftPanel') leftPanel: ElementRef;
   @ViewChild('mapEditor') mapEditor: ElementRef;
   @ViewChild('rightPanel') rightPanel: ElementRef;
+  @ViewChild(LeftPanelComponent) private leftPanelComponent: LeftPanelComponent;
 
   public designerOps: any = null;
   public sideBarState: boolean = true;
@@ -159,16 +161,16 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     let mapEditor = jQuery(this.mapEditor.nativeElement);
     let mapMain = jQuery(this.mapMain.nativeElement);
     let messagesEl = jQuery(this.messagesEl.nativeElement);
-  
-
+    
     rightPanel.width(this.minRightPanelWidh);
     leftPanel.width(this.minLeftPanelWidth);
     mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
     messagesEl.height(this.minMessageHeight);
 
     let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
-    this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
+    this.mapEditor.nativeElement.style.marginLeft =  -1*newMargin + 'px';
     mapControl.height(mapMain.height() + 80 - messagesEl.height());
+    this.leftPanelComponent.resizeAgentsTree();
   }
 
   validateMessagesResize(event: ResizeEvent): boolean {
@@ -180,7 +182,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   resizeMessages(event: ResizeEvent): void {
-
+    // resize the message and mapcontrol elements
     let margin = 2;
     let mapControl = jQuery(this.mapControl.nativeElement);
     let messagesEl = jQuery(this.messagesEl.nativeElement);
@@ -196,6 +198,9 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
       messagesEl.height(event.rectangle.height);
     }
 
+    // resize the projects tree elemnt to include 
+    this.leftPanelComponent.resizeAgentsTree();
+    
     mapControl.height(mapMain.height() + 80 - messagesEl.height() + margin);
   }
 

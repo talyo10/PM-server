@@ -13,6 +13,7 @@ import { ProjectService } from '../../shared/services/project.service'
 export class LeftPanelComponent implements OnInit {
 
   @Input() graphProps: any;
+  @Input() panel: any;
   public innerPaper: any = null;
   public innerGraph: any = null;
   public designerOps: any = null;
@@ -21,7 +22,7 @@ export class LeftPanelComponent implements OnInit {
   public leftPanelTitle: string;
   public searchtext: string = null;
   public panelsTitles: any;
-  @ViewChild('agents') agentsElement: ElementRef;
+  @ViewChild('tree') treeElement: ElementRef;
 
   constructor(private mapService: MapService, private projectService: ProjectService) {
     this.panelsTitles = [
@@ -33,7 +34,13 @@ export class LeftPanelComponent implements OnInit {
 
   ngOnInit() {
     this.selectPanel(0);
-    this.agentsElement.nativeElement.style.maxHeight = (this.agentsElement.nativeElement.clientHeight - 72) + 'px';
+    this.treeElement.nativeElement.style.maxHeight = (this.treeElement.nativeElement.clientHeight - 72) + 'px';
+  }
+
+  resizeAgentsTree() {
+    if(this.panel) {
+      this.treeElement.nativeElement.style.height = (this.panel.offsetHeight - 142) + 'px';
+    }
   }
 
   selectPanel(panelId: number) {
