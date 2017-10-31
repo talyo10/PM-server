@@ -9,7 +9,7 @@ module.exports = {
       return populatedJob
     })
   },
-  getFutureJobs: function (cb) {
+  getFutureJobs: function () {
     return ScheduledJob.find().where({
       or: [
         {
@@ -20,13 +20,13 @@ module.exports = {
       ]
     }).populate('Map')
   },
-  deleteJob: function (jobId, cb) {
+  deleteJob: function (jobId) {
     SchedultJobsService.removeJob(jobId);
     
     return ScheduledJob.destroy({id: jobId});
 
   },
-  updateJob: function (job, cb) {
+  updateJob: function (job) {
     return ScheduledJob.update({id: job.id}, job).then((job) => {
       SchedultJobsService.removeJob(job.id);
       return ScheduledJob.findOne({id: job.id}).populate('Map')
