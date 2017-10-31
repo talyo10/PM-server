@@ -844,3 +844,6 @@ button > i[class^="pmap-"] {
   height: auto !important;
 }
 
+tree-viewport {
+  overflow-x: hidden !important;
+}

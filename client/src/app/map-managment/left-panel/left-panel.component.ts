@@ -35,10 +35,13 @@ export class LeftPanelComponent implements OnInit {
   ngOnInit() {
     this.selectPanel(0);
     this.treeElement.nativeElement.style.maxHeight = (this.treeElement.nativeElement.clientHeight - 72) + 'px';
+    this.treeElement.nativeElement.style.width = this.panel.offsetWidth + 'px';
+    
   }
 
   resizeAgentsTree() {
     if(this.panel) {
+      this.treeElement.nativeElement.style.width = this.panel.offsetWidth + 'px';
       this.treeElement.nativeElement.style.height = (this.panel.offsetHeight - 142) + 'px';
     }
   }
