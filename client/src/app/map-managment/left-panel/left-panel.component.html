@@ -13,9 +13,8 @@
   </div>
 </header>
 <section class="agents" [ngSwitch]="currentPanel" >
-  <div class="projects-tree" #tree>
+  <div class="left-panel-tree-content" #tree>
     <app-map-explorer [searchtext]="searchtext" *ngSwitchCase="0"></app-map-explorer>
+    <app-map-toolbox [searchtext]="searchtext" *ngSwitchCase="1" [paper]="innerPaper" [graph]="innerGraph" [designerOps]="designerOps"></app-map-toolbox>
   </div>
-  <!-- <app-map-explorer [searchtext]="searchtext" *ngSwitchCase="0" [projectsTree]="projectsTree"></app-map-explorer> -->
-  <app-map-toolbox [searchtext]="searchtext" *ngSwitchCase="1" [paper]="innerPaper" [graph]="innerGraph" [designerOps]="designerOps"></app-map-toolbox>
 </section>
