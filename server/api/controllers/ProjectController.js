@@ -66,12 +66,14 @@ module.exports = {
         })
     },
     getProjectById: function (req, res) {
-        ProjectService.getProjectById(req.param('id'), function (err, project) {
-            if (err)
-                res.badRequest();
-            else
-                res.json(project);
-        });
+        ProjectService.getProjectById(req.param('id')).then((project) => {
+            res.json(project);
+            
+        }).catch((error) => {
+            sails.log.error("Error finding project", error);
+            res.badRequest();
+            
+        })
     },
     getNode: function (req, res) {
         ProjectService.getNode(req.param('id'), function (err, node) {
@@ -82,32 +84,36 @@ module.exports = {
         });
     },
     getProjectByUser: function (req, res) {
-        ProjectService.getProjectByUser(req.param('id'), function (err, user) {
-            if (err)
-                res.badRequest();
-            else
-                res.json(user.projects);
+        ProjectService.getProjectByUser(req.param('id')).then((project) => {
+            res.json(project);
+        }).catch((error) => {
+            sails.log.error("Error getting project", error);
         });
     },
     getJstreeProjectsByUser: function (req, res) {
-        ProjectService.getProjectByUser(req.param('id'), function (err, projects) {
-            if (err) {
-                res.badRequest();
-                return;
-            }
+        ProjectService.getProjectByUser(req.param('id')).then((projects) => new Promise((resolve, reject) =>{
             var jstreeProjects = [];
             async.each(projects, function(project, callback) {
-                ProjectService.getProjectById(project.id, function(err, fullProject){
-                    if (fullProject.isActive !== false) {
-                        JstreeService.ProjectToItem(fullProject);
-                        jstreeProjects.push(fullProject);
+                ProjectService.getProjectById(project.id).then((populatedProject) => {
+                    if (populatedProject.isActive !== false) {
+                        JstreeService.ProjectToItem(populatedProject);
+                        
+                        jstreeProjects.push(populatedProject);
                     }
                     callback();
                 });
             }, function(err) {
-                res.json(_.orderBy(jstreeProjects, ['name'], ['asc']));
+                if (err) {
+                    reject();
+                } 
+                resolve(_.orderBy(jstreeProjects, ['name'], ['asc']));
             });
-        });
+        })).then((tree) => {
+            res.json(tree);
+        }).catch((error) => {
+            sails.log.error("Error finding project", error);
+            res.badRequest();
+        })
     }
 };
 

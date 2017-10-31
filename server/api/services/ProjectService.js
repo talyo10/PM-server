@@ -38,16 +38,16 @@ module.exports = {
     deleteProject: function(projectId) {
         return Project.destroy(projectId)
     },
-    getProjectById: function(projectId, cb) {
-        return Project.findOne(projectId).populate('nodes', { where: { isActive: true }, sort: 'type' }).exec(function(err, project){
-            cb(err, project);
-        });
+    getProjectById: function(projectId) {
+        return Project.findOne(projectId).populate('nodes', { where: { isActive: true }, sort: 'type ASC' })
+        
     },
     getNode: function(id, cb) {
-        return TNode.findOne(id).populate('childs', { where: { isActive: true }, sort: 'type' }).exec(function(err, node){
+        return TNode.findOne(id).populate("childs", { where: { isActive: true }, sort: 'type ASC' }).exec(function(err, node){
             let childs = [];
             node.childs.forEach(function(child) {
                 if(child.type == 'folder') {
+                    
                     JstreeService.FolderToItem(child);
                 }
                 childs.push(child);
@@ -57,17 +57,14 @@ module.exports = {
             cb(err, node);
         });
     },
-    getProjectByUser: function(userId, cb) {
-        User.findOne(userId).populate('projects').exec(function(err, user) {
-            cb(err,user.projects);
-        });
+    getProjectByUser: function(userId) {
+        return User.findOne(userId).populate("projects").then((user) => {
+            return user.projects
+        })
     },
     getJstreeProjectsByUser: function(userId, cb) {
         User.findOne(userId).populate('projects').exec(function(err, user) {
             cb(err,user.projects);
         });
-        /*User.findOne(userId).populate('projects').exec(function(err, user) {
-            cb(err,user);
-        });*/
     }
 };
