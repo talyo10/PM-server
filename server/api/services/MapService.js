@@ -1043,68 +1043,63 @@ module.exports = {
             return Map.update({ id: newMap.id }, newMap)
         })
     },
-    addMapAttr: function (map, name, value, type, cb) {
-        var latestStructure = generateVersion(map, map.versions.length - 1);
-        sails.log.debug("****************   latest structure add map attribute  *********************");
-        sails.log.debug(latestStructure);
-        sails.log.debug("****************************************************************************");
-        value = JSON.parse(value);
-        if (!latestStructure.attributes) {
-            latestStructure.attributes = {};
-            latestStructure.attributes[name] = {
-                name: name,
-                type: type,
-                value: value
-            };
-            if (type === "list") {
-                latestStructure.attributes[name].value = JSON.stringify([value]);
+    addMapAttr: function (map, name, value, type) {
+        return new Promise((resolve, reject) => {
+            var latestStructure = generateVersion(map, map.versions.length - 1);
+            sails.log.debug("****************   latest structure add map attribute  *********************");
+            sails.log.debug(latestStructure);
+            sails.log.debug("****************************************************************************");
+            value = JSON.parse(value);
+            if (!latestStructure.attributes) {
+                latestStructure.attributes = {};
+                latestStructure.attributes[name] = {
+                    name: name,
+                    type: type,
+                    value: value
+                };
+                if (type === "list") {
+                    latestStructure.attributes[name].value = JSON.stringify([value]);
+                }
             }
-        }
-        else if (!latestStructure.attributes[name] && type == "string") {
-            latestStructure.attributes[name] = {
-                name: name,
-                type: type,
-                value: value
-            };
-        }
-        else if (!latestStructure.attributes[name] && type == "list") {
-            latestStructure.attributes[name] = {
-                name: name,
-                type: type,
-                value: JSON.stringify([value])
-            };
-        }
-        else if (latestStructure.attributes[name].type == "string" && type == "string") {
-            latestStructure.attributes[name].value = value;
-            latestStructure.attributes[name].type = type;
-        }
-        else if (latestStructure.attributes[name].type == "list" && type == "string") {
-            latestStructure.attributes[name].value = value;
-            latestStructure.attributes[name].type = type;
-        }
-        else if (latestStructure.attributes[name].type == "list" && type == "list") {
-            var jsList = JSON.parse(latestStructure.attributes[name].value);
-            jsList.push(value);
-            latestStructure.attributes[name].value = JSON.stringify(jsList);
-        }
-        else if ((latestStructure.attributes[name].type === "string" || latestStructure.attributes[name].type === "") && type == "list") {
-            latestStructure.attributes[name] = {
-                name: name,
-                type: type,
-                value: JSON.stringify([value])
-            };
-        }
-        map.mapView = latestStructure;
-        addNewMapVersion(map, function (err, version, updatedMap) {
-            sails.log.info(updatedMap);
-            if (updatedMap.length > 0) {
-                updatedMap = updatedMap[0];
-                var latestStructure = generateVersion(updatedMap, updatedMap.versions.length - 1);
-                sails.log.debug("*****");
-                sails.log.debug(JSON.stringify(latestStructure.attributes));
+            else if (!latestStructure.attributes[name] && type == "string") {
+                latestStructure.attributes[name] = {
+                    name: name,
+                    type: type,
+                    value: value
+                };
             }
-            return cb(err, updatedMap);
-        });
+            else if (!latestStructure.attributes[name] && type == "list") {
+                latestStructure.attributes[name] = {
+                    name: name,
+                    type: type,
+                    value: JSON.stringify([value])
+                };
+            }
+            else if (latestStructure.attributes[name].type == "string" && type == "string") {
+                latestStructure.attributes[name].value = value;
+                latestStructure.attributes[name].type = type;
+            }
+            else if (latestStructure.attributes[name].type == "list" && type == "string") {
+                latestStructure.attributes[name].value = value;
+                latestStructure.attributes[name].type = type;
+            }
+            else if (latestStructure.attributes[name].type == "list" && type == "list") {
+                var jsList = JSON.parse(latestStructure.attributes[name].value);
+                jsList.push(value);
+                latestStructure.attributes[name].value = JSON.stringify(jsList);
+            }
+            else if ((latestStructure.attributes[name].type === "string" || latestStructure.attributes[name].type === "") && type == "list") {
+                latestStructure.attributes[name] = {
+                    name: name,
+                    type: type,
+                    value: JSON.stringify([value])
+                };
+            }
+            map.mapView = latestStructure;
+    
+            resolve(addNewMapVersion(map));
+        })
+        
     },
     MapToItem: function (map) {
         map.text = map.name;
