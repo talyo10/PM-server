@@ -293,7 +293,7 @@ module.exports = {
             return agent
         })
     },
-    getNode: function(id, cb) {
+    getNode: function(id) {
         return SNode.findOne(id).populate('children').then((node) => new Promise((res, rej) =>{
             let childs = [];
             async.each(node.children, function(child, callback) {
@@ -339,21 +339,19 @@ module.exports = {
         }));
     },
     listenOnAgents: function () {
-        BaseAgentsService.getAgents(function (err, agents) {
-            if (agents && agents.length>0)
+        BaseAgentsService.getAgents().then((agents) => {
+            if (agents && agents.length > 0)
             {
                 agents.forEach(function(agent) {
                     listenOnAgent(agent);
                 }, this);
             }
-        });
+        })
     },
-    loadBaseAgent: function (cb) {
-        BaseAgentsService.getAgents(function (err, agents) {
-            if (agents && agents.length>0)
+    loadBaseAgent: function () {
+        return BaseAgentsService.getAgents().then((agents) => {
+            if (agents && agents.length > 0)
                 BaseAgentsService.baseAgent = agents[0];
-
-            cb(err,agents);
         })
     },
     getAgentsState: function() {
