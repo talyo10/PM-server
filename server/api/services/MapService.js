@@ -703,7 +703,7 @@ function addNewMapVersion(map) {
     });
 }
 
-function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace, cb) {
+function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace) {
     var socket = sails.io;
     sails.log.warn("executing map!");
 
@@ -882,7 +882,7 @@ module.exports = {
             return map.versions
         })
     },
-    getVersion: function (mapId, vid, cb) {
+    getVersion: function (mapId, vid) {
         return Map.findOne(mapId).then((map) => {
             return map.versions[vid]
         });
@@ -1027,7 +1027,7 @@ module.exports = {
                 });
     },
     executeMap: executeMapById,
-    updateMapProject: function (mapId, projectId, cb) {
+    updateMapProject: function (mapId, projectId) {
         return Map.update(mapId, { project: projectId })
     },
     duplicateMap: function (map, dmapId) {
