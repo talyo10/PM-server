@@ -62,9 +62,9 @@ module.exports = {
             return user.projects
         })
     },
-    getJstreeProjectsByUser: function(userId, cb) {
-        User.findOne(userId).populate('projects').exec(function(err, user) {
-            cb(err,user.projects);
+    getJstreeProjectsByUser: function(userId) {
+        return User.findOne(userId).populate('projects').then((user) => {
+            return user.projects
         });
     }
 };
