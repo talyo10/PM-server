@@ -42,8 +42,8 @@ module.exports = {
         return Project.findOne(projectId).populate('nodes', { where: { isActive: true }, sort: 'type ASC' })
         
     },
-    getNode: function(id, cb) {
-        return TNode.findOne(id).populate("childs", { where: { isActive: true }, sort: 'type ASC' }).exec(function(err, node){
+    getNode: function(id) {
+        return TNode.findOne(id).populate("childs", { where: { isActive: true }, sort: 'type ASC' }).then((node) => {
             let childs = [];
             node.childs.forEach(function(child) {
                 if(child.type == 'folder') {
@@ -54,7 +54,7 @@ module.exports = {
 
             });
             node.childs = childs;
-            cb(err, node);
+            return node
         });
     },
     getProjectByUser: function(userId) {
