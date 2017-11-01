@@ -28,11 +28,11 @@ module.exports = {
 		var filename;
 		try {
 			filename = req.file('file')._files[0].stream.filename;
-	
+
 		} catch (error) {
 			sails.log.error("can't read file " + error);
 			return res.badRequest('No file was uploaded ' + error);
-		} 
+		}
 		req.file('file').upload({
 			dirname: path.join(sails.config.appPath, ".tmp", "uploads", filename),
 			// don't allow the total upload size to exceed ~10MB
@@ -73,7 +73,7 @@ module.exports = {
 						})
 					}
 				}
-				res.ok();	
+				res.ok();
 			});
 		});
 	},
@@ -88,14 +88,16 @@ module.exports = {
 	},
 
 	installAgents: function (req, res) {
-		var filename;
+	  /* Installing agent on server and agents */
+		let filename;
 		try {
+      // trying get filename
 			filename = req.file('file')._files[0].stream.filename;
-	
 		} catch (error) {
 			sails.log.error("can't read file " + error);
 			return res.badRequest('No file was uploaded ' + error);
-		} 
+		}
+		// configuring file upload
 		req.file('file').upload({
 			dirname: path.join(sails.config.appPath, ".tmp", "uploads", filename),
 			// don't allow the total upload size to exceed ~10MB
@@ -110,10 +112,10 @@ module.exports = {
 				return res.badRequest('No file was uploaded');
 			}
 
-			var agentsNames = {};
-
+			let agentsNames = {};
 			async.each(uploadedFiles, function(upFile, callback){
-				DedicatedAgentService.addBaseAgent(req.user, upFile.fd, function(err) {
+        // for earch file uploaded, send to add dedicated agent
+				DedicatedAgentService.addDedicatedAgent(req.user, upFile.fd, function(err) {
 					if (err) {
 						return callback(err);
 					}
@@ -124,11 +126,11 @@ module.exports = {
 				if (err) {
 					res.badRequest(err);
 				}
-				for (var agentName in agentsNames) {
+				for (let agentName in agentsNames) {
 					if (agentsNames.hasOwnProperty(agentName)) {
-						var agentFile = agentsNames[agentName];
+						let agentFile = agentsNames[agentName];
 						fs.readdir(path.join(sails.config.appPath, ".tmp", "uploads", agentFile.filename), (err, files) => {
-							var agentFileName = files[0];
+							let agentFileName = files[0];
 							fs.rename(path.join(sails.config.appPath, ".tmp", "uploads", agentFile.filename, agentFileName), path.join(BaseAgentsService.modulesPath, agentName), function(err){
 								if (err) {
 									sails.log.error("Can't load plugin file: " + err);
