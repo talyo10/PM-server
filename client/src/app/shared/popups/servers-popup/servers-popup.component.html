@@ -87,12 +87,12 @@
           <div class="tr" *ngFor="let agent of servers | serverFilter:search">
             <div *ngIf="agent.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
             <div *ngIf="!agent.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
-            <div class="cell md-cell"><span>{{ agent.name }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.url }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.hostname }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.arch }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.freeSpace }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.respTime }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.name }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.url }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.hostname }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.arch }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.freeSpace }}</span></div>
+            <div class="cell md-cell"><span>{{ agent.data.respTime }}</span></div>
             <div class="cell sm-cell">
               <div class="form-group has-checkbox">
                 <label class="form-checkbox">
