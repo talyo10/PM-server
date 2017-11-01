@@ -7,7 +7,7 @@
   </header>
   <section>
     <div class="grid">
-      <div class="row" *ngFor="let server of servers | filterBy: ['name']: search.text | serverFilter:search">
+      <div class="row" *ngFor="let server of agents | filterBy: ['name']: search.text | serverFilter:search">
         <div class="cell sm-cell"><span>{{ server.data.name }}</span></div>
         <div *ngIf="server.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
         <div *ngIf="!server.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>

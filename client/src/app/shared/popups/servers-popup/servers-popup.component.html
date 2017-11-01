@@ -82,9 +82,12 @@
           </div>
         </div>
       </div>
-      <div class="tbody-wrapper">
+      <div class="tbody-wrapper" *ngIf="!agents">
+        No agents found.
+      </div>
+      <div class="tbody-wrapper" *ngIf="agents">
         <div class="tbody">
-          <div class="tr" *ngFor="let agent of servers | serverFilter:search">
+          <div class="tr" *ngFor="let agent of agents | serverFilter:search">
             <div *ngIf="agent.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
             <div *ngIf="!agent.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
             <div class="cell md-cell"><span>{{ agent.data.name }}</span></div>
@@ -96,7 +99,7 @@
             <div class="cell sm-cell">
               <div class="form-group has-checkbox">
                 <label class="form-checkbox">
-                    <input type="checkbox" [ngModel]="this.selectedServers[agent.id]"  (ngModelChange)="onChange(agent)"><i></i>
+                    <input type="checkbox" [ngModel]="selectedServers[agent.id]"  (ngModelChange)="onSelect(agent)"><i></i>
                 </label>
               </div>
             </div>
