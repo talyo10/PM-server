@@ -68,8 +68,8 @@ export class MapService {
     return this.http.post(this.serverUrl + 'map/duplicate/' + dmapId, { name: mapName, Project: projectId }, this.options).map(this.extractData);
   }
 
-  executeMap(map, agents) {
-    return this.http.post(this.serverUrl + 'sysfile/execute', { 'map': map, agentsIds: agents }, this.options).map(this.extractData);
+  executeMap(map) {
+    return this.http.post(this.serverUrl + 'sysfile/execute', { map: map }, this.options).map(this.extractData);
   }
 
   getMapById(mapId) {

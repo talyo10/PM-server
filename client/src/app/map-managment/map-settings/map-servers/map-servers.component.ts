@@ -17,17 +17,12 @@ import * as _ from 'lodash';
 export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
 
   map: any;
-  servers: any[];
+  agents: any[];
   search: any;
   interval: any;
   currentMapSubscription: Subscription;
 
-  constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) {
-    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
-    .subscribe(
-      (map) => this.map = map
-    );
-  }
+  constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) { }
 
   ngOnInit() {
     this.search = {
@@ -35,53 +30,41 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
       text: ""
     };
 
-    this.interval = setInterval(this.getAgents(this), 5000);
-    this.getAgents(this)();
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+    .subscribe(
+      (map) => {
+        this.map = map;
+        // now make sure that when switching between maps (after this component was initiated) the agents will be set according to the new map
+        if (map && map.activeServers) {
+          this.agents = _.toArray(map.activeServers);
+        } else {
+          this.agents = null;
+        }
+      }
+    );
+
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
     if (changes['map'].currentValue != null) {
-      this.servers = _.filter(_.toArray(this.map.activeServers), (o: any) => { return o.active; });
+      this.agents = _.filter(_.toArray(this.map.activeServers), (o: any) => { return o.active; });
     }
   }
 
   ngOnDestroy() {
     this.currentMapSubscription.unsubscribe();
-    clearInterval(this.interval);
-    
-  }
-
-  getAgents(serversComponent: MapServersComponent) {
-    return () => {
-      let agentsArray = [];
-      let resServers =[];
-      var activeServers =  _.toArray(this.map.activeServers);
-      console.log(activeServers);
-      serversComponent.serverService.getAgents().subscribe((res) => {
-        let agents = res;
-        serversComponent.serverService.getStatus().subscribe((resp) => {
-          agentsArray = resp;
-          _.each(agents, (agent: any) => {
-            for(let key in agentsArray[agent.key]) {
-              agent[key] = agentsArray[agent.key][key];
-            }
-            if (_.findIndex(activeServers, (v: any) => { return v.key == agent.key; }) != -1) {
-                resServers.push(agent);
-            }
-          });
-          serversComponent.servers = resServers;
-        }, (err) => {
-          console.log(err);
-        });
-      });
-    };
   }
 
   addServer() {
     let dialog = this.modalService.open(ServersPopupComponent);
-    dialog.componentInstance.map = this.map;
     dialog.result.then((data: any) => {
-      this.servers = _.filter(_.toArray(this.map.activeServers), (o: any) => { return o.active; });
+
+      data = _.toArray(data);
+      this.map.activeServers = data;
+      console.log("PASSING MAP TO SERVICE", this.map);
+      this.mapService.updateMap(this.map).subscribe((m) => {
+        this.mapService.setCurrentMap(this.map);
+      });
     });
   }
 
