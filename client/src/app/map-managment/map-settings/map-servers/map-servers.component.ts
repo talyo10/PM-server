@@ -22,23 +22,27 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
   interval: any;
   currentMapSubscription: Subscription;
 
-  constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) {
-    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
-    .subscribe(
-      (map) => {
-        this.map = map;
-        if (map && map.activeServers) {
-          this.agents = _.toArray(map.activeServers);
-        }
-      }
-    );
-  }
+  constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) { }
 
   ngOnInit() {
     this.search = {
       type: 1, /* Search by name */
       text: ""
     };
+
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+    .subscribe(
+      (map) => {
+        this.map = map;
+        // now make sure that when switching between maps (after this component was initiated) the agents will be set according to the new map
+        if (map && map.activeServers) {
+          this.agents = _.toArray(map.activeServers);
+        } else {
+          this.agents = null;
+        }
+      }
+    );
+
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
@@ -54,9 +58,13 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
   addServer() {
     let dialog = this.modalService.open(ServersPopupComponent);
     dialog.result.then((data: any) => {
+
+      data = _.toArray(data);
       this.map.activeServers = data;
-      this.mapService.setCurrentMap(this.map);
-      this.mapService.updateMap(this.map);
+      console.log("PASSING MAP TO SERVICE", this.map);
+      this.mapService.updateMap(this.map).subscribe((m) => {
+        this.mapService.setCurrentMap(this.map);
+      });
     });
   }
 

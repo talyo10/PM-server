@@ -1,13 +1,12 @@
 import { OnInit, OnDestroy, Component, Input } from '@angular/core';
 
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-
 import * as _ from 'lodash';
 import {Subscription} from "rxjs/Subscription";
 
 import { ServersService } from "../../services/servers.service";
-import {MapServersComponent} from "../../../map-managment/map-settings/map-servers/map-servers.component";
-import {MapService} from "../../services/map.service";
+import { MapService } from "../../services/map.service";
+import { MapServersComponent } from "../../../map-managment/map-settings/map-servers/map-servers.component";
 
 
 @Component({
@@ -44,7 +43,6 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
     });
 
     this.agentsListSubscription = this.serverService.getAgentsListAsObservable().subscribe((agents) => {
-      console.log("Got agents list", agents);
       this.agents = agents;
     });
   }
@@ -62,12 +60,12 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
     this.dialog.close(this.selectedServers);
   }
 
-  onSelect(agent) {
-    console.log(agent);
-    if (!this.selectedServers[agent.id]) {
-      this.selectedServers[agent.id] = agent;
+  onSelect(node) {
+    console.log(node);
+    if (!this.selectedServers[node.id]) {
+      this.selectedServers[node.id] = node.data;
     } else {
-      delete this.selectedServers[agent.id];
+      delete this.selectedServers[node.id];
     }
   }
 
