@@ -69,7 +69,7 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
     this.stencilPaper = new joint.dia.Paper({
       el: jQuery('#stencil'),
       height: 434,
-      width: 238,
+      width: 222,
       model: this.stencilGraph,
       interactive: false
     });

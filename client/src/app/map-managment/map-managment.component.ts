@@ -232,6 +232,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
     let newMargin = mapControl.width() - mapEditor.width() - (rightPanel.width() - this.minRightPanelWidh);
     this.mapEditor.nativeElement.style.marginLeft =  newMargin + 'px';
+    this.leftPanelComponent.resizeAgentsTree();
   }
 
   validateRightPanelResize(event: ResizeEvent): boolean {
@@ -258,6 +259,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
       rightPanel.width(event.rectangle.width);
     }
     mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
+    this.leftPanelComponent.resizeAgentsTree();
   }
 
   getMessages($event: any[]) {
