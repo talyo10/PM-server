@@ -65,6 +65,8 @@ var deleteNode = function(nodeId) {
 var listenOnAgent = function(agent) {
     sails.log.debug(`agentUrl for interval ${JSON.stringify(agent, null, 2)}`);
     agent = JSON.parse(JSON.stringify(agent));
+    sails.log.info("agent key", agent.key);
+    sails.log.info("agent name", agent.name);
     var iid = setInterval(function(){
         sails.log.debug(`inside interval ${JSON.stringify(agent, null, 2)}`);
         var start = new Date();
@@ -75,6 +77,7 @@ var listenOnAgent = function(agent) {
                         }
                     },
                     function (error, response, body) {
+                        sails.log(error, response, body);
                         sails.log.debug("1) Got keep alive status: " + JSON.stringify(body, null, 2));
                         try{
                             body = JSON.parse(body);
@@ -264,6 +267,8 @@ module.exports = {
                     BaseAgentsService.installPluginsOnAgent(newAgent, function() {
                     });
                 }
+                sails.log.warn("********* ***********");
+                sails.log.warn(newAgent);
                 listenOnAgent(newAgent);
                 return newAgent
             });
@@ -338,8 +343,12 @@ module.exports = {
             });
         }));
     },
+    getAgentsData: function() {
+        return BaseAgent.find()
+    }
+    ,
     listenOnAgents: function () {
-        BaseAgentsService.getAgents().then((agents) => {
+        BaseAgentsService.getAgentsData().then((agents) => {
             if (agents && agents.length > 0)
             {
                 agents.forEach(function(agent) {
