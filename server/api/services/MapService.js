@@ -167,7 +167,6 @@ var jsonpatch = require('fast-json-patch'),
         }
     },
     addActionResultToContext = function (context, linkId, processId, actionName, result, status) {
-        sails.log.debug("action result! " + result);
         for (var i = 0; i < context.map.links.length; i++) {
             var link = context.map.links[i];
             sails.log("log log log link.id: " + link.id + "linkId: " + linkId);
@@ -692,7 +691,7 @@ function addNewMapVersion(map) {
     });
 }
 
-function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace) {
+function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     var socket = sails.io;
     sails.log.warn("executing map!");
 
@@ -797,15 +796,10 @@ function executeMapById(userId, mapId, versionIndex, agentsIds, cleanWorkspace) 
         executionResult.agents = agents;
         sails.log.warn("executing on " + agents.length + " base agents");
         executionIndex = map.versions[versionIndex].executions.length;
-
-        console.log("***** **** ****** ****** **** ****** ****** ")
-
         return new Promise((resolve, reject) => {
             async.each(agents,
                 runMapFromAgent(mapVersionStructure.links, mapId, versionIndex, executionIndex, socket, JSON.parse(JSON.stringify(globalContext)), mapVersionStructure, executionResult, cleanWorkspace),
                 function (err) {
-                    console.log("!!!!!!!!!!!!!!!!!!!!");
-                    console.log("Done running.");
                     if (err) {
 
                         sails.log.error(JSON.stringify(err));

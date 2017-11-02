@@ -85,18 +85,22 @@ export class MapEditorComponent implements OnInit, OnDestroy {
         map.versionIndex++;
       }
       /* execute the map */
-      this.mapService.executeMap(map, []).subscribe((mapResult) => {
-        let res = '';
-        let vid = map.versionIndex;
-        let eid = mapResult.resObj.executionId;  
-        if (mapResult.res) {
-          res = mapResult.res;
-        } else if (mapResult.error) {
-          res = mapResult.error;
-        }
-        this.onExecution.emit(res);
-        this.executingMap = false;
-      });
+      this.mapService.executeMap(map).subscribe(
+          (mapResult) => {
+          let res = '';
+          let vid = map.versionIndex;
+          let eid = mapResult.resObj.executionId;  
+          if (mapResult.res) {
+            res = mapResult.res;
+          } else if (mapResult.error) {
+            res = mapResult.error;
+          }
+          this.onExecution.emit(res);
+          this.executingMap = false;
+        }, 
+        (error) => {
+          this.executingMap = false;
+        });
     });
   }
 
