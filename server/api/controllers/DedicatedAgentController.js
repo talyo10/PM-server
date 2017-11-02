@@ -99,7 +99,8 @@ module.exports = {
 		}
 		// configuring file upload
 		req.file('file').upload({
-			dirname: path.join(sails.config.appPath, ".tmp", "uploads", filename),
+			dirname: path.join(BaseAgentsService.modulesPath),
+			saveAs: filename,
 			// don't allow the total upload size to exceed ~10MB
 			maxBytes: 10000000
 		}, function whenDone(err, uploadedFiles) {
