@@ -128,7 +128,6 @@ var jsonpatch = require('fast-json-patch'),
             res = exp.text;
         }
         else {
-            sails.log(util.inspect(context));
             res = vm.runInNewContext(exp.text, context);
         }
         var param = {
@@ -202,13 +201,13 @@ var jsonpatch = require('fast-json-patch'),
             if (runningMaps[mapId] == runStatuses.Stopped) {
                 vm.runInNewContext(map_onStop, executionContext);
                 msg = {
-                            date: new Date(),
-                            agent: agent.name,
-                            map: mapName,
-                            msg: 'Map Paused or Stopped.\n'
+                    date: new Date(),
+                    agent: agent.name,
+                    map: mapName,
+                    msg: 'Map Paused or Stopped.\n'
                 };
                 socket.emit('update', JSON.stringify(msg));
-                callback('error: Map Stopped');
+                callback('Map Stopped');
                 return;
             }
             if (!BaseAgentsService.liveAgents[agent.key].runningMaps) {
@@ -232,8 +231,6 @@ var jsonpatch = require('fast-json-patch'),
             }
 
             for (var param in action.params) {
-                sails.log.info('***********************************');
-                sails.log.info(param);
                 try {
                     action.params[param] = evaluateExpression(action.params[param], executionContext, linkId, processId, action.name);
                 } catch (e) {
@@ -243,7 +240,7 @@ var jsonpatch = require('fast-json-patch'),
                         status: -1,
                         result: "Error:" + e
                     };
-                    sails.log.error(e);
+                    sails.log.error("Error execution map", e);
                     msg = {
                             date: new Date(),
                             agent: agent.name,
@@ -286,9 +283,6 @@ var jsonpatch = require('fast-json-patch'),
                             res: e
                         };
                     }
-                    sails.log("-----------------");
-                    sails.log(body);
-                    sails.log("-----------------");
                     if (!error && response.statusCode == 200) {
                         msg = {
                             date: new Date(),
@@ -297,6 +291,9 @@ var jsonpatch = require('fast-json-patch'),
                             msg: 'finished running action ' + action.name + ":" + body.res + "\n"
                         };
                         socket.emit('update', JSON.stringify(msg));
+                        
+                        LogService.create({ msg: "Finish running map", instanceId: mapId, instanceModel: 'Map', reason: 'execution', status: 'success' });
+
                         addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
                         executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
                             startTime: startTime,
@@ -695,6 +692,8 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     var socket = sails.io;
     sails.log.warn("executing map!");
 
+    // LogService.toast();
+
     var user = null;
     var map = null;
     var executionContext = null;
@@ -708,6 +707,9 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         return Map.findOne(mapId)
     }).then((rmap) => {
         map = rmap;
+
+        LogService.info("Starting map execution", map, "execution");
+    
         if (versionIndex <= 0) versionIndex = map.versions.length - 1;
         if (!map || map.versions.length - 1 < versionIndex) {
             msg = {
@@ -717,6 +719,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 msg: 'Map or map version Not Found'
             };
             socket.emit('update', JSON.stringify(msg));
+            LogService.error("Map or map version not found", map, "execution");
             throw new Error("Whoops! Map or map version Not Found");
         } else {
             map.versions[versionIndex].status = sails.config.constants.runStatuses.Running;
@@ -755,6 +758,8 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 map: map.name,
                 msg: "failed running map " + executionResult.name
             };
+            LogService.error("Failed running map", map, "execution");
+            
             throw new Error("Failed running map " + executionResult.name);
         }
         sails.log("Running map onstart hook: " + map.name);
@@ -768,6 +773,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         try {
             res = vm.runInNewContext(map_filterServers, executionContext);
         } catch (e) {
+            LogService.error("Failed running map", map, "execution");
             throw new Error("Error: undefinde variable " + e);
         }
         if (!res) {
@@ -783,11 +789,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         }
         var agents = {};
         var agentsStats = BaseAgentsService.liveAgents;
-        console.log('************');
         for (var mapAgent of map.activeServers) {
-            sails.log.warn("88 ** 88 ** 88");
-            sails.log.warn(">>>", mapAgent.key);
-            console.log("-->", agentsStats[mapAgent.key].alive);
             if (mapAgent && mapAgent.key && agentsStats[mapAgent.key].alive) {
                 agents[mapAgent.key] = mapAgent;
             }
@@ -801,9 +803,9 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 runMapFromAgent(mapVersionStructure.links, mapId, versionIndex, executionIndex, socket, JSON.parse(JSON.stringify(globalContext)), mapVersionStructure, executionResult, cleanWorkspace),
                 function (err) {
                     if (err) {
-
                         sails.log.error(JSON.stringify(err));
                         map.versions[versionIndex].status = sails.config.constants.runStatuses.Failed;
+                        LogService.error("Failed running map", map, "execution");
                         reject(JSON.stringify(err))
                     }
 
@@ -818,11 +820,13 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 msg = {
                     date: new Date(),
                     map: map.name,
-                    msg: "finished running map " + map.name
+                    msg: "Finished running map " + map.name
                 };
+                LogService.success("Finish running map", map, "execution");
                 return { res: JSON.stringify(msg), resObj: updatedMap }
             })
         }).catch((error) => {
+            LogService.error("Error executing map " + error, map, "execution");
             sails.log.error("ERROR EXECUTING MAP!:", error);
         })
 }

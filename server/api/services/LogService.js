@@ -17,7 +17,12 @@ function modelFor(instance) {
 
 module.exports = {
 
-    createLog: function(msg, instance, reason, status) {
+    create: function(msg, instanceId, instanceModel, reason, status) {
+        let obj = { message: msg, objectId: instanceId, model: instanceModel, reason: reason, status: status };
+        return Log.create(obj).catch((error)=> console.log(error));
+    },
+
+    createLogWithInstance: function(msg, instance, reason, status) {
         console.log("Creating log");
         let obj = { message: msg, objectId: instance.id, model: modelFor(instance), reason: reason, status: status };
         return Log.create(obj).catch((error)=> console.log(error));
@@ -28,16 +33,16 @@ module.exports = {
         return Log.find({ objectId: instance.id, model: modelFor(instance) });
     },
 
-    fail: function(msg, instance, reason) {
-        return LogService.createLog(msg, instance, reason, "error");
+    error: function(msg, instance, reason) {
+        return LogService.createLogWithInstance(msg, instance, reason, "error");
     },
 
     success: function(msg, instance, reason) {
-        return LogService.createLog(msg, instance, reason, "success");
+        return LogService.createLogWithInstance(msg, instance, reason, "success");
     },
 
     info: function(msg, instance, reason) {
-        return LogService.createLog(msg, instance, reason, "info");
+        return LogService.createLogWithInstance(msg, instance, reason, "info");
     }
 
  }
