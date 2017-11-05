@@ -114,33 +114,38 @@ module.exports = {
 			}
 
 			let agentsNames = {};
-			async.each(uploadedFiles, function(upFile, callback){
-        // for earch file uploaded, send to add dedicated agent
-				DedicatedAgentService.addDedicatedAgent(req.user, upFile.fd, function(err) {
+			async.each(uploadedFiles,
+				function(upFile, callback){
+        			// for earch file uploaded, send to add dedicated agent
+					DedicatedAgentService.addDedicatedAgent(req.user, upFile.fd).then((plugin) => {
+						if (plugin) {
+							agentsNames[plugin.type] = upFile;
+						}
+						callback();
+					}).catch((error) => {
+						sails.log.error("Error adding plugin", error);
+						callback(error);
+					})
+				},
+				function(err) {
 					if (err) {
-						return callback(err);
+						res.badRequest(err);
 					}
-					agentsNames[agent.type] = upFile;
-				});
-			},
-			function(err) {
-				if (err) {
-					res.badRequest(err);
-				}
-				for (let agentName in agentsNames) {
-					if (agentsNames.hasOwnProperty(agentName)) {
-						let agentFile = agentsNames[agentName];
-						fs.readdir(path.join(sails.config.appPath, ".tmp", "uploads", agentFile.filename), (err, files) => {
-							let agentFileName = files[0];
-							fs.rename(path.join(sails.config.appPath, ".tmp", "uploads", agentFile.filename, agentFileName), path.join(BaseAgentsService.modulesPath, agentName), function(err){
-								if (err) {
-									sails.log.error("Can't load plugin file: " + err);
-								}
-							});
-						})
+					for (let agentName in agentsNames) {
+						if (agentsNames.hasOwnProperty(agentName)) {
+							let agentFile = agentsNames[agentName];
+							fs.readdir(path.join(BaseAgentsService.modulesPath, agentFile.filename), (err, files) => {
+								let agentFileName = files[0];
+								fs.rename(path.join(BaseAgentsService.modulesPath, agentFile.filename, agentFileName), path.join(BaseAgentsService.modulesPath, agentName), function(err){
+									if (err) {
+										sails.log.error("Can't load plugin file: " + err);
+									}
+								});
+							})
+						}
 					}
-				}
-				BaseAgentsService.getAgentsState(function (agents) {
+					let agents = BaseAgentsService.getAgentsState();
+
 					async.each(
 						agents,
 						BaseAgentsService.installPluginsOnAgent,
@@ -149,7 +154,6 @@ module.exports = {
 						}
 					);
 				});
-			});
 		});
 	},
 
