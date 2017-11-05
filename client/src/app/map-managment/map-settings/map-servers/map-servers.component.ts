@@ -17,7 +17,7 @@ import * as _ from 'lodash';
 export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
 
   map: any;
-  agents: any[];
+  agents: any[] = null;
   search: any;
   interval: any;
   currentMapSubscription: Subscription;
@@ -58,12 +58,11 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
   addServer() {
     let dialog = this.modalService.open(ServersPopupComponent);
     dialog.result.then((data: any) => {
-
       data = _.toArray(data);
       this.map.activeServers = data;
       console.log("PASSING MAP TO SERVICE", this.map);
       this.mapService.updateMap(this.map).subscribe((m) => {
-        this.mapService.setCurrentMap(this.map);
+        this.mapService.selectMap(this.map);
       });
     });
   }

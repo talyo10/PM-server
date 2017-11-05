@@ -124,7 +124,6 @@ export class MapService {
     let openMaps = this.openMaps.getValue();
     if(!openMaps) {
       openMaps = [selectedMap];
-      this.setOpenMaps(openMaps);
     } else {
       let mapIndex = _.findIndex(openMaps, (map) => { return map['id'] === selectedMap.id; });
       if (mapIndex === -1) {
@@ -133,10 +132,12 @@ export class MapService {
         } else {
           openMaps[this.maxOpenMaps - 1] = selectedMap;
         }
-        this.setOpenMaps(openMaps);
       }
+      else {
+        openMaps[mapIndex] = selectedMap;
+      }
+      this.setOpenMaps(openMaps);
     }
-    
   }
   
   updateMapProject(MapId, ProjectId) {

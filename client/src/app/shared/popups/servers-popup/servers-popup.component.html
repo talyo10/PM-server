@@ -82,28 +82,42 @@
           </div>
         </div>
       </div>
-      <div class="tbody-wrapper" *ngIf="!agents">
+      <div class="tbody-wrapper" *ngIf="!agents || agents.lengt === 0">
         No agents found.
       </div>
-      <div class="tbody-wrapper" *ngIf="agents">
+      <div class="tbody-wrapper" *ngIf="agents && agents.length > 0">
         <div class="tbody">
-          <div class="tr" *ngFor="let agent of agents | serverFilter:search">
-            <div *ngIf="agent.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
-            <div *ngIf="!agent.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
-            <div class="cell md-cell"><span>{{ agent.data.name }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.data.url }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.data.hostname }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.data.arch }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.data.freeSpace }}</span></div>
-            <div class="cell md-cell"><span>{{ agent.data.respTime }}</span></div>
-            <div class="cell sm-cell">
-              <div class="form-group has-checkbox">
-                <label class="form-checkbox">
-                    <input type="checkbox" [ngModel]="selectedServers[agent.id]"  (ngModelChange)="onSelect(agent)"><i></i>
-                </label>
-              </div>
-            </div>
-          </div>
+          <tree-root #tree [nodes]="agents" [options]="treeOptions" (onMoveNode)="onMoveNode($event)">
+            <ng-template #treeNodeTemplate let-node="node.data" let-index="index">
+                <div *ngIf="!node.hasChildren" class="tr">
+                    <div *ngIf="node.data.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
+                    <div *ngIf="!node.data.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
+                    <div class="cell md-cell"><span>{{ node.data.name }}</span></div>
+                    <div class="cell md-cell"><span>{{ node.data.url }}</span></div>
+                    <div class="cell md-cell"><span>{{ node.data.hostname }}</span></div>
+                    <div class="cell md-cell"><span>{{ node.data.arch }}</span></div>
+                    <div class="cell md-cell"><span>{{ node.data.freeSpace }}</span></div>
+                    <div class="cell md-cell"><span>{{ node.data.respTime }}</span></div>
+                    <div class="cell sm-cell">
+                      <div class="form-group has-checkbox">
+                        <label class="form-checkbox">
+                            <input type="checkbox" [ngModel]="selectedServers[node.id]"  (ngModelChange)="onSelect(node)"><i></i>
+                        </label>
+                      </div>
+                    </div>
+                </div>
+                <div *ngIf="node.hasChildren" class="tr">
+                    <div class="sm-cell cell"></div>
+                    <div class="cell md-cell"><span>{{ node.name }}</span></div>
+                    <div class="cell md-cell"></div>
+                    <div class="cell md-cell"></div>
+                    <div class="cell md-cell"></div>
+                    <div class="cell md-cell"></div>
+                    <div class="cell md-cell"></div>
+                    <div class="cell md-cell"></div>
+                </div>
+            </ng-template>
+          </tree-root>
         </div>
       </div>
     </div>
