@@ -63,10 +63,9 @@ var deleteNode = function(nodeId) {
 
 
 var listenOnAgent = function(agent) {
-    sails.log.debug(`agentUrl for interval ${JSON.stringify(agent, null, 2)}`);
+
     agent = JSON.parse(JSON.stringify(agent));
     var iid = setInterval(function(){
-        sails.log.debug(`inside interval ${JSON.stringify(agent, null, 2)}`);
         var start = new Date();
         request.post(
                     agent.url + '/isalive',
@@ -75,7 +74,6 @@ var listenOnAgent = function(agent) {
                         }
                     },
                     function (error, response, body) {
-                        sails.log.debug("1) Got keep alive status: " + JSON.stringify(body, null, 2));
                         try{
                             body = JSON.parse(body);
                         } catch(e) {
@@ -85,7 +83,8 @@ var listenOnAgent = function(agent) {
                             };
                         }
                         if (!error && response.statusCode == 200) {
-                            sails.log.debug("2) Got keep alive status: " + JSON.stringify(body, null, 2));
+                            // resetting the agent.
+                            agents[agent.key] = {};
                             agents[agent.key].alive = true;
                             agents[agent.key].hostname = body.info.hostname;
                             agents[agent.key].arch = body.info.arch;
@@ -336,8 +335,12 @@ module.exports = {
             });
         }));
     },
+    getAgentsData: function() {
+        return BaseAgent.find()
+    }
+    ,
     listenOnAgents: function () {
-        BaseAgentsService.getAgents().then((agents) => {
+        BaseAgentsService.getAgentsData().then((agents) => {
             if (agents && agents.length > 0)
             {
                 agents.forEach(function(agent) {

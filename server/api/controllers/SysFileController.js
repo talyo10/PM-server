@@ -164,6 +164,11 @@ function runProcess(link, socket, mapId, mapVersion, linkIndex){
 module.exports = {
 	execute: function (req, res) {
 		var userId = req.session.passport.user;
+		if(!req.body.map.activeServers || req.body.map.activeServers.length === 0) {
+			sails.log.error("No agents selected for this map. Please select agents and then run");
+			res.badRequest("No agents selected for this map. Please select agents and then run");
+			return ;
+		}
 		if (MapService.runningMaps[req.body.map.id] == sails.config.constants.runStatuses.Running){
 			res.badRequest();
 			return;
@@ -177,53 +182,6 @@ module.exports = {
 			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
 			res.badRequest();
 		})
-       
-		/*var mapObj = req.body;
-		sandbox = {
-					map: {
-						nodes: mapObj.mapView.nodes,
-						links: mapObj.mapView.links,
-						attributes: mapObj.mapView.attributes
-						}
-				  };
-
-        MapService.getMapById(mapObj.id, function(map, err){
-            if (!map || map.versions.length-1 < mapObj.versionIndex)
-            {
-                socket.emit('update', 'Map or map version Not Found');
-                res.badRequest();
-                return;
-            }else if (map.versions[mapObj.versionIndex].status == sails.config.constants.runStatuses.Running){
-                socket.emit('update', 'Map already Running');
-                res.badRequest();
-                return;
-            }else{
-                map.versions[mapObj.versionIndex].status = sails.config.constants.runStatuses.Running;
-                MapService.updateMap(map);
-            }
-            createContext(mapObj.mapView, sandbox);
-            var links = mapObj.mapView.links;
-            sails.log(JSON.stringify(links));
-            var processesFuncs = [];
-            for (var i = 0; i < links.length; i++) {
-                var myLink = links[i];
-                processesFuncs.push(runProcess(myLink, sails.io, mapObj.id, mapObj.versionIndex, i));
-            };
-            async.series(processesFuncs, function(err, myres){
-                // if any of the file processing produced an error, err would equal that error
-                if( err ) {
-                    // One of the iterations produced an error.
-                    // All processing will now stop.
-                    return res.send('Error:'+err);
-                } else {
-                    var totalResult = "";
-                    for(var i = 0;i<myres.length; i++){
-                        totalResult = totalResult + myres[i] + "\n";
-                    }
-                    return res.send(totalResult);
-                }
-            });
-        });*/
 	},
     resumeMap: function (req, res) {
         var mapObj = req.body;
