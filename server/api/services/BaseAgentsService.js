@@ -16,31 +16,31 @@ var bytesToSize = function (bytes) {
    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
 
-var installPluginsOnAgent = function(agent, callback){
-        if (agent.alive) {
-            fs.readdir(modulesPath, (err, files) => {
-                async.each(files, 
-                    function(plugin, fileSendingCallback){
-                        var formData = {
-                            file: {
-                                value:  fs.createReadStream(path.join(modulesPath, plugin)),
-                                options: {
-                                    filename: plugin
-                                }
+var installPluginsOnAgent = function(agent) {
+    if (agent.alive) {
+        fs.readdir(modulesPath, (err, files) => {
+            async.each(files, 
+                function(plugin, fileSendingCallback){
+                    var formData = {
+                        file: {
+                            value:  fs.createReadStream(path.join(modulesPath, plugin)),
+                            options: {
+                                filename: plugin
                             }
-                        };
-                        // Post the file to the upload server
-                        request.post({url: agent.url + "/registeragent", formData: formData});
-                        fileSendingCallback();
-                    },
-                    function(err) {
-                        callback();
-                    });
-            })
-        } else {
-            callback();
-        }
-    };
+                        }
+                    };
+                    // Post the file to the upload server
+                    request.post({url: agent.url + "/registeragent", formData: formData});
+                    fileSendingCallback();
+                },
+                function(err) {
+                    console.log("finish installing");
+                });
+        })
+    } else {
+        console.log("No live agents");
+    }
+};
 
 var deleteNode = function(nodeId) {
     return SNode.findOne({ id: nodeId }).populate('children').then((node) => new Promise((res, rej) => {
@@ -259,12 +259,8 @@ module.exports = {
                 } 
                 return ;
             }).then((node) => {
-                if(node) {
-                    BaseAgentsService.installPluginsOnAgent(newAgent, function() {
-                    });
-                }
-                sails.log.warn("********* ***********");
-                sails.log.warn(newAgent);
+                // install all plugins when agents load.
+                BaseAgentsService.installPluginsOnAgent(newAgent, function() {});
                 listenOnAgent(newAgent);
                 return newAgent
             });
@@ -363,7 +359,7 @@ module.exports = {
         var resAgents = {};
         for(var prop in agents){
             var agent = agents[prop];
-            resAgents[prop] = {alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime};
+            resAgents[prop] = { alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime, url: agent.url };
         }
         return resAgents
     },
