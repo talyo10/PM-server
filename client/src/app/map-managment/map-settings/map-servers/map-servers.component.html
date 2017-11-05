@@ -6,13 +6,16 @@
         </div>
   </header>
   <section>
-    <div class="grid">
+    <div class="grid" *ngIf="agents && agents.length > 0">
       <div class="row" *ngFor="let agent of agents | filterBy: ['name']: search.text | serverFilter:search">
         <div class="cell sm-cell"><span>{{ agent.name }}</span></div>
         <div *ngIf="agent.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
         <div *ngIf="!agent.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
       </div>
 
+    </div>
+    <div class="grid" *ngIf="!agents || agents.length === 0">
+      No agents selected for this map.
     </div>
   </section>
   <footer>
