@@ -293,7 +293,7 @@ var jsonpatch = require('fast-json-patch'),
                         };
                         socket.emit('update', JSON.stringify(msg));
                         
-                        LogService.create({ msg: "Finish running map", instanceId: mapId, instanceModel: 'Map', reason: 'execution', status: 'success' });
+                        SystemLogService.create({ msg: "Finish running map", instanceId: mapId, instanceModel: 'Map', reason: 'execution', status: 'success' });
 
                         addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
                         executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
@@ -693,8 +693,6 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     var socket = sails.io;
     sails.log.warn("executing map!");
 
-    // LogService.toast();
-
     var user = null;
     var map = null;
     var executionContext = null;
@@ -709,7 +707,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     }).then((rmap) => {
         map = rmap;
 
-        LogService.info("Starting map execution", map, "execution");
+        SystemLogService.info("Starting map execution", map, "execution");
     
         if (versionIndex <= 0) versionIndex = map.versions.length - 1;
         if (!map || map.versions.length - 1 < versionIndex) {
@@ -720,7 +718,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 msg: 'Map or map version Not Found'
             };
             socket.emit('update', JSON.stringify(msg));
-            LogService.error("Map or map version not found", map, "execution");
+            SystemLogService.error("Map or map version not found", map, "execution");
             throw new Error("Whoops! Map or map version Not Found");
         } else {
             map.versions[versionIndex].status = sails.config.constants.runStatuses.Running;
@@ -759,7 +757,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 map: map.name,
                 msg: "failed running map " + executionResult.name
             };
-            LogService.error("Failed running map", map, "execution");
+            SystemLogService.error("Failed running map", map, "execution");
             
             throw new Error("Failed running map " + executionResult.name);
         }
@@ -774,7 +772,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         try {
             res = vm.runInNewContext(map_filterServers, executionContext);
         } catch (e) {
-            LogService.error("Failed running map", map, "execution");
+            SystemLogService.error("Failed running map", map, "execution");
             throw new Error("Error: undefinde variable " + e);
         }
         if (!res) {
@@ -806,7 +804,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                     if (err) {
                         sails.log.error(JSON.stringify(err));
                         map.versions[versionIndex].status = sails.config.constants.runStatuses.Failed;
-                        LogService.error("Failed running map", map, "execution");
+                        SystemLogService.error("Failed running map", map, "execution");
                         reject(JSON.stringify(err))
                     }
 
@@ -823,11 +821,11 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                     map: map.name,
                     msg: "Finished running map " + map.name
                 };
-                LogService.success("Finish running map", map, "execution");
+                SystemLogService.success("Finish running map", map, "execution");
                 return { res: JSON.stringify(msg), resObj: updatedMap }
             })
         }).catch((error) => {
-            LogService.error("Error executing map " + error, map, "execution");
+            SystemLogService.error("Error executing map " + error, map, "execution");
             sails.log.error("ERROR EXECUTING MAP!:", error);
         })
 }
