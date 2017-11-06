@@ -8,6 +8,9 @@
  * For more information on configuration, check out:
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.http.html
  */
+var path = require('path');
+var express = require('express');
+var app = express();
 
 module.exports.http = {
 
@@ -47,6 +50,7 @@ module.exports.http = {
       'bodyParser',
       'handleBodyParserError',
       'compress',
+      'staticMiddleware',
       'methodOverride',
       'poweredBy',
       '$custom',
@@ -65,6 +69,12 @@ module.exports.http = {
 
     myRequestLogger: function (req, res, next) {
       sails.log("Requested :: ", req.method, req.url);
+      return next();
+    },
+
+    staticMiddleware: function(req, res, next) {
+      // servers the static folder
+      app.use(express.static(path.join(sails.config.appPath, 'static')));
       return next();
     }
 
