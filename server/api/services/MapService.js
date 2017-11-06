@@ -7,6 +7,7 @@ var jsonpatch = require('fast-json-patch'),
     gitrepo = require('../../repos/git-cli'),
     util = require('util'),
     YAML = require('json2yaml'),
+    path = require('path'),
     NO_SUCH_MAP_ERR = "Map doesn't exist",
     map_filterServers = 'filterServers();',
     map_onStart = '(function() { if(typeof onStart === \'undefined\'){} else { onStart(); } })();',
@@ -659,8 +660,8 @@ runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, 
 };
 
 var libpm = '';
-sails.log(__dirname);
-fs.readFile(__dirname + '/../../assets/libs/lib_production_map.js', 'utf8', function (err, data) {
+fs.readFile(path.join(sails.config.appPath, 'static/libs/lib_production_map.js'), 'utf8', function (err, data) {
+    // opens the lib_production file. this file is used for user to overwrite custom function at map code. 
     if (err) {
         return console.log(err);
     }
