@@ -6,7 +6,8 @@ var request = require('request');
 var path = require('path');
 var hooks = require('./HooksService').hooks;
 
-function addDedicatedAgent(user, file, callback) {
+function addDedicatedAgent(user, file) {
+    return new Promise((resolve, reject) => {
         fs.createReadStream(file)
             .pipe(unzip.Parse())
             .on('entry', function (entry) {
@@ -18,33 +19,26 @@ function addDedicatedAgent(user, file, callback) {
                     entry.pipe(writer);
                     entry.on('readable', function() {
                         var agent = JSON.parse(writer.toString());
-                        DedicatedAgent.findOne({type: agent.type}).then(function (dagent, err) {
-                            if (err) {
-                                return callback(err);
-                            }
-                            else if (!dagent) {
-                                DedicatedAgent.create(agent, function (err, model) {
-                                    if (err) {
-                                        return callback(err);
-                                    }
+                        DedicatedAgent.findOne({ type: agent.type }).then((plugin) => {
+                           if (!plugin) {
+                                DedicatedAgent.create(agent).then((model) => {
                                     hooks.addPlugin(user, model);
-                                    callback();
-                                });   
+                                    resolve(model);
+                                }).catch((error) => reject(error));   
                             } else {
-                                BaseAgent.update({type: agent.type}, agent).exec(function (err, updatedAgent) {        
-                                    if (err) {
-                                      return  callback(err);
-                                    } 
-                                    callback();
-                                });
+                                DedicatedAgent.update({ type: agent.type }, agent).then((updatedPlugin) => {        
+                                    resolve(updatedPlugin);
+                                }).catch((error) => reject(error));
                             }
                         });
                     });
                 } else {
                     entry.autodrain();
+                    resolve();
                 }
-            });
-    }
+        });
+    })
+}
 
 module.exports = {
     loadAgents: function() {

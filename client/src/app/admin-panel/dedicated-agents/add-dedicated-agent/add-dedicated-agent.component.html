@@ -25,7 +25,7 @@
     </tbody>
   </section>
   <footer>
-    <button class="btn-event" type="button" (click)="uploader.uploadAll();" [disabled]="!uploader.getNotUploadedItems().length"><i class="pmap-26"></i>Install</button>
+    <button class="btn-event" type="button" (click)="uploader.uploadAll(); closeWindow();" [disabled]="!uploader.getNotUploadedItems().length"><i class="pmap-26"></i>Install</button>
     <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Close</button>
   </footer>
 </div>
