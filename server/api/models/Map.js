@@ -12,10 +12,6 @@ module.exports = {
       type: 'string',
       required: true
     },
-    activeServers: {
-      type: 'json',
-      defaultsTo: {}
-    },
     structure: {
       type: 'json',
       defaultsTo: {
@@ -41,6 +37,11 @@ module.exports = {
     isActive: {
       type: 'boolean',
       defaultsTo: true
+    },
+    agents: {
+      collection: 'baseagent',
+      via: 'agent',
+      through: 'mapagent'
     }
 
   }
