@@ -164,15 +164,11 @@ function runProcess(link, socket, mapId, mapVersion, linkIndex){
 module.exports = {
 	execute: function (req, res) {
 		var userId = req.session.passport.user;
-		if(!req.body.map.activeServers || req.body.map.activeServers.length === 0) {
-			sails.log.error("No agents selected for this map. Please select agents and then run");
-			res.badRequest("No agents selected for this map. Please select agents and then run");
-			return ;
-		}
 		if (MapService.runningMaps[req.body.map.id] == sails.config.constants.runStatuses.Running){
 			res.badRequest();
 			return;
 		}
+		
 		MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Running;
 		MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData).then((result) => {
 			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;

@@ -60,9 +60,9 @@ var jsonpatch = require('fast-json-patch'),
     updateMap = function (map) {
         return Map.update({ id: map.id }, map);
     },
-    updateMapOnFinish = function (map, executionContext) {
+    updateMapOnFinish = function (mapId, executionContext) {
         var umap = vm.runInNewContext(map_getMapValue, executionContext);
-        return Map.update({ id: map }, umap);
+        return Map.update({ id: mapId }, umap);
     },
     updateAgent = function (agent, executionContext) {
         var uAgent = vm.runInNewContext(map_getCurrentAgentValue, executionContext);
@@ -729,7 +729,7 @@ fs.readFile(path.join(sails.config.appPath, 'static/libs/lib_production_map.js')
 });
 
 function addNewMapVersion(map) {
-    return getMap(map.id).then((oldMap) => {
+    return Map.findOne(map.id).populate("agents").then((oldMap) => {
         if (!oldMap || oldMap === "") {
             sails.log.error("Problem loading map");
         }
@@ -745,10 +745,7 @@ function addNewMapVersion(map) {
             oldMap.versions.push(version);
         }
 
-        oldMap.activeServers = map.activeServers;
-        return Map.update({ id: map.id }, oldMap)
-    }).then((updatedMap) => {
-        return updatedMap
+        return oldMap.save();
     });
 }
 
@@ -794,7 +791,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
 
     return User.findOne({ id: userId }).then((ruser) => {
         user = ruser
-        return Map.findOne(mapId)
+        return Map.findOne(mapId).populate('agents')
     }).then((rmap) => {
         map = rmap;
 
@@ -881,14 +878,15 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 agentsIds[myAgent] = true;
             }
         }
+
         var agents = {};
         var agentsStats = BaseAgentsService.liveAgents;
-        for (var mapAgent of map.activeServers) {
+        for (var mapAgent of map.agents) {
             if (mapAgent && mapAgent.key && agentsStats[mapAgent.key].alive) {
                 agents[mapAgent.key] = mapAgent;
             }
         }
-
+        
         executionResult.agents = agents;
 
         // sets the map agents which are alive.
@@ -1079,7 +1077,6 @@ module.exports = {
         });
     },
     updateMap: function (map) {
-        sails.log.info("Inside update map");
         return Map.update(map.id, map).then((updatedMap) => {
             if (updatedMap.length > 0) {
                 updatedMap = updatedMap[0];

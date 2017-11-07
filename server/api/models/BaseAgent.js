@@ -30,6 +30,11 @@ module.exports = {
     },
     sshKey: {
       type: 'string'
+    },
+    maps: {
+      collection: 'map',
+      via: 'agent',
+      through: 'mapagent'
     }
   }
 };

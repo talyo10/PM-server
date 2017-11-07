@@ -113,6 +113,10 @@ export class MapService {
     /* return the map subject as an observable */
     return this.map.asObservable();
   }
+
+  getMapAgents(map) {
+    return this.http.get(this.serverUrl + 'map/' + map.id + '/agents', this.options).map((res) => res.json())
+  }
   
   stopMap(map) {
     return this.http.post(this.serverUrl + 'map/updateVersionStatus', { map: map, status: this.runStatuses.Stopped }, this.options).map(this.extractData);
@@ -146,6 +150,10 @@ export class MapService {
 
   updateMap(map) {
     return this.http.post(this.serverUrl + 'map/updateMapProject/', { map: map }, this.options).map(this.extractData);
+  }
+
+  updateMapAgents(map, agents) {
+    return this.http.post(this.serverUrl + 'map/'+ map.id + '/agents/update', { agents: agents }).map(this.extractData)
   }
 
   /* offline Services */
