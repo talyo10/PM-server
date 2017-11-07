@@ -14,43 +14,52 @@ module.exports = {
     },
     getRenderedMapById: function (req, res) {
         MapService.getRenderedMapById(req.param('id')).then((map) => {
-            res.json(map);
-        }).catch((error) => {
-            sails.log.error("Failed loading map", error);
-            res.badRequest();
-        })
+                res.json(map);
+            }).catch((error) => {
+                sails.log.error("Failed loading map", error);
+                res.badRequest();
+            });
     },
     addMapVersion: function (req, res) {
         MapService.addMapVersion(req.body).then((version) => {
-                res.json(version);
-            }).catch((error) => {
-                sails.log.error("Error adding map version", error);
-                res.badRequest();
-            })
+                    res.json(version);
+                }).catch((error) => {
+                    sails.log.error("Error adding map version", error);
+                    res.badRequest();
+                });
 
     },
     addNewMap: function (req, res) {
         MapService.addNewMap(req.body.parentId, req.body.map).then((node) => {
-            res.json(node);
-        }).catch((error) => {
-            sails.log.error("Error creating new map", error);
-            res.badRequest()
-        });
+                    res.json(node);
+                }).catch((error) => {
+                    sails.log.error("Error creating new map", error);
+                    res.badRequest()
+                });
+    },
+    getAgents: function (req, res) { 
+        MapAgentService.getAgentsForMap(req.param('id')).then((agents) => {
+                console.log("Sending agents");
+                res.json(agents);
+            }).catch((error) => {
+                sails.log.error("Error getting agents", error);
+                res.badRequest();
+            })
     },
     updateVersionStatus:function(req,res){
         var mapId = req.body.map.id;
         var versionIndex = req.body.map.versionIndex;
 
         MapService.updateVersionStatus(mapId, versionIndex, req.body.status).then((result) => {
-            if(result === true) {
-                res.ok();
-            } else {
+                if(result === true) {
+                    res.ok();
+                } else {
+                    res.badRequest();
+                }
+            }).catch((error) => {
+                sails.log.error("Error updating status", error);
                 res.badRequest();
-            }
-        }).catch((error) => {
-            sails.log.error("Error updating status", error);
-            res.badRequest();
-        });
+            });
     },
     updateMapProject : function (req,res) {
       MapService.updateMapProject(req.param('mapId'), req.param('projectId')).then((map) => res.ok()).catch((error) => {
@@ -64,6 +73,15 @@ module.exports = {
         }).catch((error) => {
             sails.log.error("Error updating map", map);
         })
+    },
+    updateMapAgents: function(req, res) {
+        console.log("** in update map agents **")
+        MapAgentService.updateMapAgents(req.param('id'), req.body.agents)
+            .then((agents) => res.json(agents))
+            .catch((error) => {
+                console.log("Error updating map agents", error);
+                res.badRequest();
+            })
     },
     duplicateMap: function (req, res) {
         var mapId = req.param('mapId');
