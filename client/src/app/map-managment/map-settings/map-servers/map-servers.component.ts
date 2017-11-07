@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, SimpleChange } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
@@ -14,10 +14,12 @@ import * as _ from 'lodash';
   templateUrl: './map-servers.component.html',
   styleUrls: ['./map-servers.component.css']
 })
-export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
+export class MapServersComponent implements OnInit, OnDestroy {
 
   map: any;
   agents: any[] = null;
+  agentsReq: any;
+  updateAgentsReq: any;
   search: any;
   interval: any;
   currentMapSubscription: Subscription;
@@ -31,38 +33,32 @@ export class MapServersComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
-    .subscribe(
-      (map) => {
-        this.map = map;
-        // now make sure that when switching between maps (after this component was initiated) the agents will be set according to the new map
-        if (map && map.activeServers) {
-          this.agents = _.toArray(map.activeServers);
-        } else {
-          this.agents = null;
+      .subscribe(
+        (map) => {
+          this.map = map;
+
+          // request agents for this map
+          this.agentsReq = this.mapService.getMapAgents(map).subscribe((agents) => {
+            this.agents = agents;
+          })
         }
-      }
     );
-
-  }
-
-  ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
-    if (changes['map'].currentValue != null) {
-      this.agents = _.filter(_.toArray(this.map.activeServers), (o: any) => { return o.active; });
-    }
   }
 
   ngOnDestroy() {
     this.currentMapSubscription.unsubscribe();
+    this.agentsReq.unsubscribe();
+    if (this.updateAgentsReq) {
+      this.updateAgentsReq.unsubscribe();
+    }
   }
 
   addServer() {
     let dialog = this.modalService.open(ServersPopupComponent);
     dialog.result.then((data: any) => {
       data = _.toArray(data);
-      this.map.activeServers = data;
-      console.log("PASSING MAP TO SERVICE", this.map);
-      this.mapService.updateMap(this.map).subscribe((m) => {
-        this.mapService.selectMap(this.map);
+      this.updateAgentsReq = this.mapService.updateMapAgents(this.map, data).subscribe((agents) => {
+        this.agents = agents
       });
     });
   }
