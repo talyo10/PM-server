@@ -26,7 +26,6 @@ module.exports = {
       type: 'json',
       defaultsTo: [{
         date: new Date(),
-        executions: [],
         structure: {},
         status: sails.config.constants.runStatuses.NeverRun
       }]
