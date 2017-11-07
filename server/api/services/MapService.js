@@ -169,15 +169,12 @@ var jsonpatch = require('fast-json-patch'),
     addActionResultToContext = function (context, linkId, processId, actionName, result, status) {
         for (var i = 0; i < context.map.links.length; i++) {
             var link = context.map.links[i];
-            sails.log("log log log link.id: " + link.id + "linkId: " + linkId);
             if (link.id == linkId) {
                 for (var j = 0; j < link.processes.length; j++) {
                     var process = link.processes[j];
-                    sails.log("log log log process.id: " + process.name + "processId: " + processId);
                     if (process.name == processId) {
                         for (var k = 0; k < process.actions.length; k++) {
                             var action = process.actions[k];
-                            sails.log.debug("action: " + action.name + "actionName: " + actionName);
                             if (action.name == actionName) {
                                 action.result = result;
                                 action.status = status;
@@ -192,7 +189,7 @@ var jsonpatch = require('fast-json-patch'),
             }
         }
     },
-    runAction = function (mapId, mapName, versionIndex, executionIndex, linkId, processId, processKey, action, socket, agent, executionContext, executionResult) {
+    runAction = function (mapId, mapName, versionIndex, executionIndex, linkId, processId, processKey, action, socket, agent, executionContext, executionResult, runningExecutionResults) {
         return function (callback) {
             var action_str = 'var currentAction = ' + JSON.stringify(action) + ";";
             var msg;
@@ -219,12 +216,21 @@ var jsonpatch = require('fast-json-patch'),
             action = JSON.parse(JSON.stringify(action));
             var key = action.name;
 
+
+            if(!runningExecutionResults.agents[agent.key].processes[processKey].agents) {
+                runningExecutionResults.agents[agent.key].processes[processKey].agents = {};
+            }
+            
+
             if (!executionResult.links[linkId].processes[processKey].actions[key]) {
                 executionResult.links[linkId].processes[processKey].actions[key] = JSON.parse(JSON.stringify(action));
                 executionResult.links[linkId].processes[processKey].actions[key].agents = {};
             }
 
-            sails.log.info('Processing action ' + JSON.stringify(action, null, 2));
+            if (!runningExecutionResults.agents[agent.key].processes[processKey].actions[key]) {
+                runningExecutionResults.agents[agent.key].processes[processKey].actions[key] = JSON.parse(JSON.stringify(action));
+            }
+
             action.params = {};
             for (var paramIndex in action.method.params) {
                 var cParam = action.method.params[paramIndex];
@@ -236,11 +242,16 @@ var jsonpatch = require('fast-json-patch'),
                     action.params[param] = evaluateExpression(action.params[param], executionContext, linkId, processId, action.name);
                 } catch (e) {
                     executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
-                        startTime: new Date().toString(),
-                        endTime: new Date().toString(),
+                        startTime: (new Date()).toString(),
+                        endTime: (new Date()).toString(),
                         status: -1,
                         result: "Error:" + e
                     };
+
+                    runningExecutionResults.agents[agent.key].processes[processKey].actions[key].finishTime = new Date();
+                    runningExecutionResults.agents[agent.key].processes[processKey].actions[key].status = 'error';
+                    runningExecutionResults.agents[agent.key].processes[processKey].actions[key].result = 'Error' + e;
+
                     sails.log.error("Error execution map", e);
                     msg = {
                             date: new Date(),
@@ -263,7 +274,7 @@ var jsonpatch = require('fast-json-patch'),
                 ": " + action.method.name + "\n" };
             socket.emit('update', JSON.stringify(msg));
             action.server.url = getDedicatedUrl(agent, action.server.type);
-            var startTime = new Date().toString();
+            var startTime = new Date();
             request.post(
                 agent.url + '/task/register',
                 {
@@ -293,15 +304,23 @@ var jsonpatch = require('fast-json-patch'),
                         };
                         socket.emit('update', JSON.stringify(msg));
                         
-                        SystemLogService.create({ msg: "Finish running map", instanceId: mapId, instanceModel: 'Map', reason: 'execution', status: 'success' });
+                        SystemLogService.create("Finish running map", mapId, 'Map', 'execution', 'success');
 
                         addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
                         executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
-                            startTime: startTime,
-                            endTime: new Date().toString(),
+                            startTime: (new Date()).toString(),
+                            endTime: (new Date()).toString(),
                             status: 0,
                             result: body.res
                         };
+
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].startTime = startTime;
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].finishTime = new Date();
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].status = 'success';
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].result = body.res;
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].startTime = startTime;
+
+
                         callback(null, body);
                     }
                     else {
@@ -321,11 +340,18 @@ var jsonpatch = require('fast-json-patch'),
                         sails.log(res);
                         addActionResultToContext(executionContext, linkId, processId, action.name, res, -1);
                         executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
-                            startTime: startTime,
-                            endTime: new Date().toString(),
+                            startTime: (new Date()).toString(),
+                            endTime: (new Date()).toString(),
                             status: -1,
                             result: "Error:" + res
                         };
+
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].startTime = startTime;
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].finishTime = new Date();
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].status = 'error';
+                        runningExecutionResults.agents[agent.key].processes[processKey].actions[key].result = 'Error: ' + res;
+
+
                         if (action.mandatory) {
                             callback(res);
                         }
@@ -337,7 +363,7 @@ var jsonpatch = require('fast-json-patch'),
             );
         };
     },
-    runProcess = function (socket, mapId, mapVersion, executionIndex, agent, executionContext, executionResult) {
+    runProcess = function (socket, mapId, mapVersion, executionIndex, agent, executionContext, executionResult, runningExecutionResults) {
         return function (link, callback) {
             var linkIndex = link.linkIndex;
             var link_str = 'var currentLink = ' + JSON.stringify(link);
@@ -454,7 +480,7 @@ var jsonpatch = require('fast-json-patch'),
                 var key = process.name;
                 for (var i = 0; i < process.actions.length; i++) {
                     var act = process.actions[i];
-                    actionFuncs.push(runAction(mapId, map.name, mapVersion, executionIndex, link.id, process.name, key, act, socket, agent, executionContext, executionResult));
+                    actionFuncs.push(runAction(mapId, map.name, mapVersion, executionIndex, link.id, process.name, key, act, socket, agent, executionContext, executionResult, runningExecutionResults));
                 }
 
                 if (!executionResult.links) {
@@ -478,20 +504,39 @@ var jsonpatch = require('fast-json-patch'),
                 }
 
                 executionResult.links[link.id].agents[agent.key] = {
-                    startTime: new Date().toString(),
-                    endTime: new Date().toString(),
+                    startTime: (new Date()).toString(),
+                    endTime:(new Date()).toString(),
                     status: -1,
                     result: '',
                     executed: false
                 };
 
                 executionResult.links[link.id].processes[key].agents[agent.key] = {
-                    startTime: new Date().toString(),
-                    endTime: new Date().toString(),
+                    startTime: (new Date()).toString(),
+                    endTime: (new Date()).toString(),
                     status: -1,
                     result: ''
                 };
 
+                if (!runningExecutionResults.agents[agent.key]) {
+                    runningExecutionResults.agents[agent.key] = {};
+                    runningExecutionResults.agents[agent.key].processes = {};
+                }
+
+                if (!runningExecutionResults.agents[agent.key].processes) {
+                    runningExecutionResults.agents[agent.key].processes = {};
+                    runningExecutionResults.agents[agent.key].processes[key] = {};
+                    runningExecutionResults.agents[agent.key].actions = {};
+                }
+
+                if (!runningExecutionResults.agents[agent.key].processes[key]) {
+                    runningExecutionResults.agents[agent.key].processes[key] = JSON.parse(JSON.stringify(process));
+                }
+
+                runningExecutionResults.agents[agent.key].processes[key].actions = {};
+                
+                // creating a record for the process and setting start time
+                var startTime = new Date();
 
                 async.series(actionFuncs, function (err, res) {
                     // if any of the file processing produced an error, err would equal that error
@@ -509,9 +554,16 @@ var jsonpatch = require('fast-json-patch'),
                         socket.emit('update', JSON.stringify(msg));
 
                         executionResult.links[link.id].processes[key].agents[agent.key] = {
-                            startTime: new Date().toString(),
-                            endTime: new Date().toString(),
+                            startTime: (new Date()).toString(),
+                            endTime: (new Date()).toString(),
                             status: -1,
+                            result: "Error: " + err
+                        };
+
+                        runningExecutionResults.agents[agent.key].processes[key] = {
+                            startTime: startTime,
+                            finishTime: new Date(),
+                            status: 'error',
                             result: "Error: " + err
                         };
 
@@ -541,13 +593,18 @@ var jsonpatch = require('fast-json-patch'),
                         socket.emit('update', JSON.stringify(msg));
 
                         executionResult.links[link.id].processes[key].agents[agent.key].result = actionsTotal;
-                        executionResult.links[link.id].processes[key].agents[agent.key].endTime = new Date().toString();
+                        executionResult.links[link.id].processes[key].agents[agent.key].endTime = (new Date()).toString();
                         executionResult.links[link.id].processes[key].agents[agent.key].status = 0;
 
                         executionResult.links[link.id].agents[agent.key].result = actionsTotal;
-                        executionResult.links[link.id].agents[agent.key].endTime = new Date().toString();
+                        executionResult.links[link.id].agents[agent.key].endTime = (new Date()).toString();
                         executionResult.links[link.id].agents[agent.key].status = 0;
                         executionResult.links[link.id].agents[agent.key].executed = true;
+
+                        runningExecutionResults.agents[agent.key].processes[key].startTime = startTime;
+                        runningExecutionResults.agents[agent.key].processes[key].finishTime = new Date();
+                        runningExecutionResults.agents[agent.key].processes[key].status = actionsTotal.status;
+                        runningExecutionResults.agents[agent.key].processes[key].result = actionsTotal;
 
                         addProcessResultToContext(executionContext, link.id, process.name, actionsTotal, 0);
 
@@ -558,7 +615,7 @@ var jsonpatch = require('fast-json-patch'),
             });
         };
     },
-    parallelProcesses = function (node, socket, mapId, mapVersion, executionIndex, agent, executionContext, map_graph, executionResult) {
+    parallelProcesses = function (node, socket, mapId, mapVersion, executionIndex, agent, executionContext, map_graph, executionResult, runningExecutionResults) {
         return function (callback) {
             var links = [];
             var continueExecution = false;
@@ -567,8 +624,6 @@ var jsonpatch = require('fast-json-patch'),
                 var glink = inDegrees[i];
                 var mapLink = map_graph.edge(glink.v, glink.w);
                 try {
-                    sails.log.warn(mapLink.processes[0].actions[0].name);
-                    sails.log.warn(isNaN(mapLink.status));
                     if (executionResult.links[mapLink.id].agents[agent.key].executed === true) {
                         continueExecution = true;
                         break;
@@ -589,7 +644,7 @@ var jsonpatch = require('fast-json-patch'),
                 links.push(map_graph.edge(link.v, link.w));
             }
             async.each(links,
-                runProcess(socket, mapId, mapVersion, executionIndex, agent, executionContext, executionResult),
+                runProcess(socket, mapId, mapVersion, executionIndex, agent, executionContext, executionResult, runningExecutionResults),
                 function (err) {
                     if (!err) {
                         callback(null, "success");
@@ -600,8 +655,9 @@ var jsonpatch = require('fast-json-patch'),
                 });
         };
     };
-runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, globalScope, mapstruct, executionResult, cleanWorkspace) {
+runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, globalScope, mapstruct, executionResult, cleanWorkspace, runningExecutionResults) {
     return function (agent, callback) {
+        var startTime = new Date();
         var map_graph = buildMapGraph(mapstruct);
         var executionContext = JSON.parse(JSON.stringify(globalScope));
         createContext(mapstruct, executionContext);
@@ -612,7 +668,7 @@ runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, 
         var sortedNodes = graphlib.alg.topsort(map_graph);
         for (var i = 0; i < sortedNodes.length; i++) {
             var node = sortedNodes[i];
-            processesFuncs.push(parallelProcesses(node, socket, mapId, versionIndex, executionIndex, agent, executionContext, map_graph, executionResult));
+            processesFuncs.push(parallelProcesses(node, socket, mapId, versionIndex, executionIndex, agent, executionContext, map_graph, executionResult, runningExecutionResults));
         }
         async.series(processesFuncs, function (err, myres) {
             // update the agent value
@@ -627,7 +683,14 @@ runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, 
                 }
                 executionResult.agents[agent.key].result = totalResult;
                 executionResult.agents[agent.key].status = 0;
-                executionResult.agents[agent.key].endTime = new Date().toString();
+                executionResult.agents[agent.key].endTime = (new Date()).toString();
+                
+                runningExecutionResults.agents[agent.key].result = totalResult;
+                runningExecutionResults.agents[agent.key].finishTime = new Date();
+                runningExecutionResults.agents[agent.key].startTime = new Date();
+                runningExecutionResults.agents[agent.key].status = 'success';
+                
+
                 if (cleanWorkspace) {
                     request.post(
                         agent.url + '/deleteworkspace',
@@ -689,6 +752,33 @@ function addNewMapVersion(map) {
     });
 }
 
+function createExecutionModels(runningExecutionResults) {
+    Execution.create({ map: runningExecutionResults.map, status: runningExecutionResults.status, mapVersion: runningExecutionResults.mapVersion, startTime: runningExecutionResults.startTime, finishTime: runningExecutionResults.finishTime }).then((exec) => {
+        return exec
+    }).then((exec) => new Promise((resolve, reject) => {
+        for (let i in runningExecutionResults.agents) {
+            let agentResults = runningExecutionResults.agents[i];
+            AgentExecutionResult.create({ agent: agentResults.id, status: agentResults.status, result: agentResults.result, startTime: agentResults.startTime, finishTime: agentResults.finishTime, execution: exec.id })
+                .then((agentExec) => {
+                    for (let k in agentResults.processes) {
+                        let processResults = agentResults.processes[k];
+                        ProcessExecutionResult.create({ status: processResults.status, result: processResults.result, startTime: processResults.startTime, finishTime: processResults.finishTime, processName: k, agentExecution: agentExec.id }).then((processExec) => {
+                            for (let j in processResults.actions) {
+                                let actionResult = processResults.actions[j];
+                                ActionExecutionResult.create({ status: actionResult.status, startTime: actionResult.startTime, finishTime: actionResult.finishTime, actionName: j, processExecution: processExec.id, result: actionResult.result }).then(() => {
+                                    resolve();
+                                });
+                            }
+                        });
+                    }
+                });
+        }
+
+        resolve();
+    }))
+    
+}
+
 function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     var socket = sails.io;
     sails.log.warn("executing map!");
@@ -698,6 +788,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     var executionContext = null;
     var executionIndex = null;
     var executionResult = {};
+    var runningExecutionResults = {};
     var mapVersionStructure = null;
     var globalContext = null;
 
@@ -729,6 +820,10 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         executionResult.version = versionIndex;
         executionResult.date = (new Date()).toString();
         executionResult.startDate = (new Date()).toString();
+
+        runningExecutionResults.map = map;
+        runningExecutionResults.mapVersion = versionIndex;
+        runningExecutionResults.startTime = new Date();
 
         mapVersionStructure = generateVersion(map, versionIndex);
         executionContext = {
@@ -793,36 +888,44 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 agents[mapAgent.key] = mapAgent;
             }
         }
-        console.log(agents);
+
         executionResult.agents = agents;
+
+        // sets the map agents which are alive.
+        runningExecutionResults.agents = agents;
+
+
         sails.log.warn("executing on " + agents.length + " base agents");
         executionIndex = map.versions[versionIndex].executions.length;
         return new Promise((resolve, reject) => {
             async.each(agents,
-                runMapFromAgent(mapVersionStructure.links, mapId, versionIndex, executionIndex, socket, JSON.parse(JSON.stringify(globalContext)), mapVersionStructure, executionResult, cleanWorkspace),
+                runMapFromAgent(mapVersionStructure.links, mapId, versionIndex, executionIndex, socket, JSON.parse(JSON.stringify(globalContext)), mapVersionStructure, executionResult, cleanWorkspace, runningExecutionResults),
                 function (err) {
                     if (err) {
                         sails.log.error(JSON.stringify(err));
                         map.versions[versionIndex].status = sails.config.constants.runStatuses.Failed;
                         SystemLogService.error("Failed running map", map, "execution");
+                        runningExecutionResults.agents[agent.key].status = 'error';
                         reject(JSON.stringify(err))
                     }
 
-                    var yamlLog = YAML.stringify(executionResult);
+                    // var yamlLog = YAML.stringify(executionResult);
                     executionResult.status = 0;
-                    // var m = updateVersionResult(user, mapId, versionIndex, yamlLog, executionResult);
-                    resolve(updateVersionResult(user, mapId, versionIndex, yamlLog, executionResult));
-                    // resolve(updateVersionResult(user, mapId, versionIndex, yamlLog, executionResult))
+                    runningExecutionResults.status = 'success';
+                    runningExecutionResults.finishTime = new Date();
+                    // resolve(updateVersionResult(user, mapId, versionIndex, yamlLog, executionResult));
+                    resolve();
                 }
-            )}).then((updatedMap) => {
-                updatedMap.executionId = executionIndex;
+            )}).then(() => {
+                
                 msg = {
                     date: new Date(),
                     map: map.name,
                     msg: "Finished running map " + map.name
                 };
                 SystemLogService.success("Finish running map", map, "execution");
-                return { res: JSON.stringify(msg), resObj: updatedMap }
+                createExecutionModels(runningExecutionResults);
+                return { res: JSON.stringify(msg), resObj: map }
             })
         }).catch((error) => {
             SystemLogService.error("Error executing map " + error, map, "execution");
