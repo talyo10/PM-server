@@ -3,7 +3,11 @@ module.exports = {
         // this function get a map and an array of agents and create the map agent documents
         console.log("*** in updateMapAgents ***")
         return MapAgent.destroy({ map: mapId }).then(() => {
-            return Map.findOne(mapId).populate('agents')
+            if (agents) {
+                return Map.findOne(mapId).populate('agents')
+            } else {
+                
+            }
             
             }).then((map) => {
                 agents.forEach((agent) => {

@@ -76,12 +76,22 @@ module.exports = {
     },
     updateMapAgents: function(req, res) {
         console.log("** in update map agents **")
-        MapAgentService.updateMapAgents(req.param('id'), req.body.agents)
+        if (req.body.agents) {
+            MapAgentService.updateMapAgents(req.param('id'), req.body.agents)
             .then((agents) => res.json(agents))
             .catch((error) => {
                 console.log("Error updating map agents", error);
                 res.badRequest();
             })
+        } else {
+            MapAgent.destroy({ map: req.param('id')}).then(() => {
+                res.json();
+            }).catch((error) => {
+                console.log("Error updating map agents", error);
+                res.badRequest();
+            })
+        }
+       
     },
     duplicateMap: function (req, res) {
         var mapId = req.param('mapId');
