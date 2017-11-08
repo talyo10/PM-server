@@ -84,10 +84,7 @@ module.exports = {
 	addTrigger: function (req, res) {
         var trigger = req.body;
         var user = req.session.passport.user;
-        Trigger.create(trigger, function(err, triggerModel){
-        	if(err) {
-        		sails.log.error(err);
-        	}
+        Trigger.create(trigger).then((triggerModel) =>{
         	trigger.id = triggerModel.id;
         	triggersParser[trigger.type](user, trigger, res);
         });
