@@ -3,124 +3,65 @@
     <h2 role="handle" #popupHandle> Agents </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
-  <section class="pm-container">
-    <div class="pmap-table search-bar pm-font">
-      <div class="filter-bar">
-        <div class="tbody">
-          <div class="tr">
-            <div class="cell filter-cell">
-              <div class="filter-label">
-                <span>
-                  Filter by
-                </span>
-              </div>
-              <div class="filter-input filter-cell">
-                <select class="form-control" style="height: auto;" [(ngModel)]="search.type">
-                  <option [ngValue]="1"> -- select method -- </option>
-                  <option [ngValue]="1">Name</option>
-                  <option [ngValue]="2">Architecture</option>
-                  <option [ngValue]="3">Attribute</option>
-                </select>
-              </div>
-            </div>
-            <div [hidden]="search.type === 3 || search.type === 0">
-              <div class="cell">
-                <div class="filter-label">
-                  <span>
-                    Search term:
-                  </span>
-                </div>
-                <div class="filter-input">
-                  <input type="text" class="form-control" [(ngModel)]="search.text" />
-                </div>
-              </div>
-              <div class="cell">
-                <div class="empty-spacer"></div>
-                <button type="button" class="btn-event filter-button"><i class="pmap-25"></i> filter </button></div>
-              <div class="cell"><div class="empty-spacer"></div><button type="button" class="btn-event filter-button" (click)="clearFilter(search)"><i class="pmap-25"></i> clear filter </button></div>
-            </div>
-            <div [hidden]="search.type !== 3">
-              <div class="cell">
-                <div class="filter-label">
-                  <span>
-                    Attribute:
-                  </span>
-                </div>
-                <div class="filter-input">
-                  <input type="text" class="form-control" [(ngModel)]="search.attrName" />
-                </div>
-              </div>
-              <div class="cell">
-                  <div class="filter-label">
-                    <span>
-                      Value:
-                    </span>
-                  </div>
-                  <div class="filter-input">
-                    <input type="text" class="form-control" [(ngModel)]="search.text" />
-                  </div>
-              </div>
-              <div class="cell"><div class="empty-spacer"></div><button type="button" class="btn-event filter-button"><i class="pmap-25"></i> filter </button></div>
-              <div class="cell"><div class="empty-spacer"></div><button type="button" class="btn-event filter-button" (click)="clearFilter(search)"><i class="pmap-25"></i> clear filter </button></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pmap-table pm-font">
-      <div class="thead-wrapper">
-        <div class="thead">
-          <div class="tr">
-            <div class="cell sm-cell align-left"><span>Status</span></div>
-            <div class="cell md-cell"><span>Name</span></div>
-            <div class="cell md-cell"><span>IP</span></div>
-            <div class="cell md-cell"><span>HostName</span></div>
-            <div class="cell md-cell"><span>Architecture</span></div>
-            <div class="cell md-cell"><span>Free Disk Space</span></div>
-            <div class="cell md-cell"><span>Response Time</span></div>
-            <div class="cell sm-cell"><span>Select</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="tbody-wrapper" *ngIf="!agents || agents.length === 0">
+  <section>
+    
+      <div *ngIf="!agents || agents.length === 0">
         No agents found.
       </div>
-      <div class="tbody-wrapper" *ngIf="agents && agents.length > 0">
-        <div class="tbody">
-          <tree-root #tree [nodes]="agents" [options]="treeOptions" (onMoveNode)="onMoveNode($event)">
-            <ng-template #treeNodeTemplate let-node="node.data" let-index="index">
-                <div *ngIf="!node.hasChildren" class="tr">
-                    <div *ngIf="node.data.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
-                    <div *ngIf="!node.data.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
-                    <div class="cell md-cell"><span>{{ node.data.name }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.url }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.hostname }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.arch }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.freeSpace }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.respTime }}</span></div>
-                    <div class="cell sm-cell">
-                      <div class="form-group has-checkbox">
-                        <label class="form-checkbox">
-                            <input type="checkbox" [ngModel]="selectedServers[node.id]"  (ngModelChange)="onSelect(node)"><i></i>
-                        </label>
-                      </div>
-                    </div>
-                </div>
-                <div *ngIf="node.hasChildren" class="tr">
-                    <div class="sm-cell cell"></div>
-                    <div class="cell md-cell"><span>{{ node.name }}</span></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                </div>
+      <div class="" *ngIf="agentsTree">
+        <p-treeTable [value]="agentsTree" selectionMode="checkbox" [(selection)]="selectedFiles">
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              /
             </ng-template>
-          </tree-root>
-        </div>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.data"><i class="fa fa-cloud" aria-hidden="true"></i></span>
+              <span *ngIf="!node.data.data"><i class="pmap-21"></i></span>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              Name
+            </ng-template>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.name">{{node.data.name}}</span>
+              <span *ngIf="!node.data.name">{{node.data.data.name}}</span>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              URL
+            </ng-template>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.data">{{node.data.data.url}}</span>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              Free Disk Space
+            </ng-template>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.data">{{node.data.data.freeSpace}}</span>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              Response Time
+            </ng-template>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.data">{{node.data.data.respTime}}</span>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-node="rowData" pTemplate="header">
+              Architecture
+            </ng-template>
+            <ng-template let-col let-node="rowData" pTemplate="body">
+              <span *ngIf="node.data.data">{{node.data.data.arch}}</span>
+            </ng-template>
+          </p-column>
+        </p-treeTable>
       </div>
-    </div>
   </section>
   <footer class="pm-container">
     <div class="row pm-container">

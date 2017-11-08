@@ -21,6 +21,7 @@ import {OverlayPanelModule, ScheduleModule} from 'primeng/primeng';
 import { CalendarModule } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { TreeTableModule, TreeNode, SharedModule } from 'primeng/primeng';
 
 import { AuthGuard } from './shared/services/auth.guard';
 import { AuthenticationService } from './shared/services/authentication.service';
@@ -144,7 +145,8 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
     CombinedPopupComponent,
     SystemHooksComponent,
     AddSystemHookComponentWindow,
-    ConfirmPopupComponent
+    ConfirmPopupComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -171,7 +173,10 @@ import { ConfirmPopupComponent } from './shared/popups/confirm-popup/confirm-pop
             prefix: 'pm-app',
             storageType: 'localStorage'
         }),
-    DatePickerModule
+    DatePickerModule,
+    TreeTableModule,
+    // TreeNode,
+    SharedModule
   ],
   providers: [
     AuthGuard,
