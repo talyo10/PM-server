@@ -134,14 +134,14 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
 
   closeMap(index, mapId) {
     this.mapLoaded = false;
-    if (mapId == this.currentMap.id) {
+    if (mapId === this.currentMap.id) {
       // if the map selected is the current one
-      this.currentMap = null;
-      this.mapService.setCurrentMap(null);
       this.openMaps.splice(index, 1);
       if (this.openMaps.length > 0) {
         // if there are more openMaps
         this.mapService.setCurrentMap(this.openMaps[0]);
+      } else {
+        this.mapService.setCurrentMap(null);
       }
     } else {
       this.mapLoaded = true;
