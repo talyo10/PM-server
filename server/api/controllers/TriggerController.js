@@ -69,7 +69,7 @@ module.exports = {
 							});
 
 							if (trigger != null) {
-								MapService.executeMap("-1", trigger.map, 0, 0, function (result, text) {
+								MapService.executeMap("-1", trigger.map, 0, 0).then((result) => {
 									return res.ok();
 								});
 							} else {
