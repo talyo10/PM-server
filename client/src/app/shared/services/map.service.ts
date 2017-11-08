@@ -140,8 +140,8 @@ export class MapService {
       else {
         openMaps[mapIndex] = selectedMap;
       }
-      this.setOpenMaps(openMaps);
     }
+    this.setOpenMaps(openMaps);
   }
   
   updateMapProject(MapId, ProjectId) {
