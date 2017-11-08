@@ -885,3 +885,7 @@ tree-viewport {
 .ui-treetable-toggler {
   color: #bbb !important;
 }
+
+.ui-treetable tbody td {
+  padding: 10px !important;
+}
