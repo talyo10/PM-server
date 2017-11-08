@@ -56,7 +56,6 @@ export class MapServersComponent implements OnInit, OnDestroy {
   addServer() {
     let dialog = this.modalService.open(ServersPopupComponent);
     dialog.result.then((data: any) => {
-      data = _.toArray(data);
       this.updateAgentsReq = this.mapService.updateMapAgents(this.map, data).subscribe((agents) => {
         this.agents = agents
       });

@@ -18,12 +18,13 @@ import { MapServersComponent } from "../../../map-managment/map-settings/map-ser
 export class ServersPopupComponent implements OnInit, OnDestroy {
   agents: any[] = [];
   agentsTree: TreeNode[];
-  selectedFiles: TreeNode[];
+  selectedNodes: TreeNode[];
   search: any;
   interval: any;
   selected: boolean = false;
   unselected: boolean = false;
   selectedServers: any = {};
+  selectedAgents: any[];
   map: any;
   agentsListSubscription: Subscription = new Subscription();
   currentMapSubscription: Subscription = new Subscription();
@@ -36,7 +37,6 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.selectedServers = {};
     this.search = {
       type: 0
     };
@@ -67,8 +67,8 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
   }
 
   closeWindow() {
-    // when closing the dialog, return the selected servers array.
-    this.dialog.close(this.selectedServers);
+    // when closing the dialog, return null.
+    this.dialog.close();
   }
 
   onSelect(node) {
@@ -80,13 +80,17 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
     }
   }
 
+  nodeSelect(event) {
+    let selectedAgents = _.filter(this.selectedNodes, (node) => { return node.data.data});
+    this.selectedAgents = [];
+    selectedAgents.forEach((agent) => {
+      this.selectedAgents.push(agent.data.data);
+    })
+  }
+
   apply() {
     // save the selected agents to the map;
-    let selectedAgentsData = [];
-    this.agents.forEach((agent) => {
-      selectedAgentsData.push(agent.data);
-    });
-    this.closeWindow();
+    this.dialog.close(this.selectedAgents);
   }
 
   showUnSelected() {

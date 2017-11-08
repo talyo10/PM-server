@@ -9,7 +9,7 @@
         No agents found.
       </div>
       <div class="" *ngIf="agentsTree">
-        <p-treeTable [value]="agentsTree" selectionMode="checkbox" [(selection)]="selectedFiles">
+        <p-treeTable [value]="agentsTree" selectionMode="checkbox" [(selection)]="selectedNodes" (onNodeSelect)="nodeSelect($event)">
           <p-column>
             <ng-template let-col let-node="rowData" pTemplate="header">
               /
@@ -80,7 +80,7 @@
     </div>
     <div class="pull-right">
       <button class="btn-event btn-no-icon" type="button" (click)="apply()"> Apply </button>
-      <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Close</button>
+      <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Cancel</button>
     </div>
   </footer>
 </div>
