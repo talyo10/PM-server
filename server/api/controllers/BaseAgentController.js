@@ -42,6 +42,14 @@ module.exports = {
         res.status(200);
         res.send(agents);
     },
+    getSNodes: function(req, res) {
+        SNode.find().populate('data').then((nodes) => {
+                res.json(nodes);
+            }).catch((error) => {
+                console.log("Error getting nodes", error);
+                res.badRequest();
+            })
+    },
     addAgent: function (req, res) {
         BaseAgentsService.addBaseAgent(req.body).then((agent) => {
             hooks.addServer(req.user, agent);

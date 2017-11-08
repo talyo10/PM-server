@@ -88,7 +88,8 @@ module.exports.routes = {
     'POST /BaseAgent/installAgent': 'BaseAgentController.installAgent',
     'get /BaseAgent/deleteAgent/:id': 'BaseAgentController.deleteAgent',
     'get /BaseAgent/statuses': 'BaseAgentController.getAgentsState',
-
+    'get /agents/snodes': 'BaseAgentController.getSNodes',
+    
     'get /BaseAgent/deleteGroup/:id': 'BaseAgentController.deleteGroup',
     'post /BaseAgent/addGroup': 'BaseAgentController.addGroup',
     'POST /BaseAgent/updateGroup': 'BaseAgentController.updateGroup',

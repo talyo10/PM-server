@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 import * as _ from 'lodash';
+import { TreeNode } from 'primeng/primeng';
 
 import { ConstsService } from './consts.service';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
@@ -26,6 +27,34 @@ export class ServersService {
       this.setAgentsList(r);
     });
   }
+
+  buildSNodeTree(nodes, parent = "-1"): TreeNode[] {
+    // The function gets an array of flatten snodes with parent property. By defult, to level nodes parent is -1.
+    // The function return a nested array tree of the snodes.
+    let tree: TreeNode[] = [];
+    let nodesClone = nodes;
+    for (let i in nodes) {
+        if(nodes[i].parent == parent) {
+          let children = this.buildSNodeTree(nodes, nodes[i].id)
+          nodesClone[i] = { data: nodesClone[i] }
+          if(children.length) {
+              nodes[i].children = children
+              nodesClone[i].children = children
+          }
+          tree.push(nodesClone[i])
+        }
+    }
+    return tree
+  }
+
+  getSNodesTree() {
+    // get a list of all snodes (with populated agent data) and return it as a tree
+    return this.http.get(this.serverUrl + "agents/snodes", this.options).map((nodes) => {
+      return this.buildSNodeTree(nodes.json());
+    })
+  }
+
+
 
   getAgentsListAsObservable(): Observable<any[]> {
     return this.agents.asObservable();
