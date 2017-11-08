@@ -41,7 +41,7 @@
     <div class="col-md-4">
       <select class="form-control" [(ngModel)]="trigger.map">
         <option>-- select map --</option>
-				<option *ngFor="let map of trigger.project.maps" [ngValue]="map">{{ map.name }}</option>
+				<option *ngFor="let map of trigger.project.nodes" [ngValue]="map">{{ map.name }}</option>
 			</select>
     </div>
   </div>
