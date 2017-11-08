@@ -867,9 +867,12 @@ tree-viewport {
 
 .ui-state-default, .ui-treetable {
   font-size: 16px;
-  color: #02a7c7;
   background: transparent !important;
   border: 0 !important;
+}
+
+thead {
+  border-bottom: 1px solid #6f6f6f;  
 }
 
 .ui-chkbox-box {
@@ -880,6 +883,7 @@ tree-viewport {
 
 .ui-column-title {
   font-weight: bolder;
+  color: #02a7c7 !important;
 }
 
 .ui-treetable-toggler {
