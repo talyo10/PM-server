@@ -70,13 +70,15 @@ module.exports.routes = {
     'get /map/deleteMap/:id': 'MapController.deleteMap',
     'get /map/updateMapProject/:mapId/:projectId': 'MapController.updateMapProject',
     'POST /map/updateMapProject': 'MapController.updateMap',
+    'POST /map/:id/agents/update': 'MapController.updateMapAgents',
     'POST /map/addMapVersion': 'MapController.addMapVersion',
     'POST /map/createMap': 'MapController.addNewMap',
     'POST /map/updateVersionStatus': 'MapController.updateVersionStatus',
     'POST /map/duplicate/:mapId': 'MapController.duplicateMap',
     'GET /map/versions/:mapId': 'MapController.getVersions',
     'GET /map/versions/:mapId/:versionId': 'MapController.getVersion',
-
+    'GET /map/:id/agents': 'MapController.getAgents',
+    
     'POST /ScheduledJob/addJob': 'ScheduledJobController.addJob',
     'get /ScheduledJob/deleteJob/:id': 'ScheduledJobController.deleteJob',
     'get /ScheduledJob/getFutureJobs': 'ScheduledJobController.getFutureJobs',
