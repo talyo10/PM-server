@@ -12,20 +12,11 @@
         <p-treeTable [value]="agentsTree" selectionMode="checkbox" [(selection)]="selectedNodes" (onNodeSelect)="nodeSelect($event)">
           <p-column>
             <ng-template let-col let-node="rowData" pTemplate="header">
-              /
-            </ng-template>
-            <ng-template let-col let-node="rowData" pTemplate="body">
-              <span *ngIf="node.data.data"><i class="fa fa-cloud" aria-hidden="true"></i></span>
-              <span *ngIf="!node.data.data"><i class="pmap-21"></i></span>
-            </ng-template>
-          </p-column>
-          <p-column>
-            <ng-template let-col let-node="rowData" pTemplate="header">
               Name
             </ng-template>
             <ng-template let-col let-node="rowData" pTemplate="body">
-              <span *ngIf="node.data.name">{{node.data.name}}</span>
-              <span *ngIf="!node.data.name">{{node.data.data.name}}</span>
+              <span *ngIf="node.data.name"><i class="pmap-21"></i>  {{node.data.name}}</span>
+              <span *ngIf="!node.data.name"><i class="fa fa-cloud" aria-hidden="true"></i>  {{node.data.data.name}}</span>
             </ng-template>
           </p-column>
           <p-column>

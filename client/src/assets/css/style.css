@@ -449,7 +449,7 @@ button[type="submit"].btn-event.btn-danger i {
   color: #bbbbbb;
 }
 
-.pmap-table .tbody .tr:last-child .cell {
+.pmap-table .tbody .tr:last-cd .cell {
   border-bottom: none;
 }
 
@@ -846,4 +846,42 @@ button > i[class^="pmap-"] {
 
 tree-viewport {
   overflow-x: hidden !important;
+}
+
+.ui-widget-content {
+  background: transparent !important;
+  font-size: 14px !important;
+  color: #bbb !important;
+  border: 0 !important;
+}
+
+.ui-treetable-row-selectable:hover {
+  background: #02a7c7 !important;
+  color: #bbb !important;
+}
+
+.ui-state-highlight {
+  background: #262829 !important;
+  color: #fff !important;
+}
+
+.ui-state-default, .ui-treetable {
+  font-size: 16px;
+  color: #02a7c7;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.ui-chkbox-box {
+  background: transparent !important;
+  color: #6f6f6f !important;
+  border: 1px solid #807d7d !important;
+}
+
+.ui-column-title {
+  font-weight: bolder;
+}
+
+.ui-treetable-toggler {
+  color: #bbb !important;
 }
