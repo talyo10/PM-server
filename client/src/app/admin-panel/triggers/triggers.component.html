@@ -18,7 +18,7 @@
           <div class="cell">{{trigger.name}}</div>
           <div class="cell">{{trigger.type }}</div>
           <div class="cell">{{trigger.project.name }}</div>
-          <div class="cell">{{trigger.map.name }}</div>
+          <div class="cell" *ngIf="trigger.map">{{trigger.map.name }}</div>
           <div class="cell"><button type="button" (click)="deleteTrigger(triggerIndex)"><i class="pmap-27"></i></button></div>
         </div>
       </div>
