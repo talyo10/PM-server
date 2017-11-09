@@ -70,7 +70,7 @@ export class MapEditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  executeMap(map, executingMap) {
+  executeMap(map) {
     if (this.executingMap) {
       // this.mapService.stopMap(map).subscribe((result) => {
       //   this.executingMap = false;
@@ -79,23 +79,12 @@ export class MapEditorComponent implements OnInit, OnDestroy {
     }
     this.executingMap = true;
     this.mapService.saveMap(map).subscribe((result) => {
-
-      if (result.date) {
-        map.mapView = result.structure;
-        map.versionIndex++;
-      }
+      
       /* execute the map */
-      this.mapService.executeMap(map).subscribe(
-          (mapResult) => {
-          let res = '';
-          let vid = map.versionIndex;
-          let eid = mapResult.resObj.executionId;  
-          if (mapResult.res) {
-            res = mapResult.res;
-          } else if (mapResult.error) {
-            res = mapResult.error;
-          }
-          this.onExecution.emit(res);
+      this.mapService.executeMap(result).subscribe(
+        (mapResult) => {
+          console.log(mapResult);
+          this.onExecution.emit(mapResult['res']? mapResult['res']: '');
           this.executingMap = false;
         }, 
         (error) => {

@@ -170,7 +170,7 @@ module.exports = {
 		}
 		
 		MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Running;
-		MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.agentsIds, req.body.map.deleteData).then((result) => {
+		MapService.executeMap(userId, req.body.map.id, req.body.map.versionIndex, req.body.map.deleteData).then((result) => {
 			MapService.runningMaps[req.body.map.id] = sails.config.constants.runStatuses.Done;
 			res.json(result);
 		}).catch((error) => {

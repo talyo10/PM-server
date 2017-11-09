@@ -27,7 +27,7 @@ export class MapVersionsComponent {
   }
 
   ngOnInit() {
-    this.mapService.getMapVersions(this.map.id).subscribe((versions) => {
+    this.mapService.getMapVersions(this.map).subscribe((versions) => {
       this.versions = versions;
     });
   }

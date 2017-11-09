@@ -14,9 +14,9 @@
     <button *ngIf="savingMap" type="button">
       <i class="pmap-28"></i>Saving...
     </button>
-    <button *ngIf="!executingMap" type="button" (click)="executeMap(map, executingMap)">
+    <button *ngIf="!executingMap" type="button" (click)="executeMap(map)">
       <i class="pmap-26"></i>
-      <span>Execute</span>
+      <span>Save and Execute</span>
     </button>
     <button *ngIf="executingMap" type="button" (click)="stopMap(map, executingMap)">
       <i class="pmap-31"></i>
