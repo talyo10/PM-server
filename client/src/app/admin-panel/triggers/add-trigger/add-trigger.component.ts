@@ -24,6 +24,7 @@ export class AddTriggerComponentWindow {
       params: []
     }
   };
+  
   types: any[] = [];
   projects: any[] = [];
   @Input()triggersList: any[];
