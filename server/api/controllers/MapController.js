@@ -106,9 +106,9 @@ module.exports = {
     },
     getVersions: function (req, res) {
         MapService.getVersions(req.param('mapId')).then((versions) => {
-            res.json(version);
+            res.json(versions);
         }).catch((error) => {
-            sails.log.error("Error getting versions");
+            sails.log.error("Error getting versions", error);
             res.badRequest();
         })
     },

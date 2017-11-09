@@ -744,6 +744,7 @@ function addNewMapVersion(map) {
             };
             oldMap.versions.push(version);
         }
+        oldMap.versionIndex = oldMap.versions.length - 1;
 
         return oldMap.save();
     });

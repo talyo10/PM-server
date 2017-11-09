@@ -14,12 +14,12 @@ export class MapService {
   private versions: any = {};
 
   public runStatuses: any = {
-        Running : 1,
-        Done: 2,
-        Failed: 3,
-        Paused: 4,
-        Stopped: 5,
-        NeverRun: 6
+    Running: 1,
+    Done: 2,
+    Failed: 3,
+    Paused: 4,
+    Stopped: 5,
+    NeverRun: 6
   };
 
   public openMaps: BehaviorSubject<any> = new BehaviorSubject<any>(null);
@@ -39,7 +39,7 @@ export class MapService {
         this.setCurrentMap(maps[0]);
       } else {
         localStorage.removeItem('openMaps');
-      }      
+      }
     }
   }
 
@@ -57,7 +57,7 @@ export class MapService {
   }
 
   createMap(parentId, mapName, projectId) {
-    return this.http.post(this.serverUrl + 'map/createMap', { parentId: parentId,map:{ name: mapName, Project: projectId }}, this.options).map(this.extractData);
+    return this.http.post(this.serverUrl + 'map/createMap', { parentId: parentId, map: { name: mapName, Project: projectId } }, this.options).map(this.extractData);
   }
 
   deleteMap(mapId) {
@@ -69,7 +69,14 @@ export class MapService {
   }
 
   executeMap(map) {
-    return this.http.post(this.serverUrl + 'sysfile/execute', { map: map }, this.options).map(this.extractData);
+    return this.http.post(this.serverUrl + 'sysfile/execute', { map: map }, this.options).map((res) => {
+      let openMaps = this.openMaps.getValue();
+      let index = _.findIndex(openMaps, (record) => { return record['id'] === res['id'] });
+      openMaps[index] = res;
+      this.setOpenMaps(openMaps);
+      return res.json();
+
+    });
   }
 
   getMapById(mapId) {
@@ -105,7 +112,7 @@ export class MapService {
     this.openMaps.next(maps);
   }
 
-  getOpenMapsObservable(): Observable<any[]>{
+  getOpenMapsObservable(): Observable<any[]> {
     return this.openMaps.asObservable();
   }
 
@@ -117,7 +124,7 @@ export class MapService {
   getMapAgents(map) {
     return this.http.get(this.serverUrl + 'map/' + map.id + '/agents', this.options).map((res) => res.json())
   }
-  
+
   stopMap(map) {
     return this.http.post(this.serverUrl + 'map/updateVersionStatus', { map: map, status: this.runStatuses.Stopped }, this.options).map(this.extractData);
   }
@@ -126,7 +133,7 @@ export class MapService {
     /* change the selected map */
     this.setCurrentMap(selectedMap);
     let openMaps = this.openMaps.getValue();
-    if(!openMaps) {
+    if (!openMaps) {
       openMaps = [selectedMap];
     } else {
       let mapIndex = _.findIndex(openMaps, (map) => { return map['id'] === selectedMap.id; });
@@ -143,7 +150,7 @@ export class MapService {
     }
     this.setOpenMaps(openMaps);
   }
-  
+
   updateMapProject(MapId, ProjectId) {
     return this.http.get(this.serverUrl + 'map/updateMapProject/' + MapId + '/' + ProjectId, this.options).map(this.extractData);
   }
@@ -153,7 +160,7 @@ export class MapService {
   }
 
   updateMapAgents(map, agents) {
-    return this.http.post(this.serverUrl + 'map/'+ map.id + '/agents/update', { agents: agents }).map(this.extractData)
+    return this.http.post(this.serverUrl + 'map/' + map.id + '/agents/update', { agents: agents }).map(this.extractData)
   }
 
   /* offline Services */
