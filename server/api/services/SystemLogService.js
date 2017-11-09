@@ -28,6 +28,10 @@ module.exports = {
         return SystemLog.create(obj).catch((error)=> console.log(error));
     },
 
+    createGeneralLog: function(msg, reason, status) {
+        return SystemLog.create({ message: msg, reason: reason, status: status}).catch((error)=> console.log(error))
+    },
+
     getLogsForInstance: function(instance) {
         /* this function get an instance and returns all the logs for this instance */
         return SystemLog.find({ objectId: instance.id, model: modelFor(instance) });

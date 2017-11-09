@@ -15,11 +15,9 @@ module.exports = {
     },
     objectId: {
       type: 'string',
-      required: true
     },
     model: {
       type: 'string',
-      required: true
     },
     reason: {
       type: 'string'
