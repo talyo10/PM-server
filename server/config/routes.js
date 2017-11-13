@@ -78,6 +78,7 @@ module.exports.routes = {
     'GET /map/versions/:mapId': 'MapController.getVersions',
     'GET /map/versions/:mapId/:versionId': 'MapController.getVersion',
     'GET /map/:id/agents': 'MapController.getAgents',
+    'get /map/:id/executions': 'MapController.getMapExecutionsList',
     
     'POST /ScheduledJob/addJob': 'ScheduledJobController.addJob',
     'get /ScheduledJob/deleteJob/:id': 'ScheduledJobController.deleteJob',
@@ -110,6 +111,8 @@ module.exports.routes = {
 
     'get /getallagents': 'DedicatedAgentController.getAllAgents',
     'post /installAgents': 'DedicatedAgentController.installAgents',
+
+    'get /executions/:id': 'ExecutionController.executionDetail',
 
     'post /github/push': 'TriggerController.githubPush'
 
