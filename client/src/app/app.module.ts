@@ -45,8 +45,6 @@ import {MapSettingsComponent} from './map-managment/map-settings/map-settings.co
 import {MessagesComponent} from './map-managment/messages/messages.component';
 import {MapExplorerComponent} from './map-managment/left-panel/map-explorer/map-explorer.component';
 import {MapToolboxComponent} from './map-managment/left-panel/map-toolbox/map-toolbox.component';
-import {ExecutionReportComponent} from './map-managment/left-panel/map-explorer/execution-report/execution-report.component';
-import {ItemExecutionResultComponent} from './map-managment/left-panel/map-explorer/execution-report/item-execution-result/item-execution-result.component';
 import {MapAttributesComponent} from './map-managment/map-settings/map-attributes/map-attributes.component';
 import {MapDesignerComponent} from './map-managment/map-editor/map-designer/map-designer.component';
 import {MapCodeEditorComponent} from './map-managment/map-editor/map-code-editor/map-code-editor.component';
@@ -55,7 +53,6 @@ import {MapAttributeComponent} from './map-managment/map-settings/map-attributes
 import {ProcessesComponentWindow} from './map-managment/map-editor/map-designer/processes/processes.component';
 import {NewProcessComponentWindow} from './map-managment/map-editor/map-designer/new-process/new-process.component';
 import {ActionsComponentWindow} from './map-managment/map-editor/map-designer/action/action.component';
-import {ExecutionChartComponent} from './map-managment/left-panel/map-explorer/execution-report/item-execution-result/execution-chart/execution-chart.component';
 import {DedicatedAgentsComponent} from './admin-panel/dedicated-agents/dedicated-agents.component';
 import {AddDedicatedAgentComponentWindow} from './admin-panel/dedicated-agents/add-dedicated-agent/add-dedicated-agent.component';
 import {ShowDedicatedAgentComponent} from './admin-panel/dedicated-agents/show-dedicated-agent/show-dedicated-agent.component';
@@ -74,7 +71,6 @@ import {AttributeWindow} from './shared/popups/attribute-window/attribute-window
 import {ServersPopupComponent} from './shared/popups/servers-popup/servers-popup.component';
 import {ServerFilterPipe} from './admin-panel/servers/server-filter.pipe';
 import {MapVersionsComponent} from './map-managment/left-panel/map-explorer/popups/map-versions/map-versions.component';
-import {MapExecutionsComponent} from './map-managment/left-panel/map-explorer/popups/map-executions/map-executions.component';
 import {TriggersComponent} from './admin-panel/triggers/triggers.component';
 import {AddTriggerComponentWindow} from './admin-panel/triggers/add-trigger/add-trigger.component';
 import {InstallAgentComponentWindow} from './admin-panel/servers/install-agent/install-agent.component';
@@ -107,17 +103,14 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     MessagesComponent,
     MapExplorerComponent,
     MapToolboxComponent,
-    ExecutionReportComponent,
     ProcessesComponentWindow,
     ActionsComponentWindow,
     NewProcessComponentWindow,
-    ItemExecutionResultComponent,
     MapAttributesComponent,
     MapDesignerComponent,
     MapCodeEditorComponent,
     MapServersComponent,
     MapAttributeComponent,
-    ExecutionChartComponent,
     DedicatedAgentsComponent,
     AddDedicatedAgentComponentWindow,
     ShowDedicatedAgentComponent,
@@ -132,7 +125,6 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     AttributeWindow,
     ServerFilterPipe,
     MapVersionsComponent,
-    MapExecutionsComponent,
     TriggersComponent,
     AddTriggerComponentWindow,
     InstallAgentComponentWindow,
@@ -202,7 +194,6 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
   entryComponents: [
     NewProjectComponentWindow,
     NewMapComponentWindow,
-    ExecutionReportComponent,
     ProcessesComponentWindow,
     NewProcessComponentWindow,
     ActionsComponentWindow,
@@ -212,7 +203,6 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     UpdateMapComponentWindow,
     AttributeWindow,
     MapVersionsComponent,
-    MapExecutionsComponent,
     AddTriggerComponentWindow,
     InstallAgentComponentWindow,
     RenameNodeComponentWindow,

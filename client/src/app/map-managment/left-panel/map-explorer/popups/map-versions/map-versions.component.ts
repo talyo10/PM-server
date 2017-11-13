@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
-import {MapExecutionsComponent} from '../map-executions/map-executions.component';
+import {MapExecutionComponent} from '../../../../map-execution/map-execution.component';
 
 import { MapService } from '../../../../../shared/services/map.service';
 
@@ -35,7 +35,7 @@ export class MapVersionsComponent {
   openExecutions(version) {
     const modalRef = this
       .modalService
-    .open(MapExecutionsComponent);
+    .open(MapExecutionComponent);
     modalRef.componentInstance.map = this.map;
     modalRef.componentInstance.version = version;
 
