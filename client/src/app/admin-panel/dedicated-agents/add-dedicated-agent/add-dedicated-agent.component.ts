@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 })
 export class AddDedicatedAgentComponentWindow {
   error: string;
+  uploading: boolean = false;
   dedicateAgents: any[];
   uploader: FileUploader;
   hasBaseDropZoneOver: boolean = false;
@@ -21,8 +22,10 @@ export class AddDedicatedAgentComponentWindow {
   constructor(public dialog: NgbActiveModal, public modalService: NgbModal, private constsService: ConstsService) {
     this.dedicateAgents = [];
     this.error = '';
-    this.uploader = new FileUploader({ url: this.constsService.getServerUrl() + 'installAgents' });
+    
+    this.uploader = new FileUploader({ url: this.constsService.getServerUrl() + 'installPlugins' });
     this.uploader.onCompleteAll = this.closeAfterComplete(this);
+    this.uploader.onSuccessItem = (res) => { this.uploading = false }
   }
 
   fileOverBase(e: any): void {
@@ -41,6 +44,11 @@ export class AddDedicatedAgentComponentWindow {
 
   closeWindow() {
     this.dialog.close();
+  }
+
+  uploadFile() {
+    this.uploading = true;
+    this.uploader.uploadAll();
   }
 
 }
