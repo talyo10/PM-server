@@ -47,7 +47,7 @@ export class MapExecutionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.execReq.unsubsctibe();
+    this.execReq.unsubscribe();
     this.executionResultsReq.unsubscribe();
   }
 
