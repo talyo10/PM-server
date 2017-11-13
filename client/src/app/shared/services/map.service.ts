@@ -156,6 +156,14 @@ export class MapService {
     return this.http.post(this.serverUrl + 'map/'+ map.id + '/agents/update', { agents: agents }).map(this.extractData)
   }
 
+  getExecutionsList(mapId) {
+    return this.http.get(this.serverUrl + "map/" + mapId + "/executions", this.options).map(this.extractData);
+  }
+
+  getExecutionDetail(executionId) {
+    return this.http.get(this.serverUrl + 'executions/' + executionId, this.options).map(this.extractData);
+  }
+
   /* offline Services */
 
   private extractData(res: Response) {
