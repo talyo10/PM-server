@@ -119,6 +119,15 @@ module.exports = {
             sails.log.error("Error getting version", error);
             res.badRequest();
         });
+    },
+    getMapExecutionsList: function(req, res) { 
+        ExecutionService.getExecuitionsByMap(req.param('id')).then((executions) => {
+                res.json(executions);
+            }).catch((error) => {
+                sails.log.error("Error getting execution". error);
+                console.log(error);
+                res.badRequest();
+            })
     }
 };
 

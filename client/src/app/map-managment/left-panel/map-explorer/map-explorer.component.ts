@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs/Subscription';
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { ProjectService } from '../../../shared/services/project.service';
 import { MapService } from '../../../shared/services/map.service';
-import { ExecutionReportComponent } from './execution-report/execution-report.component';
 import { NewMapComponentWindow } from './popups/new-map/new-map.component';
 import { UpdateMapComponentWindow } from './popups/update-map/update-map.component';
 import { NewProjectComponentWindow } from './popups/new-project/new-project.component';
@@ -17,7 +16,8 @@ import { NewFolderComponentWindow } from './popups/new-folder/new-folder.compone
 import { MapVersionsComponent } from './popups/map-versions/map-versions.component';
 import { RenameFolderComponentWindow } from './popups/rename-folder/rename-folder.component';
 import { ConfirmPopupComponent } from '../../../shared/popups/confirm-popup/confirm-popup.component';
-import { ConfirmPopupModel } from "../../../shared/interfaces/iconfirm-popup"
+import { ConfirmPopupModel } from "../../../shared/interfaces/iconfirm-popup";
+import { MapExecutionComponent } from "../../map-execution/map-execution.component";
 
 
 import * as _ from 'lodash';
@@ -34,7 +34,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
-  
+
   private parmasReq: any;
   private openMaps: any[];
   projectsTree: any = [];
@@ -87,7 +87,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(private authenticationService: AuthenticationService,private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) {  }
+  constructor(private authenticationService: AuthenticationService, private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let user = this.authenticationService.getCurrentUser();
@@ -98,22 +98,22 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
     this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
       .subscribe(
-        (tree) => {
-          this.projectsTree = tree;
-          this.tree.treeModel.update();
-        },
-        (error) => console.log(error)
+      (tree) => {
+        this.projectsTree = tree;
+        this.tree.treeModel.update();
+      },
+      (error) => console.log(error)
       );
-    
+
     this.openMapsSubscription = this.mapService.getOpenMapsObservable()
       .subscribe(
-        (maps) => {
-          this.openMaps = maps
-        }
+      (maps) => {
+        this.openMaps = maps
+      }
       )
     let actionMapping = this.actionMapping;
     this.treeOptions = {
-      getChildren: (node:TreeNode) => {
+      getChildren: (node: TreeNode) => {
         return new Promise((resolve, reject) => {
           this.projectService.getNode(node.id).subscribe((node) => {
             _.map(node.childs, this.mapNode.bind(this));
@@ -138,17 +138,17 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
   selectMap(node: TreeNode) {
-    if(this.isMap(node)) {
+    if (this.isMap(node)) {
       let mapIndex = null;
       if (this.openMaps && this.openMaps.length > 0) {
-        mapIndex = _.findIndex(this.openMaps, (map) => { 
+        mapIndex = _.findIndex(this.openMaps, (map) => {
           return map.id == node.data.map
         });
       }
 
       if (mapIndex !== null && mapIndex > -1) {
         this.mapService.selectMap(this.openMaps[mapIndex]);
-      } 
+      }
       else {
         this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
           (map) => {
@@ -225,36 +225,36 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         this.tree.treeModel.update();
         node.expand();
         node.ensureVisible();
-        },
-        (error) => { console.log(error); });
+      },
+      (error) => { console.log(error); });
   }
 
   addProject() {
 
-      const pmodal = this
+    const pmodal = this
       .modalService
-        .open(NewProjectComponentWindow);
+      .open(NewProjectComponentWindow);
 
-      pmodal.result
+    pmodal.result
       .then((project: any) => {
-          if (!project) return;
-          console.log('created');
-          project.editMode = true;
-          this.projectsTree.push(project);
-          this.tree.treeModel.update();
-        },
-        (error) => { console.log(error); });
+        if (!project) return;
+        console.log('created');
+        project.editMode = true;
+        this.projectsTree.push(project);
+        this.tree.treeModel.update();
+      },
+      (error) => { console.log(error); });
   }
 
   deleteProject(node: TreeNode) {
     let project: any = node.data;
-    
+
     const pmodal = this.modalService.open(ConfirmPopupComponent);
     let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
     popupFields.title = "Delete Map";
     popupFields.message = "Are you sure you want to delete project: '" + node.displayField + "'?";
     popupFields.action = "Delete";
-    
+
     pmodal.componentInstance.popupFields = popupFields;
 
     pmodal.result
@@ -268,7 +268,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       })
       .catch((error) => console.log("Error deleting project!"))
 
-    
+
   }
 
   openContextMenu($event, node: TreeNode) {
@@ -278,13 +278,13 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         event: $event,
         item: node,
       });
-    } else if (this.isMap(node)){
+    } else if (this.isMap(node)) {
       this.contextMenuService.show.next({
         contextMenu: this.mapCtx,
         event: $event,
         item: node,
       });
-    } else if (this.isFolder(node)){
+    } else if (this.isFolder(node)) {
       this.contextMenuService.show.next({
         contextMenu: this.folderCtx,
         event: $event,
@@ -297,20 +297,21 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     let map = node.data.map;
     const pmodal = this
       .modalService
-    .open(UpdateMapComponentWindow);
+      .open(UpdateMapComponentWindow);
     pmodal.componentInstance.mapName = map.name;
 
     pmodal.result
       .then((mapName) => {
-          if (!mapName) return;
-          map.name = mapName;
-          this.mapService.updateMap(map).subscribe((res)=> {
-            node.data.text = map.name;
-            node.data.name = map.name;
-            this.tree.treeModel.update();
-          });
-        },
-        (error) => { console.log(error);
+        if (!mapName) return;
+        map.name = mapName;
+        this.mapService.updateMap(map).subscribe((res) => {
+          node.data.text = map.name;
+          node.data.name = map.name;
+          this.tree.treeModel.update();
+        });
+      },
+      (error) => {
+        console.log(error);
       });
   }
 
@@ -318,20 +319,20 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     let folder = node.data;
     const pmodal = this
       .modalService
-    .open(RenameFolderComponentWindow);
+      .open(RenameFolderComponentWindow);
     pmodal.componentInstance.name = node.data.name;
 
     pmodal.result
       .then((name) => {
-          if (!name) return;
-          folder.name = name;
-          this.projectService.renameFolder(node.data.id, name).subscribe((res)=> {
-            node.data.text = name;
-            node.data.name = name;
-            this.tree.treeModel.update();
-          });
-        },
-        (error) => console.log(error));
+        if (!name) return;
+        folder.name = name;
+        this.projectService.renameFolder(node.data.id, name).subscribe((res) => {
+          node.data.text = name;
+          node.data.name = name;
+          this.tree.treeModel.update();
+        });
+      },
+      (error) => console.log(error));
   }
 
   deleteMap(node: TreeNode) {
@@ -340,7 +341,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     popupFields.title = "Delete Map";
     popupFields.message = "Are you sure you want to delete map: '" + node.displayField + "'?";
     popupFields.action = "Delete";
-    
+
     pmodal.componentInstance.popupFields = popupFields;
 
     pmodal.result
@@ -353,8 +354,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         }
       })
       .catch((error) => console.log("Error deleting map!"))
-    
-    
+
+
   }
 
   deleteFolder(node: TreeNode) {
@@ -363,7 +364,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     popupFields.title = "Delete Folder";
     popupFields.message = "Are you sure you want to delete folder: '" + node.displayField + "'?";
     popupFields.action = "Delete";
-    
+
     pmodal.componentInstance.popupFields = popupFields;
 
     pmodal.result
@@ -376,7 +377,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         }
       })
       .catch((error) => console.log("Error deleting folder!"))
-   
+
   }
 
   isProject(node: TreeNode) {
@@ -396,7 +397,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       return this.mapToItem(node);
     } else if (node.type == "folder") {
       return this.folderToItem(node);
-    } else if (node.type == "project"){
+    } else if (node.type == "project") {
       return this.projectToItem(node);
     } else {
       return;
@@ -404,13 +405,9 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
   showExecutions(node: TreeNode) {
-    let map = node.data.map;
-    const pmodal = this
-      .modalService
-      .open(ExecutionReportComponent);
-    pmodal.componentInstance.map = map;
-    pmodal.componentInstance.execution = null;
-
+    let mapId = node.data.map;
+    const pmodal = this.modalService.open(MapExecutionComponent);
+    pmodal.componentInstance.mapNode = node.data;
   }
 
   showVersions(node: TreeNode) {

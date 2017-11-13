@@ -30,7 +30,7 @@ module.exports = {
     },
     actionResult: {
       collection: 'ActionExecutionResult',
-      via: 'processExecution',
+      via: 'processExecution'
     }
   }
 };

@@ -20,6 +20,9 @@ module.exports = {
       type: 'string',
       enum: ['success', 'error'],
     },
+    startAgentsNumber: {
+      type: 'int'
+    },
     mapVersion: {
       type: 'int',
       required: true
