@@ -220,7 +220,7 @@ var jsonpatch = require('fast-json-patch'),
             if(!runningExecutionResults.agents[agent.key].processes[processKey].agents) {
                 runningExecutionResults.agents[agent.key].processes[processKey].agents = {};
             }
-            
+
 
             if (!executionResult.links[linkId].processes[processKey].actions[key]) {
                 executionResult.links[linkId].processes[processKey].actions[key] = JSON.parse(JSON.stringify(action));
@@ -303,7 +303,7 @@ var jsonpatch = require('fast-json-patch'),
                             msg: 'finished running action ' + action.name + ":" + body.res + "\n"
                         };
                         socket.emit('update', JSON.stringify(msg));
-                        
+
                         SystemLogService.create("Finish running map", mapId, 'Map', 'execution', 'success');
 
                         addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
@@ -534,7 +534,7 @@ var jsonpatch = require('fast-json-patch'),
                 }
 
                 runningExecutionResults.agents[agent.key].processes[key].actions = {};
-                
+
                 // creating a record for the process and setting start time
                 var startTime = new Date();
 
@@ -603,7 +603,7 @@ var jsonpatch = require('fast-json-patch'),
 
                         runningExecutionResults.agents[agent.key].processes[key].startTime = startTime;
                         runningExecutionResults.agents[agent.key].processes[key].finishTime = new Date();
-                        runningExecutionResults.agents[agent.key].processes[key].status = actionsTotal.status;
+                        runningExecutionResults.agents[agent.key].processes[key].status = 'success';
                         runningExecutionResults.agents[agent.key].processes[key].result = actionsTotal;
 
                         addProcessResultToContext(executionContext, link.id, process.name, actionsTotal, 0);
@@ -684,12 +684,12 @@ runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, 
                 executionResult.agents[agent.key].result = totalResult;
                 executionResult.agents[agent.key].status = 0;
                 executionResult.agents[agent.key].endTime = (new Date()).toString();
-                
+
                 runningExecutionResults.agents[agent.key].result = totalResult;
                 runningExecutionResults.agents[agent.key].finishTime = new Date();
                 runningExecutionResults.agents[agent.key].startTime = new Date();
                 runningExecutionResults.agents[agent.key].status = 'success';
-                
+
 
                 if (cleanWorkspace) {
                     request.post(
@@ -721,7 +721,7 @@ runMapFromAgent = function (links, mapId, versionIndex, executionIndex, socket, 
 
 var libpm = '';
 fs.readFile(path.join(sails.config.appPath, 'static/libs/lib_production_map.js'), 'utf8', function (err, data) {
-    // opens the lib_production file. this file is used for user to overwrite custom function at map code. 
+    // opens the lib_production file. this file is used for user to overwrite custom function at map code.
     if (err) {
         return console.log(err);
     }
@@ -750,7 +750,7 @@ function addNewMapVersion(map) {
 }
 
 function createExecutionModels(runningExecutionResults) {
-    Execution.create({ map: runningExecutionResults.map, status: runningExecutionResults.status, mapVersion: runningExecutionResults.mapVersion, startTime: runningExecutionResults.startTime, finishTime: runningExecutionResults.finishTime }).then((exec) => {
+    Execution.create({ map: runningExecutionResults.map, startAgentsNumber: runningExecutionResults.map.agents.length, status: runningExecutionResults.status, mapVersion: runningExecutionResults.mapVersion, startTime: runningExecutionResults.startTime, finishTime: runningExecutionResults.finishTime }).then((exec) => {
         return exec
     }).then((exec) => new Promise((resolve, reject) => {
         for (let i in runningExecutionResults.agents) {
@@ -773,7 +773,7 @@ function createExecutionModels(runningExecutionResults) {
 
         resolve();
     }))
-    
+
 }
 
 function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
@@ -796,7 +796,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         map = rmap;
 
         SystemLogService.info("Starting map execution", map, "execution");
-    
+
         if (versionIndex <= 0) versionIndex = map.versions.length - 1;
         if (!map || map.versions.length - 1 < versionIndex) {
             msg = {
@@ -850,7 +850,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 msg: "failed running map " + executionResult.name
             };
             SystemLogService.error("Failed running map", map, "execution");
-            
+
             throw new Error("Failed running map " + executionResult.name);
         }
         sails.log("Running map onstart hook: " + map.name);
@@ -886,7 +886,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                 agents[mapAgent.key] = mapAgent;
             }
         }
-        
+
         executionResult.agents = agents;
 
         // sets the map agents which are alive.
@@ -915,7 +915,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
                     resolve();
                 }
             )}).then(() => {
-                
+
                 msg = {
                     date: new Date(),
                     map: map.name,
