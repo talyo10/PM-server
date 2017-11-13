@@ -193,14 +193,16 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
     pmodal.result
       .then((map: any) => {
-        if (!map) return;
-        console.log('created');
-        map.editMode = true;
-        this.mapToItem(map);
-        node.data.children.push(map);
-        this.tree.treeModel.update();
-      },
-      (error) => { console.log(error); });
+          if (!map) return;
+          map.editMode = true;
+          this.mapToItem(map);
+          node.data.children.push(map);
+          this.tree.treeModel.update();
+          let newNode = this.tree.treeModel.getNodeById(map.id)
+          newNode.setActiveAndVisible();
+          this.selectMap(newNode);
+        },
+        (error) => { console.log(error); });
   }
 
   addFolder(node: TreeNode) {
