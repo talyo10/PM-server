@@ -1,0 +1,47 @@
+<div class="card tile bg-dark text-white" [ngClass]="{'active': selected}">
+  <div class="card-body">
+    <p-tabView>
+      <p-tabPanel header="Summary">
+        <h4 class="card-title">{{process.name}}</h4>
+        <ul>
+          <li>Node Type:</li>
+          <li>Description:</li>
+          <li>Status: {{process.status}}</li>
+        </ul>
+      </p-tabPanel>
+      <p-tabPanel header="Ag. Status">
+        <h4 class="card-title">{{process.name}}</h4>
+        <canvas #processChart height="100"></canvas>
+
+      </p-tabPanel>
+      <p-tabPanel header="Agents">
+        <h4 class="card-title">{{process.name}}</h4>
+        <div class="agents-table">
+          <table class="table table-responsive">
+            <thead>
+            <tr>
+              <th scope="col">Agent</th>
+              <th scope="col">Status</th>
+              <th scope="col">Start</th>
+              <th scope="col">End</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let agent of process.agents">
+              <td>{{agent.name}}</td>
+              <td *ngIf="agent.status === 'success'">V</td>
+              <td *ngIf="agent.status === 'error'">X</td>
+              <td>{{agent.startTime | date: 'short'}}</td>
+              <td>{{agent.finishTime | date: 'short'}}</td>
+            </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+      </p-tabPanel>
+    </p-tabView>
+
+
+  </div>
+</div>
