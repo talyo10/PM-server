@@ -273,3 +273,7 @@
 [role="handle"] {
   cursor: move;
 }
+
+select.form-control {
+  height: 26px !important;
+}
