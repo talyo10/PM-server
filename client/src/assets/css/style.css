@@ -872,7 +872,7 @@ tree-viewport {
 }
 
 thead {
-  border-bottom: 1px solid #6f6f6f;  
+  border-bottom: 1px solid #6f6f6f;
 }
 
 .ui-chkbox-box {
@@ -892,4 +892,18 @@ thead {
 
 .ui-treetable tbody td {
   padding: 10px !important;
+}
+
+.ui-tabview-selected a span {
+  color: #40c8e4 !important;
+  text-decoration: underline;
+}
+
+.ui-tabview-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.ui-tabview .ui-tabview-nav li a {
+  padding: 3px !important;
 }
