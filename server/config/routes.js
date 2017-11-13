@@ -110,7 +110,7 @@ module.exports.routes = {
     'POST /addSystemHooks': 'DedicatedAgentController.addHooks',
 
     'get /getallagents': 'DedicatedAgentController.getAllAgents',
-    'post /installAgents': 'DedicatedAgentController.installAgents',
+    'post /installPlugins': 'DedicatedAgentController.installAgents',
 
     'get /executions/:id': 'ExecutionController.executionDetail',
 
