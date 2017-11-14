@@ -22,10 +22,6 @@ export class ServersService {
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
     this.options = new RequestOptions({ headers: headers });
     this.serverUrl = this.constsService.getServerUrl();
-
-    this.agentsIntervalReq = this.getAgentInterval().subscribe((r) => {
-      this.setAgentsList(r);
-    });
   }
 
   buildSNodeTree(nodes, parent = "-1"): TreeNode[] {
@@ -108,6 +104,14 @@ export class ServersService {
 
   getStatus() {
     return this.http.get(this.serverUrl + 'BaseAgent/statuses').map(this.extractData);
+  }
+
+  getAgentsStatusInterval() {
+    return Observable
+    .timer(0, 10000)
+    .flatMap(() => {
+      return this.http.get(this.serverUrl + 'BaseAgent/statuses')
+    }).map((res) => res.json());
   }
 
   getNode(id: any) {
