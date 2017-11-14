@@ -274,7 +274,7 @@ module.exports = {
     deleteGroup: function (nodeId) {
         return deleteNode(nodeId);
     },
-    updateGroup: function (snode) {
+    updateSnode: function (snode) {
         return SNode.update({id: snode.id }, snode)
     },
     updateBaseAgent: function (parentId, baseAgent) {

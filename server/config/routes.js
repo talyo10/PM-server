@@ -93,7 +93,7 @@ module.exports.routes = {
     
     'get /BaseAgent/deleteGroup/:id': 'BaseAgentController.deleteGroup',
     'post /BaseAgent/addGroup': 'BaseAgentController.addGroup',
-    'POST /BaseAgent/updateGroup': 'BaseAgentController.updateGroup',
+    'POST /agents/snodes/:id/update': 'BaseAgentController.updateSnode',
     'get /BaseAgent/node/:id': 'BaseAgentController.getNode',
 
     'POST /BaseAgent/updateAgent': 'BaseAgentController.updateAgent',
