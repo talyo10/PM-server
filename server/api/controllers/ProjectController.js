@@ -113,6 +113,31 @@ module.exports = {
                 sails.log.error("Error finding project", error);
                 res.badRequest();
             })
+    },
+    userProjects: function (req, res) {
+        ProjectService.getProjectByUser(req.session.passport.user).then((projects) => new Promise((resolve, reject) => {
+            let nodes = [];
+            
+            async.each(projects, function(project, callback) {
+                ProjectService.getProjectById(project.id).then((populatedProject) => {
+                    if (populatedProject.isActive !== false) {
+                        nodes.push(populatedProject);
+                    }
+                    callback();
+                });
+            }, function(err) {
+                if (err) {
+                    reject();
+                } 
+                resolve(_.orderBy(nodes, ['name'], ['asc']));
+            });
+        })).then((nodes) => {
+            res.json(nodes);
+        }).catch((error) => {
+            sails.log.error("Error finding project", error);
+            res.badRequest();
+        });
+        
     }
 };
 

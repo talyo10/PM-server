@@ -65,6 +65,7 @@ module.exports.routes = {
     'POST /project/renameFolder': 'ProjectController.renameFolder',
     'POST /project/deleteFolder': 'ProjectController.deleteFolder',
     'get /project/node/:id': 'ProjectController.getNode',
+    'get /projects':  'ProjectController.userProjects',
 
     'get /map/:id/render': 'MapController.getRenderedMapById',
     'get /map/deleteMap/:id': 'MapController.deleteMap',
