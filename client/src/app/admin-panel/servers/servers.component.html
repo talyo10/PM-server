@@ -74,56 +74,51 @@
       </div>
     </div>
   </div>
-  <div class="pmap-table pm-font">
-    <div class="thead-wrapper">
-      <div class="thead">
-        <div class="tr">
-            <div class="cell sm-cell"></div>
-            <div class="cell sm-cell align-left"><span>Status</span></div>
-            <div class="cell md-cell align-left"><span>Name</span></div>
-            <div class="cell md-cell align-left"><span>IP</span></div>
-            <div class="cell md-cell align-left"><span>HostName</span></div>
-            <div class="cell md-cell align-left"><span>Architecture</span></div>
-            <div class="cell md-cell align-left"><span>Free Disk Space</span></div>
-            <div class="cell md-cell align-left"><span>Response Time</span></div>
-            <div class="cell sm-cell align-left"></div>
-            <div class="cell sm-cell align-left"></div>
-        </div>
-      </div>
-    </div>
-    <div class="tbody-wrapper">
-      <div class="tbody">
-        <!-- | serverFilter:search -->
-        <tree-root #tree [nodes]="agents" [options]="treeOptions" (onMoveNode)="onMoveNode($event)">
-            <ng-template #treeNodeTemplate let-node="node.data" let-index="index">
-                <div *ngIf="!node.hasChildren" class="tr">
-                    <div *ngIf="node.data.alive" class="sm-cell cell"><span><i class="green server-status"></i></span></div>
-                    <div *ngIf="!node.data.alive" class="sm-cell cell"><span><i class="red server-status"></i></span></div>
-                    <div class="cell md-cell"><span>{{ node.data.name }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.url }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.hostname }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.arch }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.freeSpace }}</span></div>
-                    <div class="cell md-cell"><span>{{ node.data.respTime }}</span></div>
-                    <div class="cell sm-cell"><button type="button" (click)="editAgent(node.data)"><i class="pmap-3"></i></button></div>
-                    <div class="cell sm-cell"><button type="button" (click)="deleteAgent(node)"><i class="pmap-27"></i></button></div>
-                </div>
-                <div *ngIf="node.hasChildren" class="tr">
-                    <div class="sm-cell cell"></div>
-                    <div class="cell md-cell"><span>{{ node.name }}</span></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell md-cell"></div>
-                    <div class="cell sm-cell"></div>
-                    <div class="cell sm-cell"></div>
-                </div>
-            </ng-template>
-          </tree-root>
-      </div>
-    </div>
+  <div class="" *ngIf="snodesTree">
+    <p-treeTable [value]="snodesTree">
+      <p-column>
+        <ng-template let-col let-node="rowData" pTemplate="header">
+          Name
+        </ng-template>
+        <ng-template let-col let-node="rowData" pTemplate="body">
+          <span *ngIf="node.data.name && !node.data.data"  [contextMenu]="groupCtx" [contextMenuSubject]="node"><i class="pmap-21"></i> {{node.data.name}}</span>
+          <span *ngIf="node.data.name && node.data.data" [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="pmap-21"></i> {{node.data.name}}</span>
+          <span *ngIf="!node.data.name" [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node.data.data.key].alive, 'text-danger': !agentsStatus[node.data.data.key].alive}"></i>   {{node.data.data.name}}</span>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-col let-node="rowData" pTemplate="header">
+          URL
+        </ng-template>
+        <ng-template let-col let-node="rowData" pTemplate="body">
+          <span *ngIf="node.data.data" [contextMenu]="serverCtx" [contextMenuSubject]="node">{{node.data.data.url}}</span>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-col let-node="rowData" pTemplate="header">
+          Free Disk Space
+        </ng-template>
+        <ng-template let-col let-node="rowData" pTemplate="body">
+          <span *ngIf="node.data.data">{{agentsStatus[node.data.data.key].freeSpace? agentsStatus[node.data.data.key].freeSpace:' ---'}}</span>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-col let-node="rowData" pTemplate="header">
+          Response Time
+        </ng-template>
+        <ng-template let-col let-node="rowData" pTemplate="body">
+          <span *ngIf="node.data.data">{{agentsStatus[node.data.data.key].respTime? agentsStatus[node.data.data.key].respTime:' ---'}}</span>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-col let-node="rowData" pTemplate="header">
+          Architecture
+        </ng-template>
+        <ng-template let-col let-node="rowData" pTemplate="body">
+          <span *ngIf="node.data.data">{{node.data.data.arch}}</span>
+        </ng-template>
+      </p-column>
+    </p-treeTable>
   </div>
   <div class="nl-wrapper">
     <button type="button" class="btn-event" (click)="newGroup(null)"><i class="pmap-25"></i>New Group</button>
@@ -143,7 +138,7 @@
   </ng-template>
 </context-menu>
 <context-menu #serverCtx>
-  <ng-template contextMenuItem (execute)="editAgent($event.item.data.data)">
+  <ng-template contextMenuItem (execute)="editAgent($event.item.data)">
     Edit Agent
   </ng-template>
   <ng-template contextMenuItem (execute)="deleteAgent($event.item.data)">
