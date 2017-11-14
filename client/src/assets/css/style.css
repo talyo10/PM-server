@@ -907,3 +907,7 @@ thead {
 .ui-tabview .ui-tabview-nav li a {
   padding: 3px !important;
 }
+
+.ui-treetable-row {
+  border-bottom: 1px solid #545454 !important;
+}

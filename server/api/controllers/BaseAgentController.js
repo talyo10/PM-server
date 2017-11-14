@@ -43,7 +43,7 @@ module.exports = {
         res.send(agents);
     },
     getSNodes: function(req, res) {
-        SNode.find().populate('data').then((nodes) => {
+        SNode.find().populate('data').sort("data ASC").then((nodes) => {
                 res.json(nodes);
             }).catch((error) => {
                 console.log("Error getting nodes", error);
@@ -69,8 +69,8 @@ module.exports = {
                 
             });
     },
-    updateGroup:function(req,res){
-        BaseAgentsService.updateGroup(req.body).then((node) => {
+    updateSnode:function(req, res) {
+        BaseAgentsService.updateSnode(req.body).then((node) => {
                 res.send(node);
             }).catch((error) => {
                 sails.log.error("Error updating agent", error);

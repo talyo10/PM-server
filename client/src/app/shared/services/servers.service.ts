@@ -90,8 +90,8 @@ export class ServersService {
     return this.http.post(this.serverUrl + 'BaseAgent/updateAgent', { parentId, agent }).map(this.extractData);
   }
 
-  updateGroup(group) {
-    return this.http.post(this.serverUrl + 'BaseAgent/updateGroup', group).map(this.extractData);
+  updateSnode(node) {
+    return this.http.post(this.serverUrl + 'agents/snodes/' + node.id + '/update', node).map(this.extractData);
   }
 
   addGroup(parentId, name) {
