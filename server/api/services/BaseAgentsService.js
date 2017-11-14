@@ -10,39 +10,42 @@ var path = require('path');
 var modulesPath = path.join(sails.config.appPath, "agents");
 
 var bytesToSize = function (bytes) {
-   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-   if (bytes == 0) return '0 Byte';
-   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return '0 Byte';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 };
 
-var installPluginsOnAgent = function(agent) {
-    if (agent.alive) {
+var installPluginsOnAgent = function (agent) {
+    console.log(agent.url);
+    return new Promise((resolve, reject) => {
+        if (!agent.url) {
+            return resolve();
+        }
         fs.readdir(modulesPath, (err, files) => {
-            async.each(files, 
-                function(plugin, fileSendingCallback){
+            async.each(files,
+                function (plugin, fileSendingCallback) {
                     var formData = {
                         file: {
-                            value:  fs.createReadStream(path.join(modulesPath, plugin)),
+                            value: fs.createReadStream(path.join(modulesPath, plugin)),
                             options: {
                                 filename: plugin
                             }
                         }
                     };
                     // Post the file to the upload server
-                    request.post({url: agent.url + "/registeragent", formData: formData});
+                    request.post({ url: agent.url + "/registeragent", formData: formData });
                     fileSendingCallback();
                 },
-                function(err) {
-                    console.log("finish installing");
+                function (err) {
+                    resolve();
                 });
         })
-    } else {
-        console.log("No live agents");
-    }
+    })
+
 };
 
-var deleteNode = function(nodeId) {
+var deleteNode = function (nodeId) {
     return SNode.findOne({ id: nodeId }).populate('children').then((node) => new Promise((res, rej) => {
         if (node.hasChildren) {
             // iterate through all node children and delete them
@@ -54,7 +57,7 @@ var deleteNode = function(nodeId) {
             // if it doesnt has children than its a base agent
             res(BaseAgent.destroy({ id: node.data }));
         }
-        
+
     })).then(() => {
         return SNode.destroy({ id: nodeId });
     })
@@ -62,62 +65,64 @@ var deleteNode = function(nodeId) {
 
 
 
-var listenOnAgent = function(agent) {
+var listenOnAgent = function (agent) {
 
     agent = JSON.parse(JSON.stringify(agent));
-    var iid = setInterval(function(){
+    var iid = setInterval(function () {
         var start = new Date();
         request.post(
-                    agent.url + '/isalive',
-                    { form: {
-                            key: agent.key
-                        }
-                    },
-                    function (error, response, body) {
-                        try{
-                            body = JSON.parse(body);
-                        } catch(e) {
-                            // statements
-                            body = {
-                                res:e
-                            };
-                        }
-                        if (!error && response.statusCode == 200) {
-                            // resetting the agent.
-                            agents[agent.key] = {};
-                            agents[agent.key].alive = true;
-                            agents[agent.key].hostname = body.info.hostname;
-                            agents[agent.key].arch = body.info.arch;
-                            agents[agent.key].freeSpace = bytesToSize(body.info.freeSpace);
-                            agents[agent.key].respTime = new Date() - start;
-                            agents[agent.key].url = agent.url;
-                            agents[agent.key].key = agent.key;
-                            agents[agent.key].liveCounter = LIVE_COUNTER;
-                        }
-                        else if ((--agents[agent.key].liveCounter) == 0) {
-                            agents[agent.key].alive = false;
-                            if (!agents[agent.key].hostname) {
-                                agents[agent.key].hostname = 'wait for update';
-                            }
-                            if (!agents[agent.key].arch) {
-                                agents[agent.key].arch = 'wait for update';
-                            }
-                            if (!agents[agent.key].freeSpace) {
-                                agents[agent.key].freeSpace = 0;
-                            }
-                            agents[agent.key].respTime = 0;
-                            sails.log.error(error);
-                        }
-                    });
+            agent.url + '/isalive',
+            {
+                form: {
+                    key: agent.key
+                }
+            },
+            function (error, response, body) {
+                try {
+                    body = JSON.parse(body);
+                } catch (e) {
+                    // statements
+                    body = {
+                        res: e
+                    };
+                }
+                if (!error && response.statusCode == 200) {
+                    // resetting the agent.
+                    agents[agent.key] = {};
+                    agents[agent.key].alive = true;
+                    agents[agent.key].hostname = body.info.hostname;
+                    agents[agent.key].arch = body.info.arch;
+                    agents[agent.key].freeSpace = bytesToSize(body.info.freeSpace);
+                    agents[agent.key].respTime = new Date() - start;
+                    agents[agent.key].url = agent.url;
+                    agents[agent.key].key = agent.key;
+                    agents[agent.key].liveCounter = LIVE_COUNTER;
+                }
+                else if ((--agents[agent.key].liveCounter) == 0) {
+                    agents[agent.key].alive = false;
+                    if (!agents[agent.key].hostname) {
+                        agents[agent.key].hostname = 'wait for update';
+                    }
+                    if (!agents[agent.key].arch) {
+                        agents[agent.key].arch = 'wait for update';
+                    }
+                    if (!agents[agent.key].freeSpace) {
+                        agents[agent.key].freeSpace = 0;
+                    }
+                    agents[agent.key].respTime = 0;
+                    sails.log.error(error);
+                }
+            });
     }, KEEPALIVEINTERVAL);
-    agents[agent.key] = {intervalId: iid, alive: false};
+    agents[agent.key] = { intervalId: iid, alive: false };
 };
 
 function populateTree(agentsTree) {
     let children = [];
-    return new Promise((resolve, reject) => {async.each(agentsTree.children, function(child, callback) {
+    return new Promise((resolve, reject) => {
+        async.each(agentsTree.children, function (child, callback) {
             if (!child.hasChildren) {
-                SNode.findOne({id: child.id}).populate('data').exec(function (err, data) {
+                SNode.findOne({ id: child.id }).populate('data').exec(function (err, data) {
                     if (err) {
                         return callback(err);
                     }
@@ -125,7 +130,7 @@ function populateTree(agentsTree) {
                     callback();
                 });
             } else if (child.hasChildren) {
-                SNode.findOne({id: child.id}).populate('children').exec(function (err, data) {
+                SNode.findOne({ id: child.id }).populate('children').exec(function (err, data) {
                     if (err) {
                         return callback(err);
                     }
@@ -133,8 +138,8 @@ function populateTree(agentsTree) {
                     callback();
                 });
             }
-        }, function(err) {
-            if(err) { 
+        }, function (err) {
+            if (err) {
                 reject(err)
             }
             agentsTree.children = children;
@@ -164,118 +169,118 @@ module.exports = {
             key: sshKey,
         });
 
-		getIP(function (err, ip) {
-			if (err) {
-				console.log('invalid ip');
-				return cb("Invalid ip");
-			}
-			console.log(ip);
-			var baseConf = {
-            serverUrl: "http://" + ip + ":8080",// + req.port,
-            baseAgentAddress: baseAgent.url ,
-            baseAgentPort: baseAgent.port
-        };
+        getIP(function (err, ip) {
+            if (err) {
+                console.log('invalid ip');
+                return cb("Invalid ip");
+            }
+            console.log(ip);
+            var baseConf = {
+                serverUrl: "http://" + ip + ":8080",// + req.port,
+                baseAgentAddress: baseAgent.url,
+                baseAgentPort: baseAgent.port
+            };
 
-        ssh.exec('echo "' + fs.readFileSync('./baseAgentInstall.sh') + '" > ~/install.sh', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo chmod a+x ~/install.sh', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo apt-get install -y dos2unix', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('dos2unix ~/install.sh', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo ~/install.sh', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo chmod 777 ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec(`sudo echo '` + JSON.stringify(baseConf) + `' > ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json`, {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo chmod 644 ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json', {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('sudo forever start ~/production-map/production-map-base-agent/production-map-base-agent/bin/www ' + port, {
-            out: function(stdout) {
-                console.log(stdout);
-            }
-        }).exec('wget ' + baseAgent.url + ":" + port + "/registerserver", {
-            out: function(stdout) {
-                return cb();
-            }
-        }).exec('echo "Done"', {
-            out: function(stdout) {
-                return cb();
-            }
-        }).start();
+            ssh.exec('echo "' + fs.readFileSync('./baseAgentInstall.sh') + '" > ~/install.sh', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo chmod a+x ~/install.sh', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo apt-get install -y dos2unix', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('dos2unix ~/install.sh', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo ~/install.sh', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo chmod 777 ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec(`sudo echo '` + JSON.stringify(baseConf) + `' > ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json`, {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo chmod 644 ~/production-map/production-map-base-agent/production-map-base-agent/conf/baseagent.json', {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('sudo forever start ~/production-map/production-map-base-agent/production-map-base-agent/bin/www ' + port, {
+                out: function (stdout) {
+                    console.log(stdout);
+                }
+            }).exec('wget ' + baseAgent.url + ":" + port + "/registerserver", {
+                out: function (stdout) {
+                    return cb();
+                }
+            }).exec('echo "Done"', {
+                out: function (stdout) {
+                    return cb();
+                }
+            }).start();
 
-		});
+        });
 
 
     },
     addBaseAgent: function (baseAgent) {
         var newAgent = null;
         sails.log.debug("AGENT \n", baseAgent);
-            // tring to find a base agent with the same key
+        // tring to find a base agent with the same key
         return BaseAgent.findOne({ key: baseAgent.key }).then((agent) => {
-                if(!agent) {
-                    // if there isn't an agent create it
-                    return BaseAgent.create(baseAgent)
-                } else {
-                    // otherwise update the agent
-                    return BaseAgent.update({ key: baseAgent.key }, baseAgent)
-                }
-            }).then((agent) => {
-                if (Array.isArray(agent)) {
-                    agent = agent[0];
-                }
-                if (!BaseAgentsService.baseAgent.id) {
-                    BaseAgentsService.baseAgent = agent;
-                    SchedultJobsService.loadJobs();
-                } else if (BaseAgentsService.baseAgent.id == agent.id){
-                    BaseAgentsService.baseAgent = agent;
-                }
+            if (!agent) {
+                // if there isn't an agent create it
+                return BaseAgent.create(baseAgent)
+            } else {
+                // otherwise update the agent
+                return BaseAgent.update({ key: baseAgent.key }, baseAgent)
+            }
+        }).then((agent) => {
+            if (Array.isArray(agent)) {
+                agent = agent[0];
+            }
+            if (!BaseAgentsService.baseAgent.id) {
+                BaseAgentsService.baseAgent = agent;
+                SchedultJobsService.loadJobs();
+            } else if (BaseAgentsService.baseAgent.id == agent.id) {
+                BaseAgentsService.baseAgent = agent;
+            }
 
-                agent.alive = true;
-                newAgent = agent;
-                return SNode.findOne({ data: newAgent.id })
-            }).then((node) => {
-                if (!node) {
-                    // if it is an new agent, create a SNode record for it.
-                    return SNode.create({ hasChildren: false, data: newAgent.id })
-                } 
-                return ;
-            }).then((node) => {
-                // install all plugins when agents load.
-                BaseAgentsService.installPluginsOnAgent(newAgent, function() {});
-                listenOnAgent(newAgent);
-                return newAgent
-            });
+            agent.alive = true;
+            newAgent = agent;
+            return SNode.findOne({ data: newAgent.id })
+        }).then((node) => {
+            if (!node) {
+                // if it is an new agent, create a SNode record for it.
+                return SNode.create({ hasChildren: false, data: newAgent.id })
+            }
+            return;
+        }).then((node) => {
+            // install all plugins when agents load.
+            BaseAgentsService.installPluginsOnAgent(newAgent, function () { });
+            listenOnAgent(newAgent);
+            return newAgent
+        });
     },
     deleteBaseAgent: function (nodeId) {
         return deleteNode(nodeId);
     },
     addGroup: function (parentId, name) {
-        return SNode.create({hasChildren: true, name: name, parent: parentId});
+        return SNode.create({ hasChildren: true, name: name, parent: parentId });
     },
     deleteGroup: function (nodeId) {
         return deleteNode(nodeId);
     },
     updateSnode: function (snode) {
-        return SNode.update({id: snode.id }, snode)
+        return SNode.update({ id: snode.id }, snode)
     },
     updateBaseAgent: function (parentId, baseAgent) {
         return SNode.findOne({ data: baseAgent.id }).then((node) => {
@@ -290,14 +295,14 @@ module.exports = {
             return agent
         })
     },
-    getNode: function(id) {
-        return SNode.findOne(id).populate('children').then((node) => new Promise((res, rej) =>{
+    getNode: function (id) {
+        return SNode.findOne(id).populate('children').then((node) => new Promise((res, rej) => {
             let childs = [];
-            async.each(node.children, function(child, callback) {
+            async.each(node.children, function (child, callback) {
                 if (!child.hasChildren) {
-                    SNode.findOne(child.id).populate('data').exec(function(err, node) {
+                    SNode.findOne(child.id).populate('data').exec(function (err, node) {
                         if (err) {
-                            callback(err);    
+                            callback(err);
                         }
                         childs.push(node);
                         callback();
@@ -306,7 +311,7 @@ module.exports = {
                     childs.push(child);
                     callback();
                 }
-            }, function(err) {
+            }, function (err) {
                 if (err) {
                     rej();
                 } else {
@@ -316,17 +321,17 @@ module.exports = {
             });
         }));
     },
-    getAgents: function(){
-        return SNode.find({parent: "-1"}).populate('data').populate('children').then((nodes) => new Promise((res, rej) => {
+    getAgents: function () {
+        return SNode.find({ parent: "-1" }).populate('data').populate('children').then((nodes) => new Promise((res, rej) => {
             let trees = [];
-            async.each(nodes, function(node, callback) {
+            async.each(nodes, function (node, callback) {
                 populateTree(node).then((populatedNode) => {
                     trees.push(populatedNode);
                     callback();
                 }).catch((error) => {
                     return callback(err);
                 })
-            }, function(err) {
+            }, function (err) {
                 if (err) {
                     rej(err);
                 } else {
@@ -335,15 +340,14 @@ module.exports = {
             });
         }));
     },
-    getAgentsData: function() {
+    getAgentsData: function () {
         return BaseAgent.find()
     }
     ,
     listenOnAgents: function () {
         BaseAgentsService.getAgentsData().then((agents) => {
-            if (agents && agents.length > 0)
-            {
-                agents.forEach(function(agent) {
+            if (agents && agents.length > 0) {
+                agents.forEach(function (agent) {
                     listenOnAgent(agent);
                 }, this);
             }
@@ -355,9 +359,9 @@ module.exports = {
                 BaseAgentsService.baseAgent = agents[0];
         })
     },
-    getAgentsState: function() {
+    getAgentsState: function () {
         var resAgents = {};
-        for(var prop in agents){
+        for (var prop in agents) {
             var agent = agents[prop];
             resAgents[prop] = { alive: agent.alive, hostname: agent.hostname, freeSpace: agent.freeSpace, arch: agent.arch, respTime: agent.respTime, url: agent.url };
         }

@@ -144,15 +144,18 @@ module.exports = {
 							})
 						}
 					}
-					let agents = BaseAgentsService.getAgentsState();
+					let agents = BaseAgentsService.liveAgents;
 
-					async.each(
-						agents,
-						BaseAgentsService.installPluginsOnAgent,
-						function (err) {
-							res.ok();
-						}
-					);
+					async.each(agents, function(agent, callback) {
+						BaseAgentsService.installPluginsOnAgent(agent).then((res) => {
+							callback();
+						})
+					}, function(err) {
+						res.ok();
+
+					})
+
+					
 				});
 		});
 	},
