@@ -68,15 +68,12 @@ export class ServersComponent implements OnInit, OnDestroy {
   }
 
   deleteAgent(agent) {
-    console.log(agent);
   	this.serverService.deleteAgent(agent.id).subscribe((res) => {
   		if (agent.parent && agent.parent != "-1") {
-        console.log("!");
         _.remove(agent.parent.children, (o) => {
           return o['data'].id === agent.id;
         })
       } else {
-        console.log("@")
         _.remove(this.snodesTree, (o) => {
           return o['data'].id === agent.id;
         })
@@ -143,21 +140,17 @@ export class ServersComponent implements OnInit, OnDestroy {
   }
 
   onDragLeave(event, node) {
-    console.log("Leave", node);
   }
 
   onDragOver(event, node) {
-    console.log("Over", node);
     node.expanded = true;
   }
 
   onDragStart(event, node) {
-    console.log("Drag start", event, node);
     this.draggedNode = node;
   }
   
   onDragEnd(event, node) {
-    console.log("Drag end", event, node);
     this.draggedNode = null;
   }
 
@@ -258,9 +251,9 @@ export class ServersComponent implements OnInit, OnDestroy {
     let parentId = node? node.data.id: -1;
 
     pmodal.result
-      .then((group: any) => {
-        if (!group) return;
-        this.serverService.addGroup(parentId, group.name).subscribe((groupItem) => {
+      .then((name: any) => {
+        if (!name) return;
+        this.serverService.addGroup(parentId, name).subscribe((groupItem) => {
           let obj: TreeNode = {};
           obj.data = groupItem;
           obj.parent = node;
@@ -279,4 +272,15 @@ export class ServersComponent implements OnInit, OnDestroy {
       (error) => { console.log(error); });
   }
 
+
+  renameNode(node) {
+    const pmodal = this.modalService.open(NewGroupComponentWindow);
+    pmodal.componentInstance.name = node.data.name;
+    pmodal.result.then((name) => {
+      if (name && name !== node.data.name) {
+        node.data.name = name;
+        this.updateSnodeReq = this.serverService.updateSnode(node.data).subscribe();
+      }
+    })
+  }
 }

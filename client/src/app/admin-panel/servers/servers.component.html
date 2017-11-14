@@ -170,8 +170,7 @@
   <ng-template contextMenuItem (execute)="newGroup($event.item)">
     New Group
   </ng-template>
-  <!-- <ng-template contextMenuItem (execute)="renameGroup($event.item)"> -->
-  <ng-template contextMenuItem>
+  <ng-template contextMenuItem (execute)="renameNode($event.item)">
     Rename Group
   </ng-template>
   <ng-template contextMenuItem (execute)="deleteGroup($event.item)">
