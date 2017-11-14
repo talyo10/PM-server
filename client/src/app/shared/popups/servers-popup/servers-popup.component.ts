@@ -26,21 +26,19 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
   selectedServers: any = {};
   selectedAgents: any[];
   map: any;
-  agentsListSubscription: Subscription = new Subscription();
   currentMapSubscription: Subscription = new Subscription();
   treeOptions: any;
+  agentsStatusReq: any;
+  snodeReq: any;
+  agentsStatus: {any};
   
 
-
-  constructor(public dialog: NgbActiveModal, public serverService: ServersService, private mapService: MapService) {
-    
-  }
+  constructor(public dialog: NgbActiveModal, public serverService: ServersService, private mapService: MapService) { }
 
   ngOnInit() {
     this.search = {
       type: 0
     };
-    this.agents = this.serverService.getLatestAgentsList();
     this.selected = false;
     this.unselected = false;
 
@@ -48,18 +46,17 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
       this.map = map;
     });
 
-    this.agentsListSubscription = this.serverService.getAgentsListAsObservable().subscribe((agents) => {
-      this.agents = agents;
-    });
-
-    this.serverService.getSNodesTree().subscribe((tree) => {
-      console.log(tree);
+    this.snodeReq = this.serverService.getSNodesTree().subscribe((tree) => {
       this.agentsTree = tree;
     });
+
+    this.agentsStatusReq = this.serverService.getStatus().subscribe((status) => {
+      this.agentsStatus = status;
+    })
   }
 
   ngOnDestroy() {
-    this.agentsListSubscription.unsubscribe();
+    this.snodeReq.unsubscribe();
   }
 
   clearFilter(search: any) {

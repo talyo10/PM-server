@@ -23,6 +23,8 @@ export class MapServersComponent implements OnInit, OnDestroy {
   search: any;
   interval: any;
   currentMapSubscription: Subscription;
+  agentsStatusReq: any;
+  
 
   constructor(public modalService: NgbModal, public  serverService: ServersService, private mapService: MapService) { }
 
@@ -40,6 +42,12 @@ export class MapServersComponent implements OnInit, OnDestroy {
           // request agents for this map
           this.agentsReq = this.mapService.getMapAgents(map).subscribe((agents) => {
             this.agents = agents;
+
+            if (agents) {
+              this.agentsStatusReq = this.serverService.getAgentsStatusInterval().subscribe((agentsStatus) => {
+                this.updateAgentStatus(agentsStatus);
+              });
+            }
           })
         }
     );
@@ -48,8 +56,17 @@ export class MapServersComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.currentMapSubscription.unsubscribe();
     this.agentsReq.unsubscribe();
+    if (this.agentsStatusReq) {
+      this.agentsStatusReq.unsubscribe();
+    }
     if (this.updateAgentsReq) {
       this.updateAgentsReq.unsubscribe();
+    }
+  }
+
+  updateAgentStatus(agentsStatus) {
+    for (let i in this.agents) { 
+      this.agents[i].alive = agentsStatus[this.agents[i].key].alive
     }
   }
 
@@ -57,7 +74,7 @@ export class MapServersComponent implements OnInit, OnDestroy {
     let dialog = this.modalService.open(ServersPopupComponent);
     dialog.result.then((data: any) => {
       this.updateAgentsReq = this.mapService.updateMapAgents(this.map, data).subscribe((agents) => {
-        this.agents = agents
+        this.agents = agents;
       });
     });
   }
