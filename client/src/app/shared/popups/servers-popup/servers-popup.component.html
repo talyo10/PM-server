@@ -5,7 +5,7 @@
   </header>
   <section>
     
-      <div *ngIf="!agents || agents.length === 0">
+      <div *ngIf="!agentsTree || agentsTree.length === 0">
         No agents found.
       </div>
       <div class="" *ngIf="agentsTree">
@@ -16,7 +16,7 @@
             </ng-template>
             <ng-template let-col let-node="rowData" pTemplate="body">
               <span *ngIf="node.data.name"><i class="pmap-21"></i>  {{node.data.name}}</span>
-              <span *ngIf="!node.data.name"><i class="fa fa-cloud" aria-hidden="true"></i>  {{node.data.data.name}}</span>
+              <span *ngIf="!node.data.name"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node.data.data.key].alive, 'text-danger': !agentsStatus[node.data.data.key].alive}"></i>   {{node.data.data.name}}</span>
             </ng-template>
           </p-column>
           <p-column>
@@ -32,7 +32,7 @@
               Free Disk Space
             </ng-template>
             <ng-template let-col let-node="rowData" pTemplate="body">
-              <span *ngIf="node.data.data">{{node.data.data.freeSpace}}</span>
+              <span *ngIf="node.data.data">{{agentsStatus[node.data.data.key].freeSpace? agentsStatus[node.data.data.key].freeSpace:' ---'}}</span>
             </ng-template>
           </p-column>
           <p-column>
@@ -40,7 +40,7 @@
               Response Time
             </ng-template>
             <ng-template let-col let-node="rowData" pTemplate="body">
-              <span *ngIf="node.data.data">{{node.data.data.respTime}}</span>
+              <span *ngIf="node.data.data">{{agentsStatus[node.data.data.key].respTime? agentsStatus[node.data.data.key].respTime:' ---'}}</span>
             </ng-template>
           </p-column>
           <p-column>
