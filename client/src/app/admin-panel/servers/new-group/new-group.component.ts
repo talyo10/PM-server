@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -14,22 +14,22 @@ import * as _ from 'lodash';
   providers: []
 
 })
-export class NewGroupComponentWindow {
-  public group: any;
+export class NewGroupComponentWindow implements OnInit {
+  @Input() name: any;
+  label: string;
 
-  constructor(public modal: NgbActiveModal) {
-    this.group = {
-      name: '',
-    };
+  constructor(public modal: NgbActiveModal) {  }
+
+  ngOnInit() {
+    this.label = this.name? 'Rename': 'Create';
   }
 
   closeWindow() {
-    console.log('closing windows!');
     this.modal.close();
   }
 
   create() {
-    this.modal.close(this.group);
+    this.modal.close(this.name);
   };
 
 }

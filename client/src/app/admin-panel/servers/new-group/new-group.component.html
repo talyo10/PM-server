@@ -6,11 +6,11 @@
   <section>
     <div class="form-group has-form-label">
       <label for="pr-namea" class="form-label">Name Your Group</label>
-      <input for="pr-namea" type="text" class="form-control" [(ngModel)]="group.name">
+      <input for="pr-namea" type="text" class="form-control" [(ngModel)]="name">
     </div>
   </section>
   <footer>
-    <button class="btn-event btn-no-icon" type="button" (click)="create()"> Create </button>
+    <button class="btn-event btn-no-icon" type="button" (click)="create()"> {{label}} </button>
     <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Close</button>
   </footer>
 </div>
