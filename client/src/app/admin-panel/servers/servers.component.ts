@@ -32,6 +32,8 @@ export class ServersComponent implements OnInit, OnDestroy {
   snodeReq: any;
   agentsStatus: {any};
   snodesTree: TreeNode[];
+  draggedNode: TreeNode;
+  updateSnodeReq: any;
 
   constructor(public modalService: NgbModal, public serverService: ServersService, public contextMenuService: ContextMenuService) {
   }
@@ -47,11 +49,14 @@ export class ServersComponent implements OnInit, OnDestroy {
     this.agentsStatusReq = this.serverService.getStatus().subscribe((status) => {
       this.agentsStatus = status;
     })
-    
   }
 
   ngOnDestroy() {
-    clearInterval(this.interval);
+    this.snodeReq.unsubscribe();
+    this.agentsStatusReq.unsubscribe();
+    if (this.updateSnodeReq) {
+      this.updateSnodeReq.unsubscribe();
+    }
   }
 
   editAgent(node) {
@@ -77,6 +82,83 @@ export class ServersComponent implements OnInit, OnDestroy {
         })
       }
   	});
+  }
+
+  isDecendent(node, parentId) {
+    while (node.parent) {
+      node = node.parent;
+      if (node.data.id === parentId) {
+        return true
+      }
+    }
+    return false
+  }
+
+  onDrop(event, targetNode) {
+    let draggedNode = this.draggedNode;
+    
+
+    if (!targetNode && this.draggedNode.parent != undefined) {
+      draggedNode.data.parent = "-1";
+      
+      this.updateSnodeReq = this.serverService.updateSnode(draggedNode.data).subscribe((r) => {
+        _.remove(draggedNode.parent.children, (o) => {
+          return o['data'].id === draggedNode.data.id;
+        })
+        draggedNode.parent = undefined;
+        this.snodesTree.push(draggedNode);
+      });
+      
+    } else {
+      if (targetNode.data.id === draggedNode.data.id) {
+        // check if this is the same parent already
+        return ;
+      }
+      if (this.isDecendent(targetNode, draggedNode.data.id)) {
+        // check if we are trying to drop on decendent
+        return ;
+      }
+
+      if (draggedNode.parent && draggedNode.parent !== "-1") {
+        _.remove(draggedNode.parent.children, (o) => {
+          return o['data'].id === draggedNode.data.id;
+        })
+      } else {
+        _.remove(this.snodesTree, (o) => {
+          return o['data'].id === draggedNode.data.id;
+        })
+      }
+      draggedNode.parent = targetNode;
+      draggedNode.data.parent = targetNode.data.id;
+
+      this.updateSnodeReq = this.serverService.updateSnode(draggedNode.data).subscribe();
+      
+
+      if (!targetNode.children) {
+        targetNode.children = [];
+      }
+      targetNode.children.push(draggedNode);
+    }
+    this.draggedNode = null;
+  }
+
+  onDragLeave(event, node) {
+    console.log("Leave", node);
+  }
+
+  onDragOver(event, node) {
+    console.log("Over", node);
+    node.expanded = true;
+  }
+
+  onDragStart(event, node) {
+    console.log("Drag start", event, node);
+    this.draggedNode = node;
+  }
+  
+  onDragEnd(event, node) {
+    console.log("Drag end", event, node);
+    this.draggedNode = null;
   }
 
   deleteGroup(group) {
@@ -185,6 +267,9 @@ export class ServersComponent implements OnInit, OnDestroy {
           obj.children = [];
           
           if (node) {
+            if (!node.children) {
+              node.children = [];
+            }
             node.children.push(obj);
           } else {
             this.snodesTree.push(obj);
