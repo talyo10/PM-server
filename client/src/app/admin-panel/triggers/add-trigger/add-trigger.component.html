@@ -1,48 +1,47 @@
 <div ngDraggable [handle]="popupHandle" role="small-popup-triggers" class="small-popup-triggers">
   <header>
-    <h2 role="handle" #popupHandle> Add Trigger </h2>
+    <h2 role="handle" #popupHandle> {{title}} </h2>
     <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
   </header>
   <section>
-  <div class="row" style="margin:2%">
-    <div class="col-md-2 has-form-label">
-      <span class="form-label">Name:</span>
+    <div class="row" style="margin:2%">
+      <div class="col-md-2 has-form-label">
+        <span class="form-label">Name:</span>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="name" [(ngModel)]="trigger.name">
+      </div>
     </div>
-    <div class="col-md-4">
-      <input type="text" class="form-control" placeholder="name" [(ngModel)]="trigger.name">
+    <div class="row" style="margin:2%">
+      <div class="col-md-2 has-form-label">
+        <span class="form-label">Type:</span>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="trigger.type">
+          <option *ngFor="let type of types" [ngValue]="type" [selected]="trigger.type==type.viewName">{{ type.viewName }}</option>
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="row" style="margin:2%">
-    <div class="col-md-2 has-form-label">
-      <span class="form-label">Type:</span>
+    <div class="row" style="margin:2%">
+      <div class="col-md-2 has-form-label">
+        <span class="form-label">Project:</span>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="selectedProject" (change)="onSelectProject()">
+          <option *ngFor="let prj of projects" [ngValue]="prj" [selected]="prj.id === selectedProject?.id">{{ prj.name }}</option>
+        </select>
+      </div>
     </div>
-    <div class="col-md-4">
-      <select class="form-control" [(ngModel)]="trigger.type">
-        <option>-- select type --</option>
-				<option *ngFor="let type of types" [ngValue]="type">{{ type.viewName }}</option>
-			</select>
+    <div class="row" style="margin:2%">
+      <div class="col-md-2 has-form-label">
+        <span class="form-label">Map:</span>
+      </div>
+      <div class="col-md-4" *ngIf="projectMaps">
+        <select class="form-control" [(ngModel)]="selectedMap">
+          <option *ngFor="let map of projectMaps" [ngValue]="map">{{ map.name }}</option>
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="row" style="margin:2%">
-    <div class="col-md-2 has-form-label">
-      <span class="form-label">Project:</span>
-    </div>
-    <div class="col-md-4">
-      <select class="form-control" [(ngModel)]="selectedProject" (change)="onSelectProject()">
-				<option *ngFor="let prj of projects" [ngValue]="prj">{{ prj.name }}</option>
-			</select>
-    </div>
-  </div>
-  <div class="row" style="margin:2%" *ngIf="projectMaps">
-    <div class="col-md-2 has-form-label">
-      <span class="form-label">Map:</span>
-    </div>
-    <div class="col-md-4">
-      <select class="form-control" [(ngModel)]="selectedMap">
-				<option *ngFor="let map of projectMaps" [ngValue]="map">{{ map.name }}</option>
-			</select>
-    </div>
-  </div>
   </section>
   <section>
     <div role="parameters">
@@ -72,26 +71,27 @@
                 </div>
 
                 <div [hidden]="!(param.type === 'collection')">
-                      <!--Input type collection-->
-                    <select class="form-control" [(ngModel)]="param.text">
-                              <option>-- select option --</option>
-                      <option *ngFor="let opt of param.options" [ngValue]="opt.id">{{ opt.name }}</option>
-                    </select>
+                  <!--Input type collection-->
+                  <select class="form-control" [(ngModel)]="param.text">
+                    <option>-- select option --</option>
+                    <option *ngFor="let opt of param.options" [ngValue]="opt.id">{{ opt.name }}</option>
+                  </select>
                 </div>
 
                 <div [hidden]="!(param.type === 'file' && (!param.code || param.code === false))">
                   <!-- Input type file -->
                   <input class="form-control" type="file" placeholder="select file..." [(ngModel)]="param.file" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    </section>
-    <footer>
-        <button class="btn-event" type="button" (click)="saveTrigger(trigger)"><i class="pmap-26 "></i>Save</button>
-        <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Cancel</button>
-    </footer>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <button class="btn-event" type="button" (click)="saveTrigger(trigger)">
+      <i class="pmap-26 "></i>Save</button>
+    <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Cancel</button>
+  </footer>
 </div>

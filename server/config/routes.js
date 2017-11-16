@@ -109,6 +109,7 @@ module.exports.routes = {
     'POST /map/addAttribute': 'SysFileController.updateByName',
 
     'POST /trigger': 'TriggerController.addTrigger',
+    'POST /trigger/:id/update' : 'TriggerController.updateTrigger',
 
     'get /SystemHooks/deleteHook/:id': 'DedicatedAgentController.deleteHook',
     'get /SystemHooks/getHooks': 'DedicatedAgentController.getHooks',
