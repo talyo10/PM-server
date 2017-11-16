@@ -61,9 +61,9 @@ module.exports = {
 		let githubPush = req.body;
 		let url = githubPush.repository.clone_url;
 		let branch = githubPush.ref.slice(11); // get only the branch name
-		
+
 		let signature = req.get("X-Hub-Signature") ? req.get("X-Hub-Signature").slice(5) : null;
-		
+
 		Trigger.find({ type: 'github', 'params.serverUrl.text': url }).then((triggers) => {
 			console.log(triggers.length);
 			// var triggers = _.filter(triggers, function (t) {
@@ -139,5 +139,14 @@ module.exports = {
 			trigger.id = triggerModel.id;
 			triggersParser[trigger.type](user, trigger, res);
 		});
+	},
+	updateTrigger: function (req, res) {
+		let trigger = req.body;
+		let user = req.session.passport.user;
+		Trigger.update(req.param('id'), trigger).populate('map').then((trigger) => {
+			res.json(trigger);
+		}).catch((error) => {
+			console.log("Error updating trigger", error);
+		})
 	}
 };

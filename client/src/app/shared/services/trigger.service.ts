@@ -83,7 +83,7 @@ export class TriggerService {
         return this.http.post(this.serverUrl + 'trigger' , trigger, this.options).map(this.extractData);
     }
     update(trigger) {
-        return this.http.post(this.serverUrl + 'trigger/' + trigger.id, trigger, this.options).map(this.extractData);
+        return this.http.post(this.serverUrl + 'trigger/' + trigger.id + "/update", trigger, this.options).map(this.extractData);
     }
     getTypes() {
         return this.types;
