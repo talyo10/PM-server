@@ -37,3 +37,12 @@
 [role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(5), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(5), [role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(6), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(6) {
   width: 20px  ;
 }
+
+i.fa {
+  color: #6f6f6f;
+}
+
+i.fa:hover {
+  color: #fff;
+  cursor: pointer;
+}
