@@ -67,11 +67,22 @@ module.exports = {
           res.badRequest();
       })
     },
-    updateMap : function (req,res) {
+    mapUpdate: function (req, res) {
+        MapService.mapUpdate(req.param('id'), req.body.map).then((map) => {
+            res.json(map);
+        }).catch((error) => {
+            sails.log.error("Error updating map", error);
+        });
+
+        TNode.update({ map: req.param('id')}, { name: req.body.map.name }).catch((error) => {
+            sails.log.error("Error tnode map", error);
+        });
+    },
+    updateMap : function (req, res) {
         MapService.updateMap(req.body.map).then((map) => {
             res.json(map);
         }).catch((error) => {
-            sails.log.error("Error updating map", map);
+            sails.log.error("Error updating map", error);
         })
     },
     updateMapAgents: function(req, res) {

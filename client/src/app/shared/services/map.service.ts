@@ -155,6 +155,11 @@ export class MapService {
     return this.http.get(this.serverUrl + 'map/updateMapProject/' + MapId + '/' + ProjectId, this.options).map(this.extractData);
   }
 
+  mapUpdate(mapId, map) {
+    return this.http.post(this.serverUrl + 'map/'+ mapId +'/update', { map: map }, this.options).map(this.extractData);
+    
+  }
+
   updateMap(map) {
     return this.http.post(this.serverUrl + 'map/updateMapProject/', { map: map }, this.options).map(this.extractData);
   }
