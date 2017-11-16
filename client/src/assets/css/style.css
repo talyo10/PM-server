@@ -911,3 +911,12 @@ thead {
 .ui-treetable-row {
   border-bottom: 1px solid #545454 !important;
 }
+
+.ui-tree .ui-tree-container {
+  overflow-x: hidden !important;
+}
+
+.ui-treenode-content:hover {
+  background: #02a7c7 !important;
+  color: #000;  
+}

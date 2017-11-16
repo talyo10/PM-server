@@ -23,7 +23,6 @@ export class UpdateMapComponentWindow {
   }
 
   closeWindow() {
-    console.log('closing window');
     this.dialog.close();
   }
 

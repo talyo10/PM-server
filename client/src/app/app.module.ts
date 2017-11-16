@@ -17,7 +17,7 @@ import {ChartsModule} from 'ng2-charts';
 import {FileUploadModule} from 'ng2-file-upload';
 import {ResizableModule} from 'angular2-resizable';
 import {NgPipesModule} from 'ngx-pipes';
-import {TreeTableModule, SharedModule, ScheduleModule, TabViewModule, DataTableModule, DragDropModule} from 'primeng/primeng';
+import {TreeModule as PrimeTreeModule, TreeTableModule, SharedModule, ScheduleModule, TabViewModule, DataTableModule, DragDropModule} from 'primeng/primeng';
 import {CalendarModule} from 'angular-calendar';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AngularDraggableModule} from 'angular2-draggable';
@@ -174,7 +174,8 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     SharedModule,
     TabViewModule,
     DataTableModule,
-    DragDropModule
+    DragDropModule,
+    PrimeTreeModule
   ],
   providers: [
     AuthGuard,

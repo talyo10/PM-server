@@ -1077,6 +1077,14 @@ module.exports = {
             return node;
         });
     },
+    mapUpdate: function (mapId, map) {
+        return Map.update(mapId, map).then((updatedMap) => {
+            if (updatedMap.length > 0) {
+                updatedMap = updatedMap[0];
+            }
+            return updatedMap
+        })
+    },
     updateMap: function (map) {
         return Map.update(map.id, map).then((updatedMap) => {
             if (updatedMap.length > 0) {
@@ -1196,6 +1204,9 @@ module.exports = {
             resolve(addNewMapVersion(map));
         })
 
+    },
+    findMaps: function(query) {
+        return Map.find(query)
     },
     MapToItem: function (map) {
         map.text = map.name;

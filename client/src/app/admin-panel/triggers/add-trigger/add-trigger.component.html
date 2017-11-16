@@ -28,20 +28,18 @@
       <span class="form-label">Project:</span>
     </div>
     <div class="col-md-4">
-      <select class="form-control" [(ngModel)]="trigger.project">
-        <option>-- select project --</option>
-				<option *ngFor="let project of projects" [ngValue]="project">{{ project.name }}</option>
+      <select class="form-control" [(ngModel)]="selectedProject" (change)="onSelectProject()">
+				<option *ngFor="let prj of projects" [ngValue]="prj">{{ prj.name }}</option>
 			</select>
     </div>
   </div>
-  <div class="row" style="margin:2%">
+  <div class="row" style="margin:2%" *ngIf="projectMaps">
     <div class="col-md-2 has-form-label">
       <span class="form-label">Map:</span>
     </div>
     <div class="col-md-4">
-      <select class="form-control" [(ngModel)]="trigger.map">
-        <option>-- select map --</option>
-				<option *ngFor="let map of trigger.project.nodes" [ngValue]="map.map">{{ map.name }}</option>
+      <select class="form-control" [(ngModel)]="selectedMap">
+				<option *ngFor="let map of projectMaps" [ngValue]="map">{{ map.name }}</option>
 			</select>
     </div>
   </div>

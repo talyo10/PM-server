@@ -57,6 +57,9 @@ module.exports = {
             return node
         });
     },
+    getTNode: function(id) {
+        return TNode.findOne(id).populate("childs", { where: { isActive: true }, sort: 'type ASC' })
+    },
     getProjectByUser: function(userId) {
         return User.findOne(userId).populate("projects").then((user) => {
             return user.projects
@@ -66,5 +69,10 @@ module.exports = {
         return User.findOne(userId).populate('projects').then((user) => {
             return user.projects
         });
+    },
+    updateProject: function(projectId, project) {
+        return Project.update(projectId, project).then((projects) => {
+            return projects? projects[0]: null;
+        })
     }
 };

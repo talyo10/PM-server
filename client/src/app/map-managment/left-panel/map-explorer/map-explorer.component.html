@@ -1,6 +1,21 @@
 <div>
-  <tree-root #tree [nodes]="projectsTree" [options]="treeOptions"></tree-root>
+  <p-tree #tree [value]="projectsTree" (onNodeExpand)="loadNode($event)">
+    <ng-template let-node pTemplate="default">
+      <span
+        *ngIf="!node.data || !node.data?.type || node.data?.type ==='project'"
+        [contextMenu]="projectCtx" [contextMenuSubject]="node"><i class="pmap-21 text-warning"></i> {{node.label}} </span>
+      <span
+      *ngIf="node.data?.type === 'folder'"
+      [contextMenu]="folderCtx" [contextMenuSubject]="node"><i class="pmap-21 text-warning"></i> {{node.label}} </span>
+      <span
+      (click)="selectMap(node)"
+      [ngClass]="{ 'active': selectedMap.id === node.data.map }"
+      *ngIf="node.data?.type === 'map'"
+      [contextMenu]="mapCtx" [contextMenuSubject]="node"><i class="pmap-24 text-info"></i> {{node.label}} </span>
+    </ng-template>
+  </p-tree>
 </div>
+
 <div>
   <div class="side-bar-left-btn">
     <button class="action-add-btn" type="button" (click)="addProject()">
@@ -8,6 +23,7 @@
       </button>
   </div>
 </div>
+
 <context-menu #projectCtx>
   <ng-template contextMenuItem (execute)="addMap($event.item)">
     Add Map
@@ -15,7 +31,7 @@
   <ng-template contextMenuItem (execute)="addFolder($event.item)">
     Add Folder
   </ng-template>
-  <ng-template contextMenuItem (execute)="renameNode($event.item)">
+  <ng-template contextMenuItem (execute)="renameProject($event.item)">
     Rename
   </ng-template>
   <ng-template contextMenuItem (execute)="deleteProject($event.item)">

@@ -34,8 +34,10 @@ export class LeftPanelComponent implements OnInit {
 
   ngOnInit() {
     this.selectPanel(0);
-    this.treeElement.nativeElement.style.maxHeight = (this.treeElement.nativeElement.clientHeight - 72) + 'px';
+    this.treeElement.nativeElement.style.maxHeight = (this.panel.offsetHeight - 145) + 'px';
     this.treeElement.nativeElement.style.width = this.panel.offsetWidth + 'px';
+    console.log("set height");
+    console.log(this.treeElement.nativeElement.style.maxHeight);
     
   }
 

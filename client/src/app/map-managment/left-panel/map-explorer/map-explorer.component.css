@@ -119,3 +119,10 @@ nav[region="hierarchy"] .file > i:before {
 .action-add-btn {
   width: 100%;
 }
+
+.active {
+  background: #000;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 3px;
+}
