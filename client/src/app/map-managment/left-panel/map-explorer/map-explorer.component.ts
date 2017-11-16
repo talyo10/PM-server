@@ -5,6 +5,7 @@ import { TreeComponent, TreeModel, TreeNode, TREE_ACTIONS, IActionMapping, KEYS 
 import { ContextMenuService, ContextMenuComponent } from 'ngx-contextmenu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs/Subscription';
+import { TreeNode as PrimeTreeNode } from 'primeng/primeng';
 
 import { AuthenticationService } from '../../../shared/services/authentication.service';
 import { ProjectService } from '../../../shared/services/project.service';
@@ -30,7 +31,7 @@ import * as _ from 'lodash';
 export class MapExplorerComponent implements OnInit, OnDestroy {
 
   @Input() searchtext: string = null;
-  @ViewChild('tree') tree: TreeComponent;
+  @ViewChild('tree') tree: TreeComponent[];
   @ViewChild('projectCtx') public projectCtx: ContextMenuComponent;
   @ViewChild('mapCtx') public mapCtx: ContextMenuComponent;
   @ViewChild('folderCtx') public folderCtx: ContextMenuComponent;
@@ -42,52 +43,10 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   openMapsSubscription: Subscription;
   mapReq: Subscription;
   id: string = null;
+  projectsTreeReq: any;
+  populateTnodeReq: any;
 
-  treeOptions: any;
-
-  actionMapping: IActionMapping = {
-    mouse: {
-      contextMenu: (tree, node, $event) => {
-        $event.preventDefault();
-        this.openContextMenu($event, node);
-      },
-      dblClick: (tree: TreeModel, node: TreeNode, $event: any) => {
-        if (this.isProject(node)) {
-          return TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
-        } else {
-          /* add code for opening new map tab */
-        }
-      },
-      click: (tree, node, $event) => {
-        $event.shiftKey
-          ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
-          : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
-        this.selectMap(node);
-      }
-      // ,
-      // dragStart: (tree, node) => console.log('start drag', node),
-      // drag: (tree, node) => console.log('drag', node),
-      // dragEnd: (tree, node, $event, ...rest) => console.log('drag end', node, rest[0]),
-      // dragOver: (tree, node) => console.log('drag over', node),
-      // drop: (tree, node) => console.log('drop', node),
-    },
-    keys: {
-      [KEYS.ENTER]: (tree, node, $event) => {
-        if (node.data.editMode === false) {
-          return;
-        }
-        if (this.isProject(node)) {
-          this.projectService.updateProject(node.data);
-        } else {
-          this.mapService.updateMap(node.data);
-        }
-        node.data.editMode = false;
-      }
-    }
-  };
-
-
-  constructor(private authenticationService: AuthenticationService, private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) { }
+    constructor(private authenticationService: AuthenticationService, private projectService: ProjectService, private mapService: MapService, private contextMenuService: ContextMenuService, public modalService: NgbModal, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let user = this.authenticationService.getCurrentUser();
@@ -96,46 +55,42 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.projectTreeSubscription = this.projectService.getCurrentProjectTree()
-      .subscribe(
-      (tree) => {
-        this.projectsTree = tree;
-        this.tree.treeModel.update();
-      },
-      (error) => console.log(error)
-      );
-
     this.openMapsSubscription = this.mapService.getOpenMapsObservable()
       .subscribe(
       (maps) => {
         this.openMaps = maps
       }
       )
-    let actionMapping = this.actionMapping;
-    this.treeOptions = {
-      getChildren: (node: TreeNode) => {
-        return new Promise((resolve, reject) => {
-          this.projectService.getNode(node.id).subscribe((node) => {
-            _.map(node.childs, this.mapNode.bind(this));
-            return resolve(node.childs);
-          });
-        });
-      },
-      hasCustomContextMenu: true,
-      actionMapping
-    };
-
+    
     this.parmasReq = this.route.params.subscribe((params) => {
       this.id = params['id'];
+    });
+
+    this.projectsTreeReq = this.projectService.getTnodes().subscribe((projects) => {
+      console.log(projects);
+      this.projectsTree = projects;
     });
   }
 
   ngOnDestroy() {
-    this.projectTreeSubscription.unsubscribe();
     if (this.mapReq) {
       this.mapReq.unsubscribe();
     }
+    this.projectsTreeReq.unsubscribe();
+    if (this.populateTnodeReq) {
+      this.populateTnodeReq.unsubscribe();
+    }
   }
+
+  loadNode(event) {
+    let treeNode: TreeNode = event.node;
+    if (treeNode.children)
+      return;
+    this.populateTnodeReq = this.projectService.getTNode(treeNode.data.id).subscribe((node) => {
+      event.node.children = node.children;
+    })
+  }
+
 
   selectMap(node: TreeNode) {
     if (this.isMap(node)) {
@@ -178,59 +133,61 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     project.type = 'project';
   }
 
-  addMap(node: TreeNode) {
-    node.expand();
-    node.ensureVisible();
-    let project = -1;
-    if (this.isProject(node)) {
-      project = node.data.id;
+  getNodeProject(node: PrimeTreeNode) {
+    // get the project ancestor
+    let nodeClone = _.cloneDeep(node);
+    while (nodeClone.parent) {
+      nodeClone = nodeClone.parent;
     }
+    return nodeClone;
+  }
+
+  addMap(node: PrimeTreeNode) {
+    let project = this.getNodeProject(node);
     const pmodal = this
       .modalService
       .open(NewMapComponentWindow);
-    pmodal.componentInstance.currProject = project;
+    pmodal.componentInstance.projectId = project.data.id;
     pmodal.componentInstance.parentId = node.data.id;
 
     pmodal.result
       .then((map: any) => {
-          if (!map) return;
-          map.editMode = true;
-          this.mapToItem(map);
-          node.data.children.push(map);
-          this.tree.treeModel.update();
-          let newNode = this.tree.treeModel.getNodeById(map.id)
-          newNode.setActiveAndVisible();
-          this.selectMap(newNode);
-        },
-        (error) => { console.log(error); });
+        if (!map) return;
+        let newNode: PrimeTreeNode = this.projectService.tnodeToTreeNode(map);
+        if (!node.children)
+          node.children = [];
+        node.children.push(newNode);
+        // this.selectMap(newNode);
+      },
+      (error) => { console.log(error); });
   }
 
-  addFolder(node: TreeNode) {
-    let project = -1;
-    if (this.isProject(node)) {
-      project = node.data.id;
-    }
+  addFolder(node: PrimeTreeNode) {
+
     const pmodal = this
       .modalService
       .open(NewFolderComponentWindow);
 
-    pmodal.componentInstance.projectId = project;
+    pmodal.componentInstance.projectId = node.data.type? -1: this.getNodeProject(node).data.id;
     pmodal.componentInstance.parentId = node.data.id;
 
     pmodal.result
       .then((folder: any) => {
         if (!folder) return;
-        this.folderToItem(folder);
-        node.data.children.unshift(folder);
-        this.tree.treeModel.update();
-        node.expand();
-        node.ensureVisible();
+        let newNode: PrimeTreeNode = this.projectService.tnodeToTreeNode(folder);
+        if (!node.children)
+        {
+          node.children = [newNode];
+          return;
+        }
+        node.children.unshift(newNode);
       },
       (error) => { console.log(error); });
   }
 
   addProject() {
-
+    this.projectsTree.push({label: 'work!'});
+    
     const pmodal = this
       .modalService
       .open(NewProjectComponentWindow);
@@ -238,21 +195,26 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     pmodal.result
       .then((project: any) => {
         if (!project) return;
-        console.log('created');
-        project.editMode = true;
-        this.projectsTree.push(project);
-        this.tree.treeModel.update();
+        let newNode: PrimeTreeNode = {
+          label: project.name,
+          data: project,
+          leaf: false,
+
+        }
+        this.projectsTree.push(newNode);
+        this.projectsTree.push({label: 'work!'});
+    
       },
       (error) => { console.log(error); });
   }
 
-  deleteProject(node: TreeNode) {
-    let project: any = node.data;
+  deleteProject(node: PrimeTreeNode) {
+    let project: any = node;
 
     const pmodal = this.modalService.open(ConfirmPopupComponent);
     let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
-    popupFields.title = "Delete Map";
-    popupFields.message = "Are you sure you want to delete project: '" + node.displayField + "'?";
+    popupFields.title = "Delete Project";
+    popupFields.message = "Are you sure you want to delete project: '" + node.label + "'?";
     popupFields.action = "Delete";
 
     pmodal.componentInstance.popupFields = popupFields;
@@ -260,9 +222,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     pmodal.result
       .then((r) => {
         if (r) {
-          this.projectService.deleteProject(project.id).subscribe((res) => {
-            _.remove(this.projectsTree, (proj: any) => { return proj.id === project.id; });
-            this.tree.treeModel.update();
+          this.projectService.deleteProject(project.data.id).subscribe((res) => {
+            _.remove(this.projectsTree, (proj: any) => { return proj.data.id === project.data.id; });
           });
         }
       })
@@ -293,53 +254,65 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  renameNode(node: TreeNode) {
-    let map = node.data.map;
+  renameNode(node: PrimeTreeNode) {
+    console.log(node);
     const pmodal = this
       .modalService
       .open(UpdateMapComponentWindow);
-    pmodal.componentInstance.mapName = map.name;
+    pmodal.componentInstance.mapName = node.label;
 
     pmodal.result
       .then((mapName) => {
         if (!mapName) return;
-        map.name = mapName;
-        this.mapService.updateMap(map).subscribe((res) => {
-          node.data.text = map.name;
-          node.data.name = map.name;
-          this.tree.treeModel.update();
-        });
+        node.label = mapName;
+        this.mapService.mapUpdate(node.data.map, {name: mapName}).subscribe((map) => { console.log(map)});
       },
       (error) => {
         console.log(error);
       });
   }
 
-  renameFolder(node: TreeNode) {
+  renameFolder(node: PrimeTreeNode) {
     let folder = node.data;
     const pmodal = this
       .modalService
       .open(RenameFolderComponentWindow);
-    pmodal.componentInstance.name = node.data.name;
+    pmodal.componentInstance.name = node.label;
 
     pmodal.result
       .then((name) => {
         if (!name) return;
         folder.name = name;
         this.projectService.renameFolder(node.data.id, name).subscribe((res) => {
-          node.data.text = name;
           node.data.name = name;
-          this.tree.treeModel.update();
+          node.label = name;
         });
       },
       (error) => console.log(error));
   }
 
-  deleteMap(node: TreeNode) {
+  renameProject(node: PrimeTreeNode) {
+    let folder = node.data;
+    const pmodal = this.modalService.open(RenameFolderComponentWindow);
+    pmodal.componentInstance.name = node.label;
+
+    pmodal.result
+      .then((name) => {
+        if (!name) return;
+        folder.name = name;
+        this.projectService.updateProject(node.data.id, { name: name }).subscribe((res) => {
+          node.data.name = name;
+          node.label = name;
+        });
+      },
+      (error) => console.log(error));
+  }
+
+  deleteMap(node: PrimeTreeNode) {
     const pmodal = this.modalService.open(ConfirmPopupComponent);
     let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
     popupFields.title = "Delete Map";
-    popupFields.message = "Are you sure you want to delete map: '" + node.displayField + "'?";
+    popupFields.message = "Are you sure you want to delete map: '" + node.label + "'?";
     popupFields.action = "Delete";
 
     pmodal.componentInstance.popupFields = popupFields;
@@ -348,8 +321,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       .then((r) => {
         if (r) {
           this.mapService.deleteMap(node.data.map).subscribe((res) => {
-            _.remove(node.parent.data.children, (map: any) => { return map.id === node.data.id; });
-            this.tree.treeModel.update();
+            _.remove(node.parent.children, (map: any) => { return map.data.id === node.data.id; });
           });
         }
       })
@@ -358,11 +330,11 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
 
   }
 
-  deleteFolder(node: TreeNode) {
+  deleteFolder(node: PrimeTreeNode) {
     const pmodal = this.modalService.open(ConfirmPopupComponent);
     let popupFields: ConfirmPopupModel = new ConfirmPopupModel();
     popupFields.title = "Delete Folder";
-    popupFields.message = "Are you sure you want to delete folder: '" + node.displayField + "'?";
+    popupFields.message = "Are you sure you want to delete folder: '" + node.label + "'?";
     popupFields.action = "Delete";
 
     pmodal.componentInstance.popupFields = popupFields;
@@ -371,8 +343,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       .then((r) => {
         if (r) {
           this.projectService.deleteFolder(node.data.id).subscribe((res) => {
-            _.remove(node.parent.data.children, (obj: any) => { return obj.id === node.data.id; });
-            this.tree.treeModel.update();
+            _.remove(node.parent.children, (obj: any) => { return obj.data.id === node.data.id; });
           });
         }
       })
@@ -404,6 +375,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
+ 
+
   showExecutions(node: TreeNode) {
     let mapId = node.data.map;
     const pmodal = this.modalService.open(MapExecutionComponent);
@@ -419,16 +392,16 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
-    if (changes['searchtext'] != null &&
-      changes['searchtext'].currentValue != null &&
-      changes['searchtext'].currentValue) {
-      let searchtext = changes['searchtext'].currentValue;
-      try {
-        this.tree.treeModel.filterNodes(searchtext, true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    // if (changes['searchtext'] != null &&
+    //   changes['searchtext'].currentValue != null &&
+    //   changes['searchtext'].currentValue) {
+    //   let searchtext = changes['searchtext'].currentValue;
+    //   try {
+    //     this.tree.treeModel.filterNodes(searchtext, true);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
   }
 
 

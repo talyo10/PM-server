@@ -15,7 +15,7 @@ import * as _ from 'lodash';
   templateUrl: 'new-map.component.html'
 })
 export class NewMapComponentWindow {
-  @Input() public currProject: any;
+  @Input() public projectId: any;
   @Input() public parentId: any;
   public mapName: any;
 
@@ -31,7 +31,7 @@ export class NewMapComponentWindow {
   }
 
   create() {
-    this.mapService.createMap(this.parentId, this.mapName, this.currProject.id).subscribe((map) => {
+    this.mapService.createMap(this.parentId, this.mapName, this.projectId).subscribe((map) => {
       this.dialog.close(map);
     });
   };
