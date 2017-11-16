@@ -68,6 +68,7 @@ module.exports.routes = {
     'get /projects':  'ProjectController.userProjects',
     'post /projects/:id/update':  'ProjectController.updateProject',
     'get /projects/tnode/:id' : 'ProjectController.getTNode',
+    'get /projects/:id/maps': 'ProjectController.getProjectMaps',
 
     'get /map/:id/render': 'MapController.getRenderedMapById',
     'get /map/deleteMap/:id': 'MapController.deleteMap',

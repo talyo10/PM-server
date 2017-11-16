@@ -153,7 +153,14 @@ module.exports = {
             sails.log.error("Error updating project", error);
             res.badRequest();
         });
+    },
+    getProjectMaps: function (req, res) {
+        MapService.findMaps({ Project : req.param('id')}).then((maps) => {
+            res.json(maps);
+        }).catch((error) => {
+            sails.log.error("Error finding maps", error);
+            res.badRequest();
+        });
     }
-    
 };
 

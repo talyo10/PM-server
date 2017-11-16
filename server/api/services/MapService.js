@@ -1205,6 +1205,9 @@ module.exports = {
         })
 
     },
+    findMaps: function(query) {
+        return Map.find(query)
+    },
     MapToItem: function (map) {
         map.text = map.name;
         map.type = 'map';

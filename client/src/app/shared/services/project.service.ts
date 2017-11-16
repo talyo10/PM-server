@@ -115,6 +115,10 @@ export class ProjectService {
       return this.buildProjectTree(res.json());
     })
   }
+
+  getProjectMaps(projectId) {
+    return this.http.get(this.serverUrl + 'projects/' + projectId + '/maps').map(res => res.json())
+  }
   
   setCurrentProjectTree(tree) {
     this.bJProjectsTree.next(tree);
