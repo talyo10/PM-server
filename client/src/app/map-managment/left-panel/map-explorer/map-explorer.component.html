@@ -8,6 +8,8 @@
       *ngIf="node.data?.type === 'folder'"
       [contextMenu]="folderCtx" [contextMenuSubject]="node"><i class="pmap-21 text-warning"></i> {{node.label}} </span>
       <span
+      (click)="selectMap(node)"
+      [ngClass]="{ 'active': selectedMap.id === node.data.map }"
       *ngIf="node.data?.type === 'map'"
       [contextMenu]="mapCtx" [contextMenuSubject]="node"><i class="pmap-24 text-info"></i> {{node.label}} </span>
     </ng-template>

@@ -41,6 +41,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   projectsTree: any = [];
   projectTreeSubscription: Subscription;
   openMapsSubscription: Subscription;
+  currentMapSubscription: Subscription;
+  selectedMap: any;
   mapReq: Subscription;
   id: string = null;
   projectsTreeReq: any;
@@ -60,7 +62,14 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
       (maps) => {
         this.openMaps = maps
       }
-      )
+    )
+
+    this.currentMapSubscription = this.mapService.getCurrentMapObservable()
+    .subscribe(
+      (map) => {
+        this.selectedMap = map;
+      }
+    );
     
     this.parmasReq = this.route.params.subscribe((params) => {
       this.id = params['id'];
@@ -92,25 +101,23 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
 
-  selectMap(node: TreeNode) {
-    if (this.isMap(node)) {
-      let mapIndex = null;
-      if (this.openMaps && this.openMaps.length > 0) {
-        mapIndex = _.findIndex(this.openMaps, (map) => {
-          return map.id == node.data.map
-        });
-      }
+  selectMap(node: PrimeTreeNode) {
+    let mapIndex = null;
+    if (this.openMaps && this.openMaps.length > 0) {
+      mapIndex = _.findIndex(this.openMaps, (map) => {
+        return map.id === node.data.map
+      });
+    }
 
-      if (mapIndex !== null && mapIndex > -1) {
-        this.mapService.selectMap(this.openMaps[mapIndex]);
-      }
-      else {
-        this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
-          (map) => {
-            this.mapService.selectMap(map);
-          }
-        );
-      }
+    if (mapIndex !== null && mapIndex > -1) {
+      this.mapService.selectMap(this.openMaps[mapIndex]);
+    }
+    else {
+      this.mapReq = this.mapService.getMapById(node.data.map).subscribe(
+        (map) => {
+          this.mapService.selectMap(map);
+        }
+      );
     }
   }
 
