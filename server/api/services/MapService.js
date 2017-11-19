@@ -307,7 +307,6 @@ var jsonpatch = require('fast-json-patch'),
             socket.emit('update', JSON.stringify(msg));
 
             SystemLogService.create("Finish running map", mapId, 'Map', 'execution', 'success');
-
             addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
             executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
               startTime: (new Date()).toString(),
@@ -315,13 +314,11 @@ var jsonpatch = require('fast-json-patch'),
               status: 0,
               result: body.res
             };
-
             runningExecutionResults.agents[agent.key].processes[processKey].actions[key].startTime = startTime;
             runningExecutionResults.agents[agent.key].processes[processKey].actions[key].finishTime = new Date();
             runningExecutionResults.agents[agent.key].processes[processKey].actions[key].status = 'success';
             runningExecutionResults.agents[agent.key].processes[processKey].actions[key].result = body.res;
             runningExecutionResults.agents[agent.key].processes[processKey].actions[key].startTime = startTime;
-
 
             callback(null, body);
           }
@@ -339,7 +336,6 @@ var jsonpatch = require('fast-json-patch'),
               msg: 'execution failed action ' + action.name + ":" + res + "\n"
             };
             socket.emit('serverError', JSON.stringify(msg));
-            sails.log(res);
             addActionResultToContext(executionContext, linkId, processId, action.name, res, -1);
             executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
               startTime: (new Date()).toString(),
