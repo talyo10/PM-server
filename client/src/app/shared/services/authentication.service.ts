@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Http, Headers, RequestOptions } from '@angular/http';
-import { Response } from '@angular/http';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { ConstsService } from './consts.service';
 
 import { Observable } from 'rxjs/Observable';
@@ -16,7 +14,7 @@ export class AuthenticationService {
   private userKeyName: string = 'pm-user';
   private serverUrl: string;
 
-  constructor(private http: Http, private httpClient: HttpClient, public options: RequestOptions, private localStorageService: LocalStorageService, private constsService: ConstsService) {
+  constructor(private http: Http, public options: RequestOptions, private localStorageService: LocalStorageService, private constsService: ConstsService) {
     let headers = new Headers({ 'Content-Type': 'application/json', withCredentials: true });
     this.options = new RequestOptions({ headers: headers });
     this.serverUrl = this.constsService.getServerUrl();
@@ -32,15 +30,15 @@ export class AuthenticationService {
   isLoggedIn(): Promise<boolean> {
     /* checking if user is logged in */
     return new Promise((res, rej) => {
-      if (this.localStorageService.get(this.userKeyName)) {
-        // check if there is a user in local storage
-        this.currentUser = JSON.parse(this.localStorageService.get(this.userKeyName))
-      }
-      if(this.currentUser && !_.isEmpty(this.currentUser)) {
-        return res(true);
-      }
-      
-      this.httpClient.get(this.serverUrl + 'isLoggedIn').subscribe(
+      // if (this.localStorageService.get(this.userKeyName)) {
+      //   // check if there is a user in local storage
+      //   this.currentUser = JSON.parse(this.localStorageService.get(this.userKeyName));
+      //   console.log(JSON.parse(this.localStorageService.get(this.userKeyName)));
+      // }
+      // if(this.currentUser && !_.isEmpty(this.currentUser)) {
+      //   return res(true);
+      // }
+      this.http.get(this.serverUrl + 'isLoggedIn', this.options).subscribe(
         (r) => {
           return res(true)
         },
