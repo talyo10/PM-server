@@ -70,7 +70,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         this.selectedMap = map;
       }
     );
-    
+
     this.parmasReq = this.route.params.subscribe((params) => {
       this.id = params['id'];
     });
@@ -195,8 +195,6 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
   }
 
   addProject() {
-    this.projectsTree.push({label: 'work!'});
-    
     const pmodal = this
       .modalService
       .open(NewProjectComponentWindow);
@@ -208,11 +206,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
           label: project.name,
           data: project,
           leaf: false,
-
         }
         this.projectsTree.push(newNode);
-        this.projectsTree.push({label: 'work!'});
-    
       },
       (error) => { console.log(error); });
   }
@@ -384,7 +379,7 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
- 
+
 
   showExecutions(node: TreeNode) {
     let mapId = node.data.map;
