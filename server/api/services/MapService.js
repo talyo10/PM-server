@@ -458,6 +458,9 @@ var jsonpatch = require('fast-json-patch'),
               process.id = i;
               break;
             }
+          } else {
+            process = proc;
+            process.id = i;
           }
         }
       }
