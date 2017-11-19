@@ -164,7 +164,8 @@ export class MapExplorerComponent implements OnInit, OnDestroy {
         if (!node.children)
           node.children = [];
         node.children.push(newNode);
-        // this.selectMap(newNode);
+
+        this.selectMap(newNode);
       },
       (error) => { console.log(error); });
   }
