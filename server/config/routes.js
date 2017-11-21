@@ -117,6 +117,7 @@ module.exports.routes = {
 
     'get /getallagents': 'DedicatedAgentController.getAllAgents',
     'post /installPlugins': 'DedicatedAgentController.installAgents',
+    'post /triggers/upload': 'PluginController.uploadPlugin',
 
     'get /executions/:id': 'ExecutionController.executionDetail',
 
