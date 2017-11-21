@@ -11,12 +11,12 @@ const path = require('path');
 const _ = require('lodash');
 const exec = require('child_process').exec;
 
-let pluginPath = path.join(sails.config.appPath, "plugins");
+let pluginsPath = path.join(sails.config.appPath, "plugins");
 let uploadPath = path.join(sails.config.appPath, "static", "upload");
 
 module.exports = {
     uploadPlugin: function (req, res) {
-        // installing plugin on server and agents
+        // installing plugin on server.
         try {
             // trying to get filename
             filename = req.file('file')._files[0].stream.filename;
@@ -38,33 +38,37 @@ module.exports = {
             if (uploadedFiles.length === 0) {
                 return res.badRequest('No file was uploaded');
             }
-
+            let dirname;
+            let outputPath;
+            
             async.each(uploadedFiles, (file, callback) => {
+
                 // for each file uploaded, check if it has an extension and if it is a archive.
                 let extension = file.filename.substring(file.filename.lastIndexOf(".") + 1);
                 if (extension && _.indexOf(["zip", "rar"], extension) === -1) {
                     console.log("Bad format");
                     return res.badRequest()
                 }
-                let dirname;
+                PluginService.createPlugin(file.fd).then(() => { console.log("Created plugin") });
                 extension ? dirName = file.filename.substring(0, file.filename.lastIndexOf(".")) : dirname = file.filename;
-                let outputPath = path.join(pluginPath, dirName);
+                outputPath = path.join(pluginsPath, dirName);
                 if (!fs.existsSync(outputPath)) {
                     fs.mkdirSync(outputPath);
                 }
-                // unzip the file;
+                // unzip the file; Important: when merging with DedicatedAgent, should check if need to unzip, or save only the original zipfile.
                 fs.createReadStream(file.fd)
                     .pipe(unzip.Parse())
                     .on('entry', (entry) => {
-                        var fileName = entry.path;
-                        var type = entry.type; // 'Directory' or 'File'
-                        var size = entry.size;
-                        entry.pipe(fs.createWriteStream(path.join(pluginPath, dirName, fileName)));
+                        let fileName = entry.path;
+                        let type = entry.type; // 'Directory' or 'File'
+                        let size = entry.size;
+                        entry.pipe(fs.createWriteStream(path.join(pluginsPath, dirName, fileName)));
                     }).on('close', (data) => {
                         // when done unziping, install the packages.
                         let cmd = 'cd ' + outputPath + ' &&' + ' npm install ' + " && cd " + outputPath;
                         exec(cmd, function (error, stdout, stderr) {
-                            if (error || stderr) {
+                            if (error) {
+                                console.log("ERROR", error, stderr);
                                 callback(error);
                             }
                             callback();
@@ -73,13 +77,14 @@ module.exports = {
             }, (error) => {
                 if (error) {
                     console.log("Error uploading plugin", error);
-                    res.badRequest();
+                    return res.badRequest();
                 } else {
                     res.ok();
                 }
             })
 
         });
-    }
+    },
+    pluginsPath: pluginsPath,
 };
 
