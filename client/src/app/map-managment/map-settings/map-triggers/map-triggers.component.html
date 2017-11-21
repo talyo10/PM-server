@@ -1,0 +1,7 @@
+<div class="container">
+    <div class="row" *ngIf="triggers">
+        <span *ngFor="let trigger of triggers">{{ trigger.name }}</span>
+      </div>
+</div>
+
+<button class="btn action-add-btn" (click)="addTrigger()">Add Trigger</button>
