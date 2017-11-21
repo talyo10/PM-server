@@ -4,6 +4,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TriggerService } from '../../shared/services/trigger.service';
 import { AddTriggerComponentWindow } from './add-trigger/add-trigger.component';
+import { FileUploadComponent } from '../file-upload/file-upload.component';
 
 @Component({
   selector: 'app-triggers',
@@ -30,7 +31,7 @@ export class TriggersComponent implements OnInit, OnDestroy {
   }
 
   addTrigger() {
-    const modalref = this.modalService.open(AddTriggerComponentWindow);
+    const modalref = this.modalService.open(FileUploadComponent);
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
       this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
@@ -46,14 +47,14 @@ export class TriggersComponent implements OnInit, OnDestroy {
     this.triggers.splice(triggerIndex, 1);
   }
 
-  editTrigger(trigger) {
-    const modalref = this.modalService.open(AddTriggerComponentWindow);
-    modalref.componentInstance.trigger = trigger;
-    modalref.result.then((trigger) => {
-      this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
-        this.triggers = triggersData;
-      });
-    });
-  }
+  // editTrigger(trigger) {
+  //   const modalref = this.modalService.open(AddTriggerComponentWindow);
+  //   modalref.componentInstance.trigger = trigger;
+  //   modalref.result.then((trigger) => {
+  //     this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
+  //       this.triggers = triggersData;
+  //     });
+  //   });
+  // }
 
 }
