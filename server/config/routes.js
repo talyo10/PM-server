@@ -110,14 +110,21 @@ module.exports.routes = {
 
     'POST /trigger': 'TriggerController.addTrigger',
     'POST /trigger/:id/update' : 'TriggerController.updateTrigger',
-
+    
     'get /SystemHooks/deleteHook/:id': 'DedicatedAgentController.deleteHook',
     'get /SystemHooks/getHooks': 'DedicatedAgentController.getHooks',
     'POST /addSystemHooks': 'DedicatedAgentController.addHooks',
 
     'get /getallagents': 'DedicatedAgentController.getAllAgents',
     'post /installPlugins': 'DedicatedAgentController.installAgents',
+    
     'post /triggers/upload': 'PluginController.uploadPlugin',
+    'get /plugins': 'PluginController.pluginsList',
+    'get /triggers/map/:id': 'PluginController.findByMap',
+    'post /plugins/trigger/create': 'PluginController.createMapTrigger',
+    'get /plugins/:id/methods': 'PluginController.pluginMethods',
+    '/triggers/:name': 'PluginController.triggerEvent',
+    '/triggers/:name/*': 'PluginController.triggerEvent',
 
     'get /executions/:id': 'ExecutionController.executionDetail',
 

@@ -40,7 +40,7 @@ module.exports = {
             }
             let dirname;
             let outputPath;
-            
+
             async.each(uploadedFiles, (file, callback) => {
 
                 // for each file uploaded, check if it has an extension and if it is a archive.
@@ -85,6 +85,51 @@ module.exports = {
 
         });
     },
+    triggerEvent: function (req, res) {
+        PluginService.getPlugin({ name: req.param("name") }).then((plugin) => {
+            console.log(Object.keys(req.params))
+            console.log(req.url, req.method);
+            if (!plugin.exposeRoute) {
+                console.log("Forbidden");
+                return res.badRequest();
+            }
+            res.json(plugin);
+        })
+    },
+    pluginsList: function (req, res) {
+        PluginService.filterPlugins({ type: "server" }).then((plugins) => {
+            res.json(plugins);
+        }).catch((error) => {
+            console.log("Error getting plugins", error);
+            res.badRequest();
+        })
+    },
+    pluginMethods: function (req, res) {
+        PluginMethod.find({ plugin: req.param('id') }).populate("params").then((methods) => {
+            res.json(methods);
+        }).catch((error) => {
+            console.log("Error getting methods", error);
+            res.badRequest();
+        });
+    },
+    createMapTrigger: function (req, res) {
+        console.log(req.body)
+        MapTrigger.create(req.body).then((trigger) => {
+            res.json(trigger);
+        }).catch((error) => {
+            console.log("Error creating trigger", error);
+            res.badRequest();
+        })
+    },
+    findByMap: function (req, res) {
+        MapTrigger.find({ map: req.param("id") }).then((triggers) => {
+            res.json(triggers);
+        }).catch((error) => {
+            console.log("Error finding triggers", error);
+            res.badRequest();
+        });
+    },
+
     pluginsPath: pluginsPath,
 };
 
