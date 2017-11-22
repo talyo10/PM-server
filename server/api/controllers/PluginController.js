@@ -9,7 +9,7 @@ const fs = require('fs');
 const unzip = require('unzip');
 const path = require('path');
 const _ = require('lodash');
-const exec = require('child_process').exec;
+const child_process = require('child_process');
 
 let pluginsPath = path.join(sails.config.appPath, "plugins");
 let uploadPath = path.join(sails.config.appPath, "static", "upload");
@@ -66,7 +66,7 @@ module.exports = {
                     }).on('close', (data) => {
                         // when done unziping, install the packages.
                         let cmd = 'cd ' + outputPath + ' &&' + ' npm install ' + " && cd " + outputPath;
-                        exec(cmd, function (error, stdout, stderr) {
+                        child_process.exec(cmd, function (error, stdout, stderr) {
                             if (error) {
                                 console.log("ERROR", error, stderr);
                                 callback(error);
@@ -79,6 +79,8 @@ module.exports = {
                     console.log("Error uploading plugin", error);
                     return res.badRequest();
                 } else {
+                    // load the plugin to current modules
+                    PluginService.loadPluginsModule(outputPath, null);
                     res.ok();
                 }
             })
@@ -86,15 +88,48 @@ module.exports = {
         });
     },
     triggerEvent: function (req, res) {
-        PluginService.getPlugin({ name: req.param("name") }).then((plugin) => {
-            console.log(Object.keys(req.params))
-            console.log(req.url, req.method);
-            if (!plugin.exposeRoute) {
-                console.log("Forbidden");
-                return res.badRequest();
-            }
-            res.json(plugin);
+        let triggerdPlugin;
+        let p = new Promise((resolve, reject) => {
+            PluginService.getPlugin({ name: req.param("name") }).then((plugin) => {
+                if (!plugin.active) {
+                    reject("Plugin is not active");
+                }
+                triggerdPlugin = plugin;
+                resolve(MapTrigger.find({ plugin: plugin.id }).populate("method"));
+            })
+        }).then((triggers) => {
+            triggers.forEach(trigger => {
+                let currentModule = PluginService.pluginsModules[triggerdPlugin.name];
+                params = {
+                    headers: req.headers,
+                    body: req.body
+                }
+
+                let workerProcess = child_process.spawn(currentModule.execProggram, [currentModule.main, JSON.stringify(params), JSON.stringify(trigger)]);
+
+                workerProcess.stdout.on('data', (data) => {
+                    console.log(`trigger info: ${data}`);
+                });
+
+                workerProcess.stderr.on('data', (data) => {
+                    console.log(`trigger error: ${data}`);
+                });
+
+                workerProcess.on('close', function (code) {
+                    if (code === 0) {
+                        console.log("Executing map")
+                        MapService.executeMap("-1", trigger.map, 0, 0).then((result) => {
+							console.log("finish executing map from trigger");
+						});
+                    } 
+                });
+            })
+            res.ok()
+        }).catch((error) => {
+            console.log("Error during calling trigger", error);
+            res.badRequest();
         })
+
     },
     pluginsList: function (req, res) {
         PluginService.filterPlugins({ type: "server" }).then((plugins) => {
@@ -129,6 +164,7 @@ module.exports = {
             res.badRequest();
         });
     },
+
 
     pluginsPath: pluginsPath,
 };

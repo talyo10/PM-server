@@ -15,6 +15,10 @@ module.exports = {
       type: 'string',
       enum: ["server", "agent"]
     },
+    active: {
+      type: 'boolean',
+      defaultsTo: true
+    },
     methods: {
       collection: 'PluginMethod',
       via: 'plugin'
