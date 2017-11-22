@@ -4,8 +4,8 @@
     <i role="closing" class="pmap-15" (click)="closeDialog()"></i>
   </header>
   <form #triggerForm="ngForm" (ngSubmit)="createTrigger()">
-      
-  <section *ngIf="trigger">
+    <section class="text-light" *ngIf="!plugins || plugins.length === 0">You have not installed any appropriate triggers yet, please install a one before you create triggers for the map</section>
+    <section *ngIf="trigger && plugins && plugins.length > 0">
       <div class="form-group">
         <label>Name</label>
         <input class="form-control" type="text" [(ngModel)]="trigger.name" name="name">
@@ -23,7 +23,7 @@
         <label>Method</label>
         <select #methodSelect (change)="onSelectMethod(methodSelect.value)" class="form-control" [(ngModel)]="trigger.method" name="method">
           <option value="" disabled selected>Select method from list</option>
-          <option *ngFor="let method of selectedPlugin.methods" [value]="method.id" >
+          <option *ngFor="let method of selectedPlugin.methods" [value]="method.id">
             {{method.viewName}} {{method.id}}
           </option>
         </select>
@@ -32,7 +32,7 @@
         <div *ngFor="let param of selectedMethod.params">
           <div class="form-group" *ngIf="param.type === 'string'">
             <label for="">{{param.viewName}} {{param.name}} {{trigger.params[param.name]}}</label>
-            <input class="form-control" type="text" [(ngModel)]="trigger.params[param.name]" name="param.name"/>
+            <input class="form-control" type="text" [(ngModel)]="trigger.params[param.name]" name="param.name" />
           </div>
           <div class="form-group" *ngIf="param.type === 'text'">
             <label for="">{{param.viewName}}</label>
@@ -40,12 +40,12 @@
           </div>
         </div>
       </div>
-  </section>
-  <footer>
-    <button class="btn-event" type="submit" >
-      <i class="pmap-26 "></i>Save</button>
-    <button class="btn-event btn-no-icon" (click)="closeDialog()" type="button">Cancel</button>
-  </footer>
-</form>
+    </section>
+    <footer>
+      <button class="btn-event" type="submit">
+        <i class="pmap-26 "></i>Save</button>
+      <button class="btn-event btn-no-icon" (click)="closeDialog()" type="button">Cancel</button>
+    </footer>
+  </form>
 
 </div>

@@ -1,3 +1,4 @@
+<div class="container triggers" *ngIf="!triggers || triggers.length === 0">No triggers yet</div>
 <div class="container" *ngIf="triggers">
     <div class="row triggers" *ngFor="let trigger of triggers; let i = index;">
         <div class="col-sm-12 d-flex d-flex justify-content-between trigger">
