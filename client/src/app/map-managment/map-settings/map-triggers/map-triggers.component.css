@@ -1,0 +1,25 @@
+.triggers {
+    color: #bbb;
+}
+
+.trigger span i {
+    cursor: pointer;
+}
+
+.trigger span i:hover {
+    color: #ffffff;
+}
+
+.side-bar-right-btn {
+    position: absolute;
+    bottom: 0;
+    height: 37px;
+    padding-right: 50px;
+    margin-bottom: 1px;
+    width: 100%;
+    border-top: 1px solid;
+}
+
+.action-add-btn {
+    width: 100%;
+}

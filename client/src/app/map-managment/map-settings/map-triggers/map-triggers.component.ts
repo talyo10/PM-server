@@ -22,10 +22,8 @@ export class MapTriggersComponent implements OnInit {
   ngOnInit() {
     this.mapSubscription = this.mapsService.getCurrentMapObservable().subscribe(
       (map) => {
-        console.log(map);
         this.map = map;
         this.triggersReq = this.triggersService.findByMap(this.map.id).subscribe((triggers) => {
-          console.log(triggers);
           this.triggers = triggers;
         })
       }
@@ -35,9 +33,33 @@ export class MapTriggersComponent implements OnInit {
   addTrigger() {
     const modalref = this.modalService.open(AddTriggerComponent);
     modalref.result.then(trigger => {
+      if (!trigger) {
+        return;
+      }
       trigger.map = this.map.id;
       this.triggersService.add(trigger).subscribe((trigger) => {
         console.log("Created new trigger", trigger);
+        this.triggers.push(trigger);
+      });
+    })
+  }
+
+  deleteTrigger(triggerId, triggerIndex) {
+    this.triggersService.deleteMapTrigger(triggerId).subscribe();
+    this.triggers.splice(triggerIndex, 1);
+  }
+
+  editTrigger(trigger, triggerIndex) {
+    const modalref = this.modalService.open(AddTriggerComponent);
+    modalref.componentInstance.selectedPlugin = trigger.plugin;
+    modalref.componentInstance.selectedMethod = trigger.method;
+    modalref.componentInstance.params = trigger.params;
+    modalref.componentInstance.name = trigger.name;
+    
+    modalref.result.then(updatedTrigger => {
+      updatedTrigger.id = trigger.id;
+      this.triggersService.updateTrigger(updatedTrigger).subscribe((trigger) => {
+        this.triggers[triggerIndex] = trigger;
       });
     })
   }
