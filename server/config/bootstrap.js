@@ -9,16 +9,16 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
-module.exports.bootstrap = function(cb) {
+module.exports.bootstrap = function (cb) {
 
-  // It's very important to trigger this callback method when you are finished
-  // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+    // It's very important to trigger this callback method when you are finished
+    // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
     //loadBaseAgent
     sails.services.passport.loadStrategies();
     sails.services.baseagentsservice.loadBaseAgent().then(() => {
         if (!sails.services.baseagentsservice.baseAgent.id)
             sails.log.error('No baseAgents yet, create a base agent to schedule the jobs');
-        else{
+        else {
             sails.log.info('Starting with baseAgent : ' + sails.services.baseagentsservice.baseAgent.name);
             sails.services.schedultjobsservice.loadJobs();
         }
@@ -27,11 +27,14 @@ module.exports.bootstrap = function(cb) {
     });
     sails.services.dedicatedagentservice.loadAgents();
     sails.services.hooksservice.loadHooks();
-    sails.on('lifted', function() {
+    sails.on('lifted', function () {
         //setInterval(function() {
         //  MapService.listenMapTrigger();
         //}, 5000);
         BaseAgentsService.listenOnAgents();
+        console.log("Loading plugins modules");
+        sails.services.pluginservice.loadPluginsModule();
+
     });
     cb();
 };
