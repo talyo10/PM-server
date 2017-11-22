@@ -121,9 +121,11 @@ module.exports.routes = {
     'post /triggers/upload': 'PluginController.uploadPlugin',
     'get /triggers': 'PluginController.triggersList',
     'get /triggers/map/:id': 'PluginController.findByMap',
+    'delete /triggers/map/:id/delete': 'PluginController.mapTriggerDelete',
+    'post /triggers/:id/update': 'PluginController.mapTriggerUpdate',
     'post /plugins/trigger/create': 'PluginController.createMapTrigger',
     'get /plugins/:id/methods': 'PluginController.pluginMethods',
-    'get /plugins/:id/delete': 'PluginController.pluginDelete',
+    'delete /plugins/:id/delete': 'PluginController.pluginDelete',
     '/triggers/:name': 'PluginController.triggerEvent',
     '/triggers/:name/*': 'PluginController.triggerEvent',
 

@@ -1,11 +1,11 @@
 <div ngDraggable [handle]="popupHandle" role="small-popup-triggers" class="small-popup-triggers">
   <header>
     <h2 role="handle" #popupHandle> Add New Trigger </h2>
-    <i role="closing" class="pmap-15" (click)="closeWindow()"></i>
+    <i role="closing" class="pmap-15" (click)="closeDialog()"></i>
   </header>
   <form #triggerForm="ngForm" (ngSubmit)="createTrigger()">
       
-  <section>
+  <section *ngIf="trigger">
       <div class="form-group">
         <label>Name</label>
         <input class="form-control" type="text" [(ngModel)]="trigger.name" name="name">
@@ -14,24 +14,24 @@
         <label>Plugin</label>
         <select #triggerType class="form-control" (change)="onSelectPlugin(triggerType.value)" [(ngModel)]="trigger.plugin" name="plugin">
           <option value="" disabled selected>Select plugin from list</option>
-          <option *ngFor="let plugin of plugins; let i = index" [value]="i">
+          <option *ngFor="let plugin of plugins" [value]="plugin.id">
             {{plugin.name}}
           </option>
         </select>
       </div>
       <div class="form-group" *ngIf="selectedPlugin">
         <label>Method</label>
-        <select #methodSelect (change)="onSelectMethod(triggerType.value)" class="form-control" *ngIf="selectedPlugin" [(ngModel)]="trigger.method" name="method">
+        <select #methodSelect (change)="onSelectMethod(methodSelect.value)" class="form-control" [(ngModel)]="trigger.method" name="method">
           <option value="" disabled selected>Select method from list</option>
-          <option *ngFor="let method of selectedPlugin.methods; let i = index" [value]="i" >
-            {{method.name}}
+          <option *ngFor="let method of selectedPlugin.methods" [value]="method.id" >
+            {{method.viewName}} {{method.id}}
           </option>
         </select>
       </div>
-      <div *ngIf="selectedMethod">
+      <div *ngIf="selectedMethod && trigger.params">
         <div *ngFor="let param of selectedMethod.params">
           <div class="form-group" *ngIf="param.type === 'string'">
-            <label for="">{{param.viewName}}</label>
+            <label for="">{{param.viewName}} {{param.name}} {{trigger.params[param.name]}}</label>
             <input class="form-control" type="text" [(ngModel)]="trigger.params[param.name]" name="param.name"/>
           </div>
           <div class="form-group" *ngIf="param.type === 'text'">
@@ -40,12 +40,11 @@
           </div>
         </div>
       </div>
-
   </section>
   <footer>
     <button class="btn-event" type="submit" >
       <i class="pmap-26 "></i>Save</button>
-    <button class="btn-event btn-no-icon" (click)="closeWindow()" type="button">Cancel</button>
+    <button class="btn-event btn-no-icon" (click)="closeDialog()" type="button">Cancel</button>
   </footer>
 </form>
 

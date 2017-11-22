@@ -140,12 +140,12 @@ module.exports = {
         })
     },
     pluginDelete: function (req, res) {
-        console.log("here");
         Plugin.destroy({ id: req.param("id") }).then(() => {
+            return MapTrigger.destroy({ plugin: req.param("id") })
+        }).then(() => {
             PluginMethod.destroy({ plugin: req.param("id") }).then(() => {
                 res.ok();
             });
-            
         }).catch((error) => {
             console.log("Error deleteing plugin", error);
         });
@@ -158,6 +158,14 @@ module.exports = {
             res.badRequest();
         });
     },
+    mapTriggerDelete: function (req, res) {
+        MapTrigger.destroy({ id: req.param("id") }).then(() => {
+            res.ok();
+        }).catch((error) => {
+            console.log("Error deleteing trigger", error);
+            res.badRequest();
+        })
+    },
     createMapTrigger: function (req, res) {
         console.log(req.body)
         MapTrigger.create(req.body).then((trigger) => {
@@ -168,15 +176,25 @@ module.exports = {
         })
     },
     findByMap: function (req, res) {
-        MapTrigger.find({ map: req.param("id") }).then((triggers) => {
+        MapTrigger.find({ map: req.param("id") }).populate("method").populate("plugin").then((triggers) => {
             res.json(triggers);
         }).catch((error) => {
             console.log("Error finding triggers", error);
             res.badRequest();
         });
     },
+    mapTriggerUpdate: function (req, res) {
+        console.log(req.body);
+        MapTrigger.update({ id: req.body.id }, req.body).then((triggers) => {
+            MapTrigger.findOne(triggers[0].id).populate("plugin").populate("method").then((trigger) => {
+                res.json(trigger);
+            })
+        }).catch((error) => {
+            console.log("Error updating trigger", error);
+            res.badRequest();
+        })
 
-
+    },
     pluginsPath: pluginsPath,
 };
 

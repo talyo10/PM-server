@@ -3,6 +3,8 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TriggerService } from '../../../../shared/services/trigger.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
+import * as _ from "lodash";
+
 
 @Component({
   selector: 'app-add-trigger',
@@ -17,23 +19,56 @@ export class AddTriggerComponent implements OnInit, OnDestroy {
   selectedMethod: any;
   form: FormGroup;
   trigger: any;
-  paramsForm: any;
+  params: any;
+  name: any;
 
   constructor(public dialog: NgbActiveModal, private triggersService: TriggerService) { }
 
   ngOnInit() {
-    this.triggerReq = this.triggersService.getTriggersPlugin().subscribe((plugins) => {
-      this.plugins = plugins;
-    });
-
     this.trigger = {
       name: null,
       plugin: null,
       method: null,
       params: null
     }
+    
+    this.triggerReq = this.triggersService.getTriggersPlugin().subscribe((plugins) => {
+      this.plugins = plugins;
+      if (this.selectedPlugin) {
+        let index = _.findIndex(this.plugins, (plugin) => {
+          return plugin.id === this.selectedPlugin.id;
+        })
+        this.methodReq = this.triggersService.getMethods(this.selectedPlugin.id).subscribe((methods) => {
+          this.plugins[index].methods = methods;
+          this.selectedPlugin.methods = methods;
+          if (this.selectedMethod) {
+            let methodIndex = _.findIndex(this.selectedPlugin.methods, (method) => {
+              return method['id'] === this.selectedMethod.id;
+            })
+            this.selectedMethod = this.selectedPlugin.methods[methodIndex];
+            let params = {};
+            if (!this.params) {
+              this.selectedMethod.params.forEach(param => {
+                console.log(param);
+                params[param.name] = null;
+              });
+            } else {
+              for (let param in this.params){
+                params[this.params[param]["name"]] = this.params[param]["value"];
+              }
+            }
 
+            this.trigger = {
+              name: this.name,
+              plugin: this.selectedPlugin? this.selectedPlugin.id: null,
+              method: this.selectedMethod? this.selectedMethod.id: null,
+              params: params
+            }
+          }
+        });
+      }
 
+    });
   }
 
   ngOnDestroy() {
@@ -43,18 +78,25 @@ export class AddTriggerComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelectPlugin(index) {
+  onSelectPlugin(pluginId) {
+    let index = _.findIndex(this.plugins, (plugin) => {
+      return plugin.id === pluginId
+    })
+
     if (!this.plugins[index].methods) {
-      this.methodReq = this.triggersService.getMethods(this.plugins[index].id).subscribe((methods) => {
+      this.methodReq = this.triggersService.getMethods(pluginId).subscribe((methods) => {
         this.plugins[index].methods = methods;
-        this.selectedPlugin.methods = methods;
+        this.selectedPlugin = this.plugins[index];
+    
       });
     }
-    this.selectedPlugin = this.plugins[index];
     this.selectedMethod = null;
   }
 
-  onSelectMethod(index) {
+  onSelectMethod(methodId) {
+    let index = _.findIndex(this.selectedPlugin.methods, (method) => {
+      return method['id'] === methodId
+    })
     this.selectedMethod = this.selectedPlugin.methods[index];
     let params = {};
     this.selectedMethod.params.forEach(param => {
@@ -70,11 +112,16 @@ export class AddTriggerComponent implements OnInit, OnDestroy {
         id: param.id,
         type: param.type,
         value: this.trigger.params[param.name],
-        viewName: param.viewName
+        viewName: param.viewName,
+        name: param.name
       }
       params[param.name] = p;
     })
     this.dialog.close({ name: this.trigger.name, plugin: this.selectedPlugin.id, method: this.selectedMethod.id, params: params })
+  }
+
+  closeDialog() {
+    this.dialog.close();
   }
 
 }

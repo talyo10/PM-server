@@ -98,7 +98,13 @@ export class TriggerService {
         return this.types;
     }
     deletePlugin(pluginId) {
-        return this.http.get(this.serverUrl + 'plugins/' + pluginId + "/delete" , this.options).map(this.extractData);
+        return this.http.delete(this.serverUrl + 'plugins/' + pluginId + "/delete" , this.options).map(this.extractData);
+    }
+    deleteMapTrigger(triggerId) {
+        return this.http.delete(this.serverUrl + 'triggers/map/' + triggerId + "/delete" , this.options).map(this.extractData);
+    }
+    updateTrigger(trigger) {
+        return this.http.post(this.serverUrl + "triggers/" + trigger.id + "/update", trigger, this.options).map(this.extractData);
     }
 
     private extractData(res: Response) {
