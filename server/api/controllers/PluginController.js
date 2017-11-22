@@ -119,9 +119,9 @@ module.exports = {
                     if (code === 0) {
                         console.log("Executing map")
                         MapService.executeMap("-1", trigger.map, 0, 0).then((result) => {
-							console.log("finish executing map from trigger");
-						});
-                    } 
+                            console.log("finish executing map from trigger");
+                        });
+                    }
                 });
             })
             res.ok()
@@ -131,13 +131,24 @@ module.exports = {
         })
 
     },
-    pluginsList: function (req, res) {
+    triggersList: function (req, res) {
         PluginService.filterPlugins({ type: "server" }).then((plugins) => {
             res.json(plugins);
         }).catch((error) => {
             console.log("Error getting plugins", error);
             res.badRequest();
         })
+    },
+    pluginDelete: function (req, res) {
+        console.log("here");
+        Plugin.destroy({ id: req.param("id") }).then(() => {
+            PluginMethod.destroy({ plugin: req.param("id") }).then(() => {
+                res.ok();
+            });
+            
+        }).catch((error) => {
+            console.log("Error deleteing plugin", error);
+        });
     },
     pluginMethods: function (req, res) {
         PluginMethod.find({ plugin: req.param('id') }).populate("params").then((methods) => {

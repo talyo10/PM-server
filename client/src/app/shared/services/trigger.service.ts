@@ -89,13 +89,16 @@ export class TriggerService {
         return this.http.post(this.serverUrl + 'trigger/' + trigger.id + "/update", trigger, this.options).map(this.extractData);
     }
     getTriggersPlugin() {
-        return this.http.get(this.serverUrl + 'plugins', this.options).map(this.extractData);
+        return this.http.get(this.serverUrl + 'triggers/', this.options).map(this.extractData);
     }
     getMethods(pluginId) {
         return this.http.get(this.serverUrl + 'plugins/' + pluginId + "/methods" , this.options).map(this.extractData);
     }
     getTypes() {
         return this.types;
+    }
+    deletePlugin(pluginId) {
+        return this.http.get(this.serverUrl + 'plugins/' + pluginId + "/delete" , this.options).map(this.extractData);
     }
 
     private extractData(res: Response) {

@@ -119,10 +119,11 @@ module.exports.routes = {
     'post /installPlugins': 'DedicatedAgentController.installAgents',
     
     'post /triggers/upload': 'PluginController.uploadPlugin',
-    'get /plugins': 'PluginController.pluginsList',
+    'get /triggers': 'PluginController.triggersList',
     'get /triggers/map/:id': 'PluginController.findByMap',
     'post /plugins/trigger/create': 'PluginController.createMapTrigger',
     'get /plugins/:id/methods': 'PluginController.pluginMethods',
+    'get /plugins/:id/delete': 'PluginController.pluginDelete',
     '/triggers/:name': 'PluginController.triggerEvent',
     '/triggers/:name/*': 'PluginController.triggerEvent',
 

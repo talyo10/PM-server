@@ -1,13 +1,33 @@
-<!-- IMPORTANT: ONLY TO TEST UPLOADING -->
 <div role="triggers">
   <h2 class="agents-title">
     <i class="pmap-1 noHover"></i>Triggers
   </h2>
   <div class="row">
     <div class="col-sm-12">
-      <h3>Triggers List</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Created at</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="triggers">
+          <tr *ngFor="let trigger of triggers; let i = index">
+            <th scope="row">1</th>
+            <td>{{trigger?.name}}</td>
+            <td>{{trigger?.createdAt | date: 'shortDate'}}</td>
+            <td>
 
+              <button type="button" (click)="deleteTrigger(trigger?.id, i)">
+                <i class="pmap-27"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <button class="btn-event" (click)="addTrigger()">Upload New Trigger</button>
+    <button type="button" class="btn-event" (click)="addTrigger()"><i class="pmap-25"></i>Upload New Trigger</button>
   </div>
 </div>

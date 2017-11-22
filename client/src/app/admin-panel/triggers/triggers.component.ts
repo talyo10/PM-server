@@ -21,7 +21,7 @@ export class TriggersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
+    this.triggerReq = this.triggerService.getTriggersPlugin().subscribe((triggersData: any) => {
       this.triggers = triggersData;
     });
   }
@@ -34,16 +34,12 @@ export class TriggersComponent implements OnInit, OnDestroy {
     const modalref = this.modalService.open(FileUploadComponent);
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
-      this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
-        this.triggers = triggersData;
-      });
+      this.triggers.push(trigger);
     });
   }
 
-  deleteTrigger(triggerIndex) {
-    this.triggerService.delete(this.triggers[triggerIndex].id).subscribe(res => {
-      console.log('deleted trigger');
-    });
+  deleteTrigger(triggerId, triggerIndex) {
+    this.triggerService.deletePlugin(triggerId).subscribe();
     this.triggers.splice(triggerIndex, 1);
   }
 
