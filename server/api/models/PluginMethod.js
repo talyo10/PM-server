@@ -11,6 +11,9 @@ module.exports = {
     name: {
       type: 'string'
     },
+    route: {
+      type: 'string'
+    },
     params: {
       collection: 'PluginMethodParam',
       via: 'method',
