@@ -140,14 +140,24 @@ module.exports = {
         })
     },
     pluginDelete: function (req, res) {
-        Plugin.destroy({ id: req.param("id") }).then(() => {
+        Plugin.findOne(req.param("id")).then((plugin) => {
+            PluginService.unbindPluginRoutes(plugin);
+            if (plugin.type === "server") {
+                return PluginMethod.destroy({ plugin: req.param("id") })
+            } else {
+                Plugin.destroy({ id: plugin.id }).then(() => {
+                    res.ok();
+                })
+            }
+        }).then(() => {
             return MapTrigger.destroy({ plugin: req.param("id") })
         }).then(() => {
-            PluginMethod.destroy({ plugin: req.param("id") }).then(() => {
+            Plugin.destroy({ id: req.param("id") }).then(() => {
                 res.ok();
             });
         }).catch((error) => {
             console.log("Error deleteing plugin", error);
+            res.badRequest();
         });
     },
     pluginMethods: function (req, res) {

@@ -2,8 +2,10 @@ const path = require('path');
 const unzip = require('unzip');
 const fs = require('fs');
 const streams = require('memory-streams');
+const _ = require('lodash');
 
 let pluginsModules = {};
+let routesModule = {};
 let pluginsPath = path.join(sails.config.appPath, "plugins");
 
 let loadModule = function (fullPath = pluginsPath, parentDir) {
@@ -25,17 +27,29 @@ let loadModule = function (fullPath = pluginsPath, parentDir) {
             if (path.basename(fullPath) !== "config.json") {
                 return;
             }
-            console.log("its the one");
-
             try {
                 let plugin = require(fullPath);
                 if (!plugin.name) {
                     console.log("no name exported in module");
                     return;
                 }
-                plugin.main = path.join(path.dirname(fullPath), plugin.main);
-                pluginsModules[plugin.name] = plugin;
+                Plugin.findOne({ name: plugin.name }).then((savedPlugin) => {
+                    // save only plugins that exists in db
+                    if (!savedPlugin) {
+                        return;
+                    }
+                    plugin.main = path.join(path.dirname(fullPath), plugin.main);
+                    pluginsModules[plugin.name] = plugin;
 
+                    let methods = plugin.methods;
+
+                    methods.forEach(method => {
+                        let pluginAppPath = plugin.main.slice(0, plugin.main.lastIndexOf('.'));
+                        let app = require(pluginAppPath);
+                        routesModule[method.route] = app[method.name];
+                        sails.router.bind(method.route, app[method.name]);
+                    })
+                })
             } catch (e) {
                 console.log("Error while loadin module", e);
                 return;
@@ -45,7 +59,16 @@ let loadModule = function (fullPath = pluginsPath, parentDir) {
 
 }
 
-
+let unbindRoute = function (plugin) {
+    let methods = pluginsModules[plugin.name].methods;
+    console.log(methods);
+    methods.forEach(method => {
+        if (method.route) {
+            console.log(method.route);
+            sails.router.unbind({ path: method.route, verb: routesModule[method.route] })
+        }
+    })
+}
 
 
 module.exports = {
@@ -84,6 +107,7 @@ module.exports = {
         })
     },
     loadPluginsModule: loadModule,
+    unbindPluginRoutes: unbindRoute,
     getPlugin: function (query) {
         return Plugin.findOne(query)
     },
