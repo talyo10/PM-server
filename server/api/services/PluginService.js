@@ -93,7 +93,7 @@ module.exports = {
                                 return Plugin.update({ name: obj.name }, obj)
                             }).then((plugin) => {
                                 console.log("created a new plugin", plugin)
-                                resolve();
+                                resolve(plugin);
                             }).catch((error) => {
                                 console.log("Error creating plugin", error)
                                 reject(error);

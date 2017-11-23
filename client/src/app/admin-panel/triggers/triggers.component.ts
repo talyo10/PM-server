@@ -33,6 +33,7 @@ export class TriggersComponent implements OnInit, OnDestroy {
     const modalref = this.modalService.open(FileUploadComponent);
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
+      console.log(trigger);
       this.triggers.push(trigger);
     });
   }

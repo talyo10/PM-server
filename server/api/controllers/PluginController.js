@@ -16,6 +16,7 @@ let uploadPath = path.join(sails.config.appPath, "static", "upload");
 
 module.exports = {
     uploadPlugin: function (req, res) {
+        let newPlugin;
         // installing plugin on server.
         try {
             // trying to get filename
@@ -49,7 +50,10 @@ module.exports = {
                     console.log("Bad format");
                     return res.badRequest()
                 }
-                PluginService.createPlugin(file.fd).then(() => { console.log("Created plugin") });
+                PluginService.createPlugin(file.fd).then((obj) => {
+                    newPlugin = obj;
+                    console.log("Created plugin")
+                });
                 extension ? dirName = file.filename.substring(0, file.filename.lastIndexOf(".")) : dirname = file.filename;
                 outputPath = path.join(pluginsPath, dirName);
                 if (!fs.existsSync(outputPath)) {
@@ -81,7 +85,7 @@ module.exports = {
                 } else {
                     // load the plugin to current modules
                     PluginService.loadPluginsModule(outputPath, null);
-                    res.ok();
+                    res.json(newPlugin);
                 }
             })
 
