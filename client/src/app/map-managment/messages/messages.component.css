@@ -184,3 +184,14 @@ a {
   cursor: pointer;
   cursor: hand;
 }
+
+.table {
+  color: #bbb;
+  font-size: 13px;
+}
+
+table td {
+  border-top: none;
+  border-bottom: 1px solid #bbb;
+  padding: 5px;
+}
