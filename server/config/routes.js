@@ -108,9 +108,6 @@ module.exports.routes = {
     'POST /SysFile/execute': 'SysFileController.execute',
     'POST /map/addAttribute': 'SysFileController.updateByName',
 
-    'POST /trigger': 'TriggerController.addTrigger',
-    'POST /trigger/:id/update' : 'TriggerController.updateTrigger',
-    
     'get /SystemHooks/deleteHook/:id': 'DedicatedAgentController.deleteHook',
     'get /SystemHooks/getHooks': 'DedicatedAgentController.getHooks',
     'POST /addSystemHooks': 'DedicatedAgentController.addHooks',
@@ -126,12 +123,9 @@ module.exports.routes = {
     'post /plugins/trigger/create': 'PluginController.createMapTrigger',
     'get /plugins/:id/methods': 'PluginController.pluginMethods',
     'delete /plugins/:id/delete': 'PluginController.pluginDelete',
-    '/triggers/:name': 'PluginController.triggerEvent',
-    '/triggers/:name/*': 'PluginController.triggerEvent',
 
     'get /executions/:id': 'ExecutionController.executionDetail',
 
-    'post /github/push': 'TriggerController.githubPush'
 
 
 
