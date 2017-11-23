@@ -199,7 +199,7 @@ var jsonpatch = require('fast-json-patch'),
       if (runningMaps[mapId] == runStatuses.Stopped) {
         vm.runInNewContext(map_onStop, executionContext);
 
-        MessagesService.sendMessage("update", "Map " + mapName + "paused or stopped", "info");
+        MessagesService.sendMessage("update", "Map '" + mapName + "' paused or stopped", "info");
         callback('Map Stopped');
         return;
       }
@@ -258,7 +258,7 @@ var jsonpatch = require('fast-json-patch'),
           return;
         }
       }
-      MessagesService.sendMessage("update", "Running action: " + action.name, "info")
+      MessagesService.sendMessage("update", "Running action: '" + action.name + "'", "info")
       action.server.url = getDedicatedUrl(agent, action.server.type);
       var startTime = new Date();
       request.post(
@@ -282,7 +282,7 @@ var jsonpatch = require('fast-json-patch'),
             };
           }
           if (!error && response.statusCode == 200) {
-            MessagesService.sendMessage("update", "Action " + action.name + " result: " + body.res, "info")
+            MessagesService.sendMessage("update", "Action '" + action.name + "' result: " + body.res, "success")
             SystemLogService.create("Finish running map", mapId, 'Map', 'execution', 'success');
             addActionResultToContext(executionContext, linkId, processId, action.name, body.res, 0);
             executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
@@ -306,8 +306,8 @@ var jsonpatch = require('fast-json-patch'),
             if (!res) {
               res = error;
             }
-            MessagesService.sendMessage("serverError", "Failed executing action " + action.name + ": " + res, "error")
-            MessagesService.sendMessage("update", "Failed executing action " + action.name + ": " + res, "error")
+            MessagesService.sendMessage("serverError", "Failed executing action '" + action.name + "': " + res, "error")
+            MessagesService.sendMessage("update", "Failed executing action '" + action.name + "': " + res, "error")
             addActionResultToContext(executionContext, linkId, processId, action.name, res, -1);
             executionResult.links[linkId].processes[processKey].actions[key].agents[agent.key] = {
               startTime: (new Date()).toString(),
@@ -457,7 +457,7 @@ var jsonpatch = require('fast-json-patch'),
           callback('error: no process with default execution flag');
         }
 
-        MessagesService.sendMessage("update", "Running process: " + process.name, "info")
+        MessagesService.sendMessage("update", "Running process: '" + process.name + "'", "info")
 
         /*var actions = process.actions.sort(function (a, b) {
             return b.order - a.order;
@@ -531,7 +531,7 @@ var jsonpatch = require('fast-json-patch'),
           if (err) {
             // One of the iterations produced an error.
             // All processing will now stop.
-            MessagesService.sendMessage("update", "Error executing process " + process.name + ":" + err, "error")
+            MessagesService.sendMessage("update", "Error executing process '" + process.name + "':" + err, "error")
 
             executionResult.links[link.id].processes[key].agents[agent.key] = {
               startTime: (new Date()).toString(),
@@ -563,7 +563,7 @@ var jsonpatch = require('fast-json-patch'),
               }
               actionsTotal = actionsTotal + res[i].res + "\n";
             }
-            MessagesService.sendMessage("update", 'Finished running process ' + process.name + ":" + actionsTotal, "success");
+            MessagesService.sendMessage("update", "Process '" + process.name + "' result: " + actionsTotal, "success");
             executionResult.links[link.id].processes[key].agents[agent.key].result = actionsTotal;
             executionResult.links[link.id].processes[key].agents[agent.key].endTime = (new Date()).toString();
             executionResult.links[link.id].processes[key].agents[agent.key].status = 0;
@@ -799,7 +799,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
 
     if (versionIndex <= 0) versionIndex = map.versions.length - 1;
     if (!map || map.versions.length - 1 < versionIndex) {
-      MessagesService.sendMessage("update", "Map or map version not found");
+      MessagesService.sendMessage("update", "Map or map version not found", "error");
       SystemLogService.error("Map or map version not found", map, "execution");
       throw new Error("Whoops! Map or map version Not Found");
     } else {
@@ -833,7 +833,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     if (contextRes !== 0) {
       map.versions[versionIndex].status = sails.config.constants.runStatuses.Failed;
       MessagesService.sendMessage("update", "Error: '" + contextRes.message + "\n" + contextRes.stack + "'", "error");
-      MessagesService.sendMessage("update", "failed running map " + executionResult.name, "error");
+      MessagesService.sendMessage("update", "Failed running map '" + executionResult.name + "'", "error");
       SystemLogService.error("Failed running map", map, "execution");
       throw new Error("Failed running map " + executionResult.name);
     }
@@ -849,12 +849,12 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
       res = vm.runInNewContext(map_filterServers, executionContext);
     } catch (e) {
       SystemLogService.error("Failed running map", map, "execution");
-      MessagesService.sendMessage("update", "Failed running map", map, "execution", "error");
+      MessagesService.sendMessage("update", "Failed executing map '" + map + "'", "error");
       throw new Error("Error: undefinde variable " + e);
     }
     if (!res) {
       sails.log.error("no filter function (this should not happen)");
-      MessagesService.sendMessage("update", "No filter function", map, "execution", "info");
+      MessagesService.sendMessage("update", "No filter function at '" + map.name + "'" , "info");
 
     }
     else if (res !== false) {
@@ -872,13 +872,10 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         agents[mapAgent.key] = mapAgent;
       }
     }
-
-    executionResult.agents = agents;
-    console.log(agents.length);
-    if (!agents.length > 0) {
-      console.log("hi")
-      MessagesService.sendMessage("update", "No agents selected for map '" + map.name + "'", "info");
+    if (Object.keys(agents).length === 0 ){
+      MessagesService.sendMessage("update", "No agents selected or none is alive. Please check agents status at the agents tab.", "error");
     }
+    executionResult.agents = agents;
 
     // sets the map agents which are alive.
     runningExecutionResults.agents = agents;
@@ -904,14 +901,14 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         }
       )
     }).then(() => {
-      MessagesService.sendMessage("update", "Finished executing map " + map.name, "success");
+      MessagesService.sendMessage("update", "Finished executing map '" + map.name + "'", "success");
       SystemLogService.success("Finish running map", map, "execution");
       createExecutionModels(runningExecutionResults);
-      return { res: "Finsihed running map", resObj: map }
+      return { resObj: map }
     })
   }).catch((error) => {
     SystemLogService.error("Error executing map " + error, map, "execution");
-    MessagesService.sendMessage("update", "Error executing map " + map.name + ": " + error, "error");
+    MessagesService.sendMessage("update", "Error executing map '" + map.name + "': " + error, "error");
 
     sails.log.error("ERROR EXECUTING MAP!:", error);
   })
