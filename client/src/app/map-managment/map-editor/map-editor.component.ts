@@ -32,6 +32,7 @@ export class MapEditorComponent implements OnInit, OnDestroy {
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
       .subscribe(
         (map) => {
+          this.currentPanel = 0;
           this.map = map;
         }
       );
