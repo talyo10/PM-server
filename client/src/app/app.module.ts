@@ -21,6 +21,7 @@ import {TreeModule as PrimeTreeModule, TreeTableModule, SharedModule, ScheduleMo
 import {CalendarModule} from 'angular-calendar';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AngularDraggableModule} from 'angular2-draggable';
+import { ToastrModule } from 'ngx-toastr';
 
 import {AuthGuard} from './shared/services/auth.guard';
 import {AuthenticationService} from './shared/services/authentication.service';
@@ -29,6 +30,7 @@ import {ConstsService} from './shared/services/consts.service';
 import {ProjectService} from './shared/services/project.service';
 import {ServersService} from './shared/services/servers.service';
 import {MapService} from './shared/services/map.service';
+import { NotificationsService } from './shared/services/notifications.service';
 
 import {AppComponent} from './app.component';
 import {HeaderComponent} from './header/header.component';
@@ -175,7 +177,9 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     TabViewModule,
     DataTableModule,
     DragDropModule,
-    PrimeTreeModule
+    PrimeTreeModule,
+    ToastrModule.forRoot()
+    
   ],
   providers: [
     AuthGuard,
@@ -185,6 +189,7 @@ import { ActionDetailComponent } from './map-managment/map-execution/action-deta
     ProjectService,
     MapService,
     ServersService,
+    NotificationsService,
     ScheduleModule,
     Location,
     {
