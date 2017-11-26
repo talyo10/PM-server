@@ -19,19 +19,24 @@ export class AppComponent implements OnInit {
   title = 'app works!';
   messageSubscription: Subscription;
 
-  constructor(private http: Http, private authenticationService: AuthenticationService, private router: Router, private constsService: ConstsService, private notificationsService: NotificationsService, private toastrService: ToastrService) {
-  }
+  constructor(private http: Http, private authenticationService: AuthenticationService, private router: Router, private constsService: ConstsService, private notificationsService: NotificationsService, private toastrService: ToastrService) {  }
+  
 
   ngOnInit() {
     this.messageSubscription = this.notificationsService.getNotification().subscribe((message) => {
-      let notification = JSON.parse(message);
-      if (notification.type === "success")
-        this.toastrService.success(notification.msg, null, { positionClass: 'toast-bottom-right' });
-      else if (notification.type === "error")
-        this.toastrService.error(notification.msg, null, { positionClass: 'toast-bottom-right' });
-      else
-        this.toastrService.info(notification.msg, null, { positionClass: 'toast-bottom-right' });
+      this.showNotification(JSON.parse(message));
     })
+  }
+
+  showNotification(notification) {
+    if (notification.type === "success")
+      this.toastrService.success(notification.msg, null, { positionClass: 'toast-bottom-right' });
+    else if (notification.type === "error")
+      this.toastrService.error(notification.msg, null, { positionClass: 'toast-bottom-right' });
+    else if (notification.type === "warning")
+      this.toastrService.warning(notification.msg, null, { positionClass: 'toast-bottom-right' });
+    else
+      this.toastrService.info(notification.msg, null, { positionClass: 'toast-bottom-right' });
   }
 }
 
