@@ -18,7 +18,7 @@ export class NotificationsService {
 
   constructor() {
     this.socket = io.sails.connect(this.serverUrl);
-    this.socket.on('update', (message) => {
+    this.socket.on('notification', (message) => {
       this.toast.next(message);
     });
   }
