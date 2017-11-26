@@ -1,30 +1,33 @@
 <div role="triggers">
-  <h2 class="agents-title"><i class="pmap-1 noHover"></i>Triggers</h2>
-  <div class="pmap-table">
-    <div class="thead-wrapper">
-      <div class="thead">
-        <div class="tr">
-          <div class="cell">Name</div>
-          <div class="cell">Type</div>
-          <div class="cell">project</div>
-          <div class="cell">map</div>
-          <div class="cell"></div>
-        </div>
-      </div>
+  <h2 class="agents-title">
+    <i class="pmap-1 noHover"></i>Triggers
+  </h2>
+  <div class="row">
+    <div class="col-sm-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Created at</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="triggers">
+          <tr *ngFor="let trigger of triggers; let i = index">
+            <th scope="row">1</th>
+            <td>{{trigger?.name}}</td>
+            <td>{{trigger?.createdAt | date: 'shortDate'}}</td>
+            <td>
+
+              <button type="button" (click)="deleteTrigger(trigger?.id, i)">
+                <i class="pmap-27"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="tbody-wrapper">
-      <div class="tbody">
-        <div *ngFor="let trigger of triggers; let triggerIndex = index" class="tr">
-          <div class="cell">{{trigger.name}}</div>
-          <div class="cell">{{trigger.type}}</div>
-          <div class="cell">{{trigger.project?.name }}</div>
-          <div class="cell" *ngIf="trigger.map">{{trigger.map?.name }}</div>
-          <div class="cell"><button type="button" (click)="editTrigger(trigger)"><i class="fa fa-pencil" aria-hidden="true"></i>
-          </button></div>
-          <div class="cell"><button type="button" (click)="deleteTrigger(triggerIndex)"><i class="pmap-27"></i></button></div>
-        </div>
-      </div>
-    </div>
+    <button type="button" class="btn-event" (click)="addTrigger()"><i class="pmap-25"></i>Upload New Trigger</button>
   </div>
-  <button type="button" class="btn-event" (click)="addTrigger()"><i class="pmap-25"></i>Add Trigger</button>
 </div>

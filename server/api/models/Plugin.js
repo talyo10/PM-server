@@ -1,34 +1,34 @@
 /**
- * Trigger.js
+ * Plugin.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
 module.exports = {
-
   attributes: {
-  	name: {
-    	type: 'string',
-    	required: true
-    },
-    map: {
-    	model: 'Map'
+    name: {
+      type: 'string',
+      unique: true
     },
     type: {
-    	type: 'string'
+      type: 'string',
+      enum: ["server", "agent"]
     },
-    params:{
-  		type: 'json',
-      defaultsTo: []
-  	},
-    on: {
+    active: {
       type: 'boolean',
-      defaultsTo: false
+      defaultsTo: true
     },
-    folder: {
+    methods: {
+      collection: 'PluginMethod',
+      via: 'plugin'
+    },
+    imgUrl: {
       type: 'string'
-    }
+    },
+    version: {
+      type: 'string'
+    },
   }
 };
 

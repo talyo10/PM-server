@@ -34,7 +34,7 @@ header [role="map-settings-buttons"]:after {
 }
 
 header [role="map-settings-buttons"] button {
-  width: 50%;
+  width: 33%;
   display: block;
   float: left;
   height: 100%;

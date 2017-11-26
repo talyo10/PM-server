@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TriggerService } from '../../shared/services/trigger.service';
-import { AddTriggerComponentWindow } from './add-trigger/add-trigger.component';
+import { FileUploadComponent } from '../file-upload/file-upload.component';
 
 @Component({
   selector: 'app-triggers',
@@ -20,7 +20,7 @@ export class TriggersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
+    this.triggerReq = this.triggerService.getTriggersPlugin().subscribe((triggersData: any) => {
       this.triggers = triggersData;
     });
   }
@@ -30,30 +30,17 @@ export class TriggersComponent implements OnInit, OnDestroy {
   }
 
   addTrigger() {
-    const modalref = this.modalService.open(AddTriggerComponentWindow);
+    const modalref = this.modalService.open(FileUploadComponent);
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
-      this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
-        this.triggers = triggersData;
-      });
+      console.log(trigger);
+      this.triggers.push(trigger);
     });
   }
 
-  deleteTrigger(triggerIndex) {
-    this.triggerService.delete(this.triggers[triggerIndex].id).subscribe(res => {
-      console.log('deleted trigger');
-    });
+  deleteTrigger(triggerId, triggerIndex) {
+    this.triggerService.deletePlugin(triggerId).subscribe();
     this.triggers.splice(triggerIndex, 1);
-  }
-
-  editTrigger(trigger) {
-    const modalref = this.modalService.open(AddTriggerComponentWindow);
-    modalref.componentInstance.trigger = trigger;
-    modalref.result.then((trigger) => {
-      this.triggerReq = this.triggerService.all().subscribe((triggersData: any) => {
-        this.triggers = triggersData;
-      });
-    });
   }
 
 }
