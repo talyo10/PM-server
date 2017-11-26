@@ -13,7 +13,7 @@ module.exports = {
     },
     type: {
       type: 'string',
-      enum: ["server", "agent"]
+      enum: ["server", "executer", "trigger", "module"]
     },
     active: {
       type: 'boolean',
