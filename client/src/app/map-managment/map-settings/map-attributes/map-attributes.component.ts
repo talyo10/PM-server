@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChange } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
-import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { AttributeWindow } from '../../../shared/popups/attribute-window/attribute-window.component';
 import { MapService } from '../../../shared/services/map.service'
@@ -27,7 +27,7 @@ export class MapAttributesComponent implements OnInit, OnChanges, OnDestroy {
     };
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
       .subscribe(
-        (map) => this.map = map
+      (map) => this.map = map
       );
   }
 
@@ -61,15 +61,15 @@ export class MapAttributesComponent implements OnInit, OnChanges, OnDestroy {
 
     const modalRef = this
       .modalService
-    .open(AttributeWindow);
+      .open(AttributeWindow);
     modalRef.componentInstance.attribute = attribute;
-    
+
     modalRef.result
-    .then((attr) => {
-      if (attr) {
-        this.map.mapView.attributes.push(attr);
-      }
-    });
+      .then((attr) => {
+        if (attr) {
+          this.map.mapView.attributes.push(attr);
+        }
+      });
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }): void {
