@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 export class MapCodeEditorComponent implements OnInit, OnDestroy, OnChanges {
 
   @ViewChild('editor') editorContent: ElementRef;
-  map: any = {};
+  map: any;
   public editor: any;
   private monaco: any;
 
