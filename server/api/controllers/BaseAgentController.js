@@ -14,6 +14,8 @@ module.exports = {
                 res.ok();
             }).catch((error) => {
                 sails.log.error("Error deleting agent", error);
+                MessagesService.sendMessage("notification", "Error deleting agent", "error");
+                
                 res.badRequest();
             });
     },
@@ -32,6 +34,8 @@ module.exports = {
                 res.send(node);
             }).catch((error) => {
                 sails.log.error("Error creating group", error);
+                MessagesService.sendMessage("notification", "Error adding group", "error");
+                
                 res.badRequest(error);
                 
             });
@@ -56,6 +60,8 @@ module.exports = {
             res.send(agent);
         }).catch((error) => {
             sails.log.error(error);
+            MessagesService.sendMessage("notification", "Error adding agent", "error");
+            
             res.badRequest();
         })
        

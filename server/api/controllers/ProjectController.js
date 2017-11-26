@@ -18,6 +18,7 @@ module.exports = {
                 JstreeService.FolderToItem(folder);
                 sails.log.info(folder);
                 hooks.addFolder(req.user, folder);
+                MessagesService.sendMessage("notification", "'" + req.body.name + "' created successfuly", "success");
                 res.json(folder);
             }
             )
@@ -30,6 +31,7 @@ module.exports = {
         ProjectService.deleteFolder(req.body.id).then((folder) => {
             JstreeService.FolderToItem(folder);
             hooks.deleteFolder(req.user, folder);
+            MessagesService.sendMessage("notification", "Deleted folder successfuly", "success");
             res.json(folder);
         }).catch((error) => {
             res.badRequest();
@@ -51,6 +53,8 @@ module.exports = {
             (project) => {
                 JstreeService.ProjectToItem(project);
                 hooks.addProject(req.user, project);
+                MessagesService.sendMessage("notification", "'" + req.body.name + "' created successfuly", "success");
+                
                 res.json(project);
             }
             )
@@ -61,7 +65,9 @@ module.exports = {
             hooks.deleteProject(req.user, { name: req.param('id') });
             res.ok();
         }).catch((error) => {
-            sails.log.error("Error deleting project");
+            sails.log.error("Error deleting project", error);
+            MessagesService.sendMessage("notification", "Error deleting project", "error");
+            
             res.badRequest();
         })
     },
