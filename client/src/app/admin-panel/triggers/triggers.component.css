@@ -22,22 +22,6 @@
   color: #f1f1f1;
 }
 
-[role="triggers"] .pmap-table {
-  margin-bottom: 10px;
-}
-
-[role="triggers"] .pmap-table .thead .tr .cell:first-of-type, [role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(2), [role="triggers"] .pmap-table .tbody .tr .cell:first-of-type, [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(2) {
-  width: 200px;
-}
-
-[role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(3), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(3), [role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(4), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(4) {
-  width: 133px;
-}
-
-[role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(5), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(5), [role="triggers"] .pmap-table .thead .tr .cell:nth-of-type(6), [role="triggers"] .pmap-table .tbody .tr .cell:nth-of-type(6) {
-  width: 20px  ;
-}
-
 i.fa {
   color: #6f6f6f;
 }
@@ -45,4 +29,17 @@ i.fa {
 i.fa:hover {
   color: #fff;
   cursor: pointer;
+}
+
+.table {
+  color: #bbb !important;
+}
+
+.table thead th {
+  color: #02a7c7 !important;
+  border-bottom-color: #bbb !important;
+} 
+
+.table thead tr {
+  border-bottom-color: #bbb !important;
 }

@@ -70,23 +70,30 @@ export class TriggerService {
       this.serverUrl = this.constsService.getServerUrl();
     }
 
-    delete(id) {
-        return this.http.delete(this.serverUrl + 'trigger/' + id, this.options).map(this.extractData);
-    }
-    get(id) {
-        return this.http.get(this.serverUrl + 'trigger/' + id, this.options).map(this.extractData);
-    }
-    all() {
-        return this.http.get(this.serverUrl + 'trigger', this.options).map(this.extractData);
-    }
     add(trigger) {
-        return this.http.post(this.serverUrl + 'trigger' , trigger, this.options).map(this.extractData);
+        return this.http.post(this.serverUrl + 'plugins/trigger/create' , trigger, this.options).map(this.extractData);
     }
-    update(trigger) {
-        return this.http.post(this.serverUrl + 'trigger/' + trigger.id + "/update", trigger, this.options).map(this.extractData);
+    deletePlugin(pluginId) {
+        return this.http.delete(this.serverUrl + 'plugins/' + pluginId + "/delete" , this.options).map(this.extractData);
+    }
+    deleteMapTrigger(triggerId) {
+        return this.http.delete(this.serverUrl + 'triggers/map/' + triggerId + "/delete" , this.options).map(this.extractData);
+    }
+    findByMap(mapId) {
+        return this.http.get(this.serverUrl + "triggers/map/" + mapId, this.options).map(this.extractData);
+    }
+    getTriggersPlugin() {
+        return this.http.get(this.serverUrl + 'triggers/', this.options).map(this.extractData);
+    }
+    getMethods(pluginId) {
+        return this.http.get(this.serverUrl + 'plugins/' + pluginId + "/methods" , this.options).map(this.extractData);
     }
     getTypes() {
         return this.types;
+    }
+    
+    updateTrigger(trigger) {
+        return this.http.post(this.serverUrl + "triggers/" + trigger.id + "/update", trigger, this.options).map(this.extractData);
     }
 
     private extractData(res: Response) {

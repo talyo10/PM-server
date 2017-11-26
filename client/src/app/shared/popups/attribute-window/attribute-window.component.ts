@@ -21,14 +21,13 @@ export class AttributeWindow {
     this.attr = _.cloneDeep(this.attribute);
   }
   closeWindow() {
-    console.log('closing window');
     this.dialog.close(false);
   }
 
   apply() {
     this.attr.value = this.attr.strValue;
     if (this.attr.type == "List") {
-      this.attr.value = JSON.parse("[" + this.attr.value + "]");
+      this.attr.value = this.attr.value.split(",");
     } 
     this.dialog.close(this.attr);
   };

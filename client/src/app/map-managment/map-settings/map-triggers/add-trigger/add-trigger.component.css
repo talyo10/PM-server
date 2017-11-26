@@ -40,21 +40,21 @@
   color: #9e9c9c;
 }
 
-.small-popup-triggers > section {
+section {
   padding: 25px 33px;
   border-bottom: 1px solid #323436;
 }
 
-.small-popup-triggers > footer {
+footer {
   padding: 20px 29px;
   text-align: right;
 }
 
-.small-popup-triggers > footer button {
+footer button {
   vertical-align: middle;
 }
 
-.small-popup-triggers > footer button:first-child {
+footer button:first-child {
   margin-right: 4px;
 }
 
@@ -88,7 +88,7 @@
   padding-right: 10px;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-group {
+section .form-group {
   width: 378px;
   margin-bottom: 18px;
 }
@@ -122,65 +122,65 @@
   width: 100%;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .has-form-label {
+section .has-form-label {
   padding-left: 85px;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .has-form-label:before, .small-popup-triggers[role="small-popup-triggers"] section .has-form-label:after {
+section .has-form-label:before, .small-popup-triggers[role="small-popup-triggers"] section .has-form-label:after {
   content: " ";
   display: table;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .has-form-label:after {
+section .has-form-label:after {
   clear: both;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .has-form-label .form-label {
+section .has-form-label .form-label {
   width: 85px;
   margin-left: -85px;
   float: left;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .has-form-label .form-control {
+section .has-form-label .form-control {
   width: 100%;
   float: left;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group:first-child {
+section .form-horizontal .form-group:first-child {
   width: 100%;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group:before, .small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group:after {
+section .form-horizontal .form-group:before, .small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group:after {
   content: " ";
   display: table;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group:after {
+section .form-horizontal .form-group:after {
   clear: both;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group .col {
+section .form-horizontal .form-group .col {
   float: left;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group .col:first-child {
+section .form-horizontal .form-group .col:first-child {
   width: 378px;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-horizontal .form-group .col:first-child + .col {
+section .form-horizontal .form-group .col:first-child + .col {
   width: 212px;
   text-align: right;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section:nth-of-type(2) {
+section:nth-of-type(2) {
   padding-top: 16px;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section:nth-of-type(3) {
+section:nth-of-type(3) {
   padding-top: 14px;
 }
 
-.small-popup-triggers[role="small-popup-triggers"] section .form-group:last-child {
+section .form-group:last-child {
   margin-bottom: 0;
 }
 

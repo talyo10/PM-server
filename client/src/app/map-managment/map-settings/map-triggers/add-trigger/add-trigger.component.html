@@ -1,0 +1,51 @@
+<div ngDraggable [handle]="popupHandle" role="small-popup-triggers" class="small-popup-triggers">
+  <header>
+    <h2 role="handle" #popupHandle> Add New Trigger </h2>
+    <i role="closing" class="pmap-15" (click)="closeDialog()"></i>
+  </header>
+  <form #triggerForm="ngForm" (ngSubmit)="createTrigger()">
+    <section class="text-light" *ngIf="!plugins || plugins.length === 0">You have not installed any appropriate triggers yet, please install a one before you create triggers for the map</section>
+    <section *ngIf="trigger && plugins && plugins.length > 0">
+      <div class="form-group">
+        <label>Name</label>
+        <input class="form-control" type="text" [(ngModel)]="trigger.name" name="name">
+      </div>
+      <div class="form-group">
+        <label>Plugin</label>
+        <select #triggerType class="form-control" (change)="onSelectPlugin(triggerType.value)" [(ngModel)]="trigger.plugin" name="plugin">
+          <option value="" disabled selected>Select plugin from list</option>
+          <option *ngFor="let plugin of plugins" [value]="plugin.id">
+            {{plugin.name}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="selectedPlugin">
+        <label>Method</label>
+        <select #methodSelect (change)="onSelectMethod(methodSelect.value)" class="form-control" [(ngModel)]="trigger.method" name="method">
+          <option value="" disabled selected>Select method from list</option>
+          <option *ngFor="let method of selectedPlugin.methods" [value]="method.id">
+            {{method.viewName}}
+          </option>
+        </select>
+      </div>
+      <div *ngIf="selectedMethod && trigger.params">
+        <div *ngFor="let param of selectedMethod.params">
+          <div class="form-group" *ngIf="param.type === 'string'">
+            <label for="">{{param.viewName}}</label>
+            <input class="form-control" type="text" [(ngModel)]="trigger.params[param.name]" name="param.name" />
+          </div>
+          <div class="form-group" *ngIf="param.type === 'text'">
+            <label for="">{{param.viewName}}</label>
+            <textarea class="form-control" [(ngModel)]="trigger.params[param.name]" name="param.name"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <button class="btn-event" type="submit">
+        <i class="pmap-26 "></i>Save</button>
+      <button class="btn-event btn-no-icon" (click)="closeDialog()" type="button">Cancel</button>
+    </footer>
+  </form>
+
+</div>
