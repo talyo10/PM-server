@@ -15,6 +15,16 @@ let pluginsPath = path.join(sails.config.appPath, "plugins");
 let uploadPath = path.join(sails.config.appPath, "static", "upload");
 
 module.exports = {
+    pluginsList: function (req, res) {
+        Plugin.find().then((plugins) => {
+            console.log(plugins);
+            res.json(plugins);
+        }).catch((error) => {
+            MessagesService.sendMessage("notification", "Error getting plugins", "error");
+            console.log("Error getting plugins", error);
+            res.badRequest();
+        })
+    },
     uploadPlugin: function (req, res) {
         let newPlugin;
         // installing plugin on server.
@@ -52,35 +62,14 @@ module.exports = {
                 }
                 PluginService.createPlugin(file.fd).then((obj) => {
                     newPlugin = obj;
-                    console.log("Created plugin")
+                    console.log("Created plugin");
+                    callback();
                 });
-                extension ? dirName = file.filename.substring(0, file.filename.lastIndexOf(".")) : dirname = file.filename;
-                outputPath = path.join(pluginsPath, dirName);
-                if (!fs.existsSync(outputPath)) {
-                    fs.mkdirSync(outputPath);
-                }
-                // unzip the file; Important: when merging with DedicatedAgent, should check if need to unzip, or save only the original zipfile.
-                fs.createReadStream(file.fd)
-                    .pipe(unzip.Parse())
-                    .on('entry', (entry) => {
-                        let fileName = entry.path;
-                        let type = entry.type; // 'Directory' or 'File'
-                        let size = entry.size;
-                        entry.pipe(fs.createWriteStream(path.join(pluginsPath, dirName, fileName)));
-                    }).on('close', (data) => {
-                        // when done unziping, install the packages.
-                        let cmd = 'cd ' + outputPath + ' &&' + ' npm install ' + " && cd " + outputPath;
-                        child_process.exec(cmd, function (error, stdout, stderr) {
-                            if (error) {
-                                console.log("ERROR", error, stderr);
-                                callback(error);
-                            }
-                            callback();
-                        });
-                    });
+                
             }, (error) => {
                 if (error) {
                     console.log("Error uploading plugin", error);
+                    MessagesService.sendMessage("notification", "Error uploading plugin(s)", "error");
                     return res.badRequest();
                 } else {
                     // load the plugin to current modules
@@ -136,7 +125,7 @@ module.exports = {
 
     },
     triggersList: function (req, res) {
-        PluginService.filterPlugins({ type: "server" }).then((plugins) => {
+        PluginService.filterPlugins({ type: ["server", "trigger"] }).then((plugins) => {
             res.json(plugins);
         }).catch((error) => {
             console.log("Error getting plugins", error);
@@ -145,6 +134,8 @@ module.exports = {
     },
     pluginDelete: function (req, res) {
         Plugin.findOne(req.param("id")).then((plugin) => {
+            if (!plugin)
+                throw new Error("No plugin found");
             PluginService.unbindPluginRoutes(plugin);
             if (plugin.type === "server") {
                 return PluginMethod.destroy({ plugin: req.param("id") })
@@ -164,8 +155,26 @@ module.exports = {
             res.badRequest();
         });
     },
+    pluginDetail: function (req, res) {
+        Plugin.findOne({ or : [
+            { id: req.param("query") },
+            { name: req.param("query") }
+        ]}).then((plugin) => {
+            res.json(plugin);
+        }).catch((error) => {
+            console.log("Error getting plugin", error);
+            res.badRequest();
+        });
+    },
     pluginMethods: function (req, res) {
-        PluginMethod.find({ plugin: req.param('id') }).populate("params").then((methods) => {
+        console.log(req.param("query"));
+        Plugin.findOne({ or : [
+            { id: req.param("query") },
+            { name: req.param("query") }
+        ]}).then((plugin) => {
+            console.log("!!", plugin);
+            return PluginMethod.find({plugin: plugin.id}).populate("params")
+        }).then((methods) => {
             res.json(methods);
         }).catch((error) => {
             console.log("Error getting methods", error);

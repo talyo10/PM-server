@@ -82,11 +82,17 @@ export class TriggerService {
     findByMap(mapId) {
         return this.http.get(this.serverUrl + "triggers/map/" + mapId, this.options).map(this.extractData);
     }
+    getPlugin(query) {
+        return this.http.get(this.serverUrl + "plugins/" + query, this.options).map(this.extractData);
+    }
+    getPlugins() {
+        return this.http.get(this.serverUrl + "plugins", this.options).map(this.extractData);
+    }
     getTriggersPlugin() {
         return this.http.get(this.serverUrl + 'triggers/', this.options).map(this.extractData);
     }
-    getMethods(pluginId) {
-        return this.http.get(this.serverUrl + 'plugins/' + pluginId + "/methods" , this.options).map(this.extractData);
+    getMethods(query) {
+        return this.http.get(this.serverUrl + 'plugins/' + query + "/methods" , this.options).map(this.extractData);
     }
     getTypes() {
         return this.types;
