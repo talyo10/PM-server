@@ -6,12 +6,11 @@ import { TriggerService } from '../../shared/services/trigger.service';
 import { FileUploadComponent } from '../file-upload/file-upload.component';
 
 @Component({
-  selector: 'app-triggers',
-  templateUrl: './triggers.component.html',
-  styleUrls: ['./triggers.component.css'],
-  providers: [TriggerService]
+  selector: 'app-plugins',
+  templateUrl: './plugins.component.html',
+  styleUrls: ['./plugins.component.css']
 })
-export class TriggersComponent implements OnInit, OnDestroy {
+export class PluginsComponent implements OnInit, OnDestroy {
   triggerReq: any;
   plugins: any[];
 
@@ -31,8 +30,9 @@ export class TriggersComponent implements OnInit, OnDestroy {
     const modalref = this.modalService.open(FileUploadComponent);
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
-      console.log(trigger);
-      this.plugins.push(trigger);
+      this.triggerReq = this.triggerService.getPlugins().subscribe((triggersData: any) => {
+        this.plugins = triggersData;
+      });
     });
   }
 

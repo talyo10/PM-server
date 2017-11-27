@@ -11,7 +11,7 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { CalendarComponent } from './admin-panel/calendar/calendar.component';
 import { DedicatedAgentsComponent } from './admin-panel/dedicated-agents/dedicated-agents.component';
 import { ServersComponent } from './admin-panel/servers/servers.component';
-import { TriggersComponent } from './admin-panel/triggers/triggers.component';
+import { PluginsComponent } from './admin-panel/plugins/plugins.component';
 import { RegisterComponent } from './register/register.component';
 
 const appRoutes: Routes = [
@@ -37,7 +37,7 @@ const appRoutes: Routes = [
                 children: [
                     { path: 'calendar', component: CalendarComponent },
                     { path: 'agents', component: ServersComponent },
-                    { path: 'plugins', component: TriggersComponent },
+                    { path: 'plugins', component: PluginsComponent },
                     { path: 'SystemHooks', component: SystemHooksComponent}
                 ]
             },

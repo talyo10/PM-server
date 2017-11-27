@@ -72,7 +72,7 @@ import { AttributeWindow } from './shared/popups/attribute-window/attribute-wind
 import { ServersPopupComponent } from './shared/popups/servers-popup/servers-popup.component';
 import { ServerFilterPipe } from './admin-panel/servers/server-filter.pipe';
 import { MapVersionsComponent } from './map-managment/left-panel/map-explorer/popups/map-versions/map-versions.component';
-import { TriggersComponent } from './admin-panel/triggers/triggers.component';
+import { PluginsComponent } from './admin-panel/plugins/plugins.component';
 import { InstallAgentComponentWindow } from './admin-panel/servers/install-agent/install-agent.component';
 import { RenameNodeComponentWindow } from './map-managment/map-editor/map-designer/rename-node/rename-node.component';
 import { DeleteNodeComponentWindow } from './map-managment/map-editor/map-designer/delete-node/delete-node.component';
@@ -128,7 +128,7 @@ import { AddTriggerComponent } from './map-managment/map-settings/map-triggers/a
     AttributeWindow,
     ServerFilterPipe,
     MapVersionsComponent,
-    TriggersComponent,
+    PluginsComponent,
     InstallAgentComponentWindow,
     RenameNodeComponentWindow,
     ConnectionCheckerComponent,
