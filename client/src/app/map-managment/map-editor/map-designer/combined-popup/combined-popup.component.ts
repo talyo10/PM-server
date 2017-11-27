@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {NewProcessComponentWindow} from "../new-process/new-process.component";
-import {AgentsService} from "../../../../shared/services/agents.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NewProcessComponentWindow } from "../new-process/new-process.component";
+import { AgentsService } from "../../../../shared/services/agents.service";
 import * as _ from 'lodash';
+import { TriggerService } from '../../../../shared/services/trigger.service';
 
 @Component({
   selector: 'ngbd-modal-content',
@@ -23,14 +24,16 @@ export class CombinedPopupComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public modalService: NgbModal,
-    private agentsService: AgentsService) { }
+    private agentsService: AgentsService,
+    private triggersService: TriggerService
+  ) { }
 
   ngOnInit() {
 
     this.editingAction = false;
 
-    if(this.currentProcess == null) {
-      if(this.link.processes) {
+    if (this.currentProcess == null) {
+      if (this.link.processes) {
         this.currentProcess = this.link.processes[0];
       }
     } else {
@@ -42,11 +45,12 @@ export class CombinedPopupComponent implements OnInit {
   }
 
   setCurrentAction() {
-    if(this.currentProcess.actions[0])
+    if (this.currentProcess.actions[0])
       this.currentAction = this.currentProcess.actions[0];
     else {
       this.currentAction = this.createNewAction();
     }
+    console.log(this.currentAction);
   }
 
   private createNewProcess() {
@@ -82,22 +86,22 @@ export class CombinedPopupComponent implements OnInit {
     };
   }
 
-  onAddActionClick(){
 
+  onAddActionClick() {
     let newAction = this.createNewAction();
-
     this.currentAction = newAction;
-
     let now = new Date();
     this.currentAction.lastUpdate = now;
-
     this.currentProcess.actions.push(this.currentAction);
 
-    this.agentsService.all(false).subscribe((res) => {
-      if (_.isEmpty(this.currentAction.server)) {
-        this.currentAction.server = _.cloneDeep(this.agentsService.get(this.dest.type));
-      }
-    });
+    this.triggersService.getPlugin(this.dest.name).subscribe((plugin) => {
+      this.triggersService.getMethods(this.dest.name).subscribe((methods) => {
+        plugin.methods = methods;
+        this.currentAction.server = plugin;
+        console.log(this.currentAction);
+
+      })
+    })
 
     this.editingAction = true;
   }
@@ -125,7 +129,7 @@ export class CombinedPopupComponent implements OnInit {
     this.editingAction = true;
   }
 
-  editProcess(){
+  editProcess() {
     this.editingAction = false;
   }
 
@@ -150,7 +154,7 @@ export class CombinedPopupComponent implements OnInit {
   }
 
   onDeleteProcess() {
-    if(this.link.processes.length == 1) {
+    if (this.link.processes.length == 1) {
       alert('Can\'t remove single process');
     } else {
 
