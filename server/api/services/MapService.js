@@ -778,6 +778,7 @@ function createExecutionModels(runningExecutionResults) {
 }
 function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
   MessagesService.sendMessage("update", "Start executing map", "info");
+  MessagesService.sendMessage("notification", "Starting map executin", "info");
 
   var socket = sails.io;
   var user = null;
@@ -902,6 +903,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
       )
     }).then(() => {
       MessagesService.sendMessage("update", "Finished executing map '" + map.name + "'", "success");
+      MessagesService.sendMessage("notification", "Finished executing map '" + map.name + "'", "success");
       SystemLogService.success("Finish running map", map, "execution");
       createExecutionModels(runningExecutionResults);
       return { resObj: map }

@@ -11,6 +11,8 @@ module.exports = {
                 res.send(exec);
             }).catch((error) => {
                 sails.log.error("Error getting execution result", error);
+                MessagesService.sendMessage("notification", "Error getting execution result", "error");
+                
                 res.badRequest();
             })
     }
