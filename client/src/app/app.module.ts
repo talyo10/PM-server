@@ -86,7 +86,8 @@ import { ProccessDetailComponent } from './map-managment/map-execution/proccess-
 import { ActionDetailComponent } from './map-managment/map-execution/action-detail/action-detail.component';
 import { FileUploadComponent } from './admin-panel/file-upload/file-upload.component';
 import { MapTriggersComponent } from './map-managment/map-settings/map-triggers/map-triggers.component';
-import { AddTriggerComponent } from './map-managment/map-settings/map-triggers/add-trigger/add-trigger.component'
+import { AddTriggerComponent } from './map-managment/map-settings/map-triggers/add-trigger/add-trigger.component';
+import { FilterPipe } from './shared/pipes/filter.pipe'
 
 
 @NgModule({
@@ -147,7 +148,8 @@ import { AddTriggerComponent } from './map-managment/map-settings/map-triggers/a
     ActionDetailComponent,
     FileUploadComponent,
     MapTriggersComponent,
-    AddTriggerComponent
+    AddTriggerComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
