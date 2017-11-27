@@ -36,9 +36,8 @@ const appRoutes: Routes = [
                 canActivateChild: [AuthGuard],
                 children: [
                     { path: 'calendar', component: CalendarComponent },
-                    { path: 'plugins', component: DedicatedAgentsComponent },
                     { path: 'agents', component: ServersComponent },
-                    { path: 'triggers', component: TriggersComponent },
+                    { path: 'plugins', component: TriggersComponent },
                     { path: 'SystemHooks', component: SystemHooksComponent}
                 ]
             },

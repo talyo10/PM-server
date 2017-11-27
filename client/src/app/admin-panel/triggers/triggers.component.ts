@@ -13,15 +13,13 @@ import { FileUploadComponent } from '../file-upload/file-upload.component';
 })
 export class TriggersComponent implements OnInit, OnDestroy {
   triggerReq: any;
-  triggers: any[];
+  plugins: any[];
 
-  constructor(public modalService: NgbModal, private triggerService: TriggerService) {
-    this.triggers = [];
-  }
+  constructor(public modalService: NgbModal, private triggerService: TriggerService) {  }
 
   ngOnInit() {
-    this.triggerReq = this.triggerService.getTriggersPlugin().subscribe((triggersData: any) => {
-      this.triggers = triggersData;
+    this.triggerReq = this.triggerService.getPlugins().subscribe((triggersData: any) => {
+      this.plugins = triggersData;
     });
   }
 
@@ -34,13 +32,13 @@ export class TriggersComponent implements OnInit, OnDestroy {
     // modalref.componentInstance.triggersList = this.triggers;
     modalref.result.then((trigger) => {
       console.log(trigger);
-      this.triggers.push(trigger);
+      this.plugins.push(trigger);
     });
   }
 
-  deleteTrigger(triggerId, triggerIndex) {
+  deletePlugin(triggerId, triggerIndex) {
     this.triggerService.deletePlugin(triggerId).subscribe();
-    this.triggers.splice(triggerIndex, 1);
+    this.plugins.splice(triggerIndex, 1);
   }
 
 }

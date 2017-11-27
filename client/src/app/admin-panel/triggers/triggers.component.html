@@ -1,26 +1,26 @@
 <div role="triggers">
   <h2 class="agents-title">
-    <i class="pmap-1 noHover"></i>Triggers
+    <i class="pmap-1 noHover"></i>Plugins
   </h2>
   <div class="row">
     <div class="col-sm-12">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
             <th scope="col">Name</th>
+            <th scope="col">Type</th>
             <th scope="col">Created at</th>
             <th scope="col">Delete</th>
           </tr>
         </thead>
-        <tbody *ngIf="triggers">
-          <tr *ngFor="let trigger of triggers; let i = index">
-            <th scope="row">1</th>
-            <td>{{trigger?.name}}</td>
-            <td>{{trigger?.createdAt | date: 'shortDate'}}</td>
+        <tbody *ngIf="plugins">
+          <tr *ngFor="let plugin of plugins; let i = index">
+            <td>{{plugin?.name}}</td>
+            <td>{{plugin?.type}}</td>
+            <td>{{plugin?.createdAt | date: 'shortDate'}}</td>
             <td>
 
-              <button type="button" (click)="deleteTrigger(trigger?.id, i)">
+              <button type="button" (click)="deletePlugin(plugin?.id, i)">
                 <i class="pmap-27"></i>
               </button>
             </td>
@@ -28,6 +28,7 @@
         </tbody>
       </table>
     </div>
-    <button type="button" class="btn-event" (click)="addTrigger()"><i class="pmap-25"></i>Upload New Trigger</button>
+    <button type="button" class="btn-event" (click)="addTrigger()">
+      <i class="pmap-25"></i>Upload New Plugin</button>
   </div>
 </div>
