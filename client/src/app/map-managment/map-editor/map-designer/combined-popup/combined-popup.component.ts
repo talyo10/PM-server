@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { NewProcessComponentWindow } from "../new-process/new-process.component";
 import { AgentsService } from "../../../../shared/services/agents.service";
@@ -11,7 +11,7 @@ import { TriggerService } from '../../../../shared/services/trigger.service';
   styleUrls: ['./combined-popup.component.css'],
   providers: [AgentsService]
 })
-export class CombinedPopupComponent implements OnInit {
+export class CombinedPopupComponent implements OnInit, OnDestroy {
 
   @Input() link: any;
   @Input() src: any;
@@ -20,6 +20,9 @@ export class CombinedPopupComponent implements OnInit {
 
   editingAction: boolean;
   currentAction: any;
+
+  addActionReq: any;
+  methodsReq: any;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -42,6 +45,13 @@ export class CombinedPopupComponent implements OnInit {
     }
 
     this.setCurrentAction();
+  }
+
+  ngOnDestroy() {
+    if (this.addActionReq)
+      this.addActionReq.unsubscribe();
+    if (this.methodsReq)
+      this.methodsReq.unsubscribe();
   }
 
   setCurrentAction() {
@@ -94,12 +104,10 @@ export class CombinedPopupComponent implements OnInit {
     this.currentAction.lastUpdate = now;
     this.currentProcess.actions.push(this.currentAction);
 
-    this.triggersService.getPlugin(this.dest.name).subscribe((plugin) => {
-      this.triggersService.getMethods(this.dest.name).subscribe((methods) => {
+    this.addActionReq = this.triggersService.getPlugin(this.dest.name).subscribe((plugin) => {
+      this.methodsReq = this.triggersService.getMethods(this.dest.name).subscribe((methods) => {
         plugin.methods = methods;
         this.currentAction.server = plugin;
-        console.log(this.currentAction);
-
       })
     })
 
