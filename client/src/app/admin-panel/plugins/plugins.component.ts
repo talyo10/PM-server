@@ -13,6 +13,7 @@ import { FileUploadComponent } from '../file-upload/file-upload.component';
 export class PluginsComponent implements OnInit, OnDestroy {
   triggerReq: any;
   plugins: any[];
+  filterTerm: string;
 
   constructor(public modalService: NgbModal, private triggerService: TriggerService) {  }
 
