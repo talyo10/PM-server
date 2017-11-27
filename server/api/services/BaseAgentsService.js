@@ -1,5 +1,7 @@
 var request = require('request');
 const async = require('async');
+const unzip = require('unzip');
+const streams = require('memory-streams');
 var agents = {};
 var KEEPALIVEINTERVAL = 5000;
 var LIVE_COUNTER = 5;
@@ -315,9 +317,46 @@ module.exports = {
       return;
     }).then((node) => {
       // install all plugins when agents load.
-      BaseAgentsService.installPluginsOnAgent(newAgent, function () {});
-      listenOnAgent(newAgent);
-      return newAgent
+      fs.readdir(PluginService.uploadPath, (err, files) => {
+        console.log("*** *** *** ")
+        console.log(files);
+        async.each(
+          files,
+          function (plugin, fileSendingCallback) {
+            console.log(plugin)
+            fs.createReadStream(path.join(PluginService.uploadPath, plugin))
+              .pipe(unzip.Parse())
+              .on('entry', function (entry) {
+                let fileName = entry.path;
+                let type = entry.type;
+                let size = entry.size;
+                if (fileName === 'config.json') {
+                  let writer = new streams.WritableStream();
+                  entry.pipe(writer);
+                  entry.on('readable', function () {
+                    let obj = JSON.parse(writer.toString());
+                    // check the plugin type
+                    if (obj.type === "executer") {
+                      console.log(plugin);
+                      installExecuterPluginOnAgent(path.join(PluginService.uploadPath, plugin), newAgent).then(() => {
+                        console.log("Install successfuly on agent");
+                      }).catch((error) => {
+                        fileSendingCallback(error)
+
+                      });
+                    }
+
+                  })
+                }
+              })
+          },
+          function (err) {
+            if (err)
+              console.log("Error while installing agent ", err);
+          })
+        listenOnAgent(newAgent);
+        return newAgent
+      })
     });
   },
   deleteBaseAgent: function (nodeId) {

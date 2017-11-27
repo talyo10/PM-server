@@ -8,6 +8,8 @@ const _ = require('lodash');
 let pluginsModules = {};
 let routesModule = {};
 let pluginsPath = path.join(sails.config.appPath, "plugins");
+let uploadPath = path.join(sails.config.appPath, "static", "upload");
+
 
 let loadModule = function (fullPath = pluginsPath, parentDir) {
   fs.lstat(fullPath, function (err, stat) {
@@ -168,5 +170,6 @@ module.exports = {
   filterPlugins: function (query) {
     return Plugin.find(query)
   },
-  pluginsModules: pluginsModules
+  pluginsModules: pluginsModules,
+  uploadPath: uploadPath
 }
