@@ -120,7 +120,7 @@ module.exports = {
             });
           }
         });
-      })
+      });
       res.ok()
     }).catch((error) => {
       console.log("Error during calling trigger", error);
@@ -188,6 +188,36 @@ module.exports = {
       console.log("Error getting methods", error);
       res.badRequest();
     });
+  },
+  pluginImage: function (req, res) {
+    Plugin.findOne({
+      or: [
+        { id: req.param("query") },
+        { name: req.param("query") }
+      ]
+    }).then((plugin) => {
+      if (!plugin.imgUrl) {
+        return;
+      }
+      let SkipperDisk = require('skipper-disk');
+      let fileAdapter = SkipperDisk(/* optional opts */);
+
+      // set the filename
+      res.set("Content-disposition", "attachment; filename='" + path.basename(plugin.imgUrl) + "'");
+
+      // Stream the file down
+      fileAdapter.read(path.join(PluginService.pluginsPath, plugin.name, plugin.imgUrl))
+        .on('error', function (err) {
+          return res.serverError(err);
+        })
+        .pipe(res);
+
+    }).catch((error) => {
+      console.log("Error getting img", error);
+      res.badRequest();
+    });
+
+
   },
   triggersList: function (req, res) {
     PluginService.filterPlugins({
