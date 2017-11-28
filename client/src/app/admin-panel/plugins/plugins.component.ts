@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from "../../../environments/environment";
 
 import { TriggerService } from '../../shared/services/trigger.service';
 import { FileUploadComponent } from '../file-upload/file-upload.component';
@@ -14,6 +15,7 @@ export class PluginsComponent implements OnInit, OnDestroy {
   triggerReq: any;
   plugins: any[];
   filterTerm: string;
+  serverUrl: string = environment.serverUrl;
 
   constructor(public modalService: NgbModal, private triggerService: TriggerService) {  }
 

@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
-import { MapDesignerComponent } from '../../map-editor/map-designer/map-designer.component';
-import { AgentsService } from '../../../shared/services/agents.service';
-
 
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
 import * as joint from 'jointjs';
+
+import { MapDesignerComponent } from '../../map-editor/map-designer/map-designer.component';
+import { AgentsService } from '../../../shared/services/agents.service';
+import { environment } from "../../../../environments/environment";
 import { TriggerService } from '../../../shared/services/trigger.service';
+
 
 @Component({
   selector: 'app-map-toolbox',
@@ -25,6 +27,8 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
   private stencilGraph: any;
   private stencilPaper: any;
   private agentsBlocks: any[];
+
+  serverUrl: string = environment.serverUrl;
 
   req: any;
 
@@ -46,15 +50,11 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
       let iteration = 0;
 
       _.forEach(blocks, (block: any) => {
-        let url = block.img_url;
-        let node = mapBlock.clone().position(0, iteration * offset).attr({
-          image: {
-            'xlink:href': url
-          },
-          text: {
-            text: block.text
-          }
-        });
+        let url = this.serverUrl + "plugins/" + block.text + "/image";
+        let attr;
+        block.img_url ? attr = { image: { 'xlink:href': url }, text: { text: block.text } } : attr = { image: { 'xlink:href': 'assets/img/agents-small-01.png' }, text: { text: block.text } };
+        let node = mapBlock.clone().position(0, iteration * offset).attr(attr);
+        ;
         iteration++;
         graph.addCell(node);
       });

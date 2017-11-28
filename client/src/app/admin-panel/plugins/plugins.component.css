@@ -38,8 +38,13 @@ i.fa:hover {
 .table thead th {
   color: #02a7c7 !important;
   border-bottom-color: #bbb !important;
-} 
+}
 
 .table thead tr {
   border-bottom-color: #bbb !important;
+}
+
+img.img-plugin {
+  width: 40px;
+  max-height: 35px;
 }
