@@ -23,7 +23,7 @@ export class FileUploadComponent {
     this.dedicateAgents = [];
     this.error = '';
 
-    this.uploader = new FileUploader({ url: this.constsService.getServerUrl() + 'triggers/upload' });
+    this.uploader = new FileUploader({ url: this.constsService.getServerUrl() + 'plugins/create' });
     this.uploader.onCompleteAll = this.closeAfterComplete(this);
     this.uploader.onSuccessItem = (res) => { this.uploading = false }
   }
