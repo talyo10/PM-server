@@ -127,16 +127,6 @@ module.exports = {
       res.badRequest();
     })
   },
-  triggersList: function (req, res) {
-    PluginService.filterPlugins({
-      type: ["server", "trigger"]
-    }).then((plugins) => {
-      res.json(plugins);
-    }).catch((error) => {
-      console.log("Error getting plugins", error);
-      res.badRequest();
-    })
-  },
   pluginDelete: function (req, res) {
     Plugin.findOne(req.param("id")).then((plugin) => {
       if (!plugin)
@@ -171,8 +161,8 @@ module.exports = {
   pluginDetail: function (req, res) {
     Plugin.findOne({
       or: [{
-          id: req.param("query")
-        },
+        id: req.param("query")
+      },
         {
           name: req.param("query")
         }
@@ -185,9 +175,14 @@ module.exports = {
     });
   },
   pluginMethods: function (req, res) {
-    PluginMethod.find({
-      plugin: req.param('id')
-    }).populate("params").then((methods) => {
+    Plugin.findOne({
+      or: [
+        { id: req.param("query") },
+        { name: req.param("query") }
+      ]
+    }).then((plugin) => {
+      return PluginMethod.find({ plugin: plugin.id }).populate("params")
+    }).then((methods) => {
       res.json(methods);
     }).catch((error) => {
       console.log("Error getting methods", error);
@@ -203,47 +198,6 @@ module.exports = {
       console.log("Error getting plugins", error);
       res.badRequest();
     })
-  },
-  pluginDelete: function (req, res) {
-    Plugin.findOne(req.param("id")).then((plugin) => {
-      PluginService.unbindPluginRoutes(plugin);
-      if (plugin.type === "server") {
-        return PluginMethod.destroy({
-          plugin: req.param("id")
-        })
-      } else {
-        Plugin.destroy({
-          id: plugin.id
-        }).then(() => {
-          res.ok();
-        })
-      }
-    }).then(() => {
-      return MapTrigger.destroy({
-        plugin: req.param("id")
-      })
-    }).then(() => {
-      Plugin.destroy({
-        id: req.param("id")
-      }).then(() => {
-        res.ok();
-      });
-    }).catch((error) => {
-      console.log("Error deleteing plugin", error);
-      MessagesService.sendMessage("notification", "Error deleting plugins", "error");
-
-      res.badRequest();
-    });
-  },
-  pluginMethods: function (req, res) {
-    PluginMethod.find({
-      plugin: req.param('id')
-    }).populate("params").then((methods) => {
-      res.json(methods);
-    }).catch((error) => {
-      console.log("Error getting methods", error);
-      res.badRequest();
-    });
   },
   mapTriggerDelete: function (req, res) {
     MapTrigger.destroy({
