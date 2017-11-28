@@ -30,7 +30,7 @@ export class ServersComponent implements OnInit, OnDestroy {
   @ViewChild('serverCtx') public serverCtx: ContextMenuComponent;
   agentsStatusReq: any;
   snodeReq: any;
-  agentsStatus: {any};
+  agentsStatus: Object = {};
   snodesTree: TreeNode[];
   draggedNode: TreeNode;
   updateSnodeReq: any;
@@ -47,7 +47,7 @@ export class ServersComponent implements OnInit, OnDestroy {
     });
 
     this.agentsStatusReq = this.serverService.getStatus().subscribe((status) => {
-      this.agentsStatus = status;
+      this.agentsStatus = status? status: {};
     })
   }
 
