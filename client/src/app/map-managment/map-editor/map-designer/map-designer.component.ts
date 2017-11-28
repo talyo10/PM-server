@@ -31,8 +31,8 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() height: number = 0;
   @Input() gridSize: number = 0;
   @ViewChild(ContextMenuComponent) public contextMenu: ContextMenuComponent;
-  
-  
+
+
   public graph: any;
   public paper: any;
   private _currentLink: any;
@@ -41,10 +41,10 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   private graphScale: number = 1;
   private innerWidth: number;
   private innerHeight: number;
-  
+
   map: any = {};
   currentMapSubscription: Subscription;
-  
+
   constructor(private modalService: NgbModal, private mapService: MapService, private contextMenuService: ContextMenuService) {
     this._currentLink = null;
     this.reconnectingLink = false;modalService;
@@ -342,15 +342,15 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
       id: id,
       type: type,
       name: name,
-      serverUrl: "localhost:8100", /* Default address */
+      serverUrl: "localhost:8080", /* Default address */
       attributes: {}
     };
-    node.attributes.attrs['.label'].text = name + '-' + nameIndex;
+    node.attributes.attrs['.label'].text = name;
     this.graph.addCell(node);
     this.updateMapViewContentGraph();
   }
 
-   
+
 
   updatePaper() {
     this.paper.fitToContent({
@@ -366,7 +366,7 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
     // Clear the graph (Genius .__.)
     if (this.map && this.graph) {
       this.graph.clear();
-    
+
 
       try {
 

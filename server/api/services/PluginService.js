@@ -39,10 +39,10 @@ let loadModule = function (fullPath = pluginsPath, parentDir) {
         Plugin.findOne({ name: plugin.name }).then((savedPlugin) => {
           // save only plugins that exists in db
           if (!savedPlugin) {
-            console.log("No plugin found at db. abort!")
             return;
           }
           savedPlugin.main = path.join(path.dirname(fullPath), savedPlugin.main);
+          savedPlugin.dir = path.dirname(fullPath);
           pluginsModules[savedPlugin.name] = savedPlugin;
           let methods = plugin.methods;
           let app = require(savedPlugin.main);
@@ -62,7 +62,7 @@ let loadModule = function (fullPath = pluginsPath, parentDir) {
 
 let unbindRoute = function (plugin) {
   if (plugin.type == "executer" || !pluginsModules)
-    return ;
+    return;
   let methods = pluginsModules[plugin.name].methods;
   console.log(methods);
   methods.forEach(method => {
@@ -76,26 +76,39 @@ let unbindRoute = function (plugin) {
   })
 }
 
-let installPluginOnAgent = function (pluginDir) {
-  BaseAgentsService.installExecuterPluginOnAgent(pluginDir).then(() => {
-    console.log("finish installing plugin on agents");
-  }).catch(error => {
-    console.log("Shit", error);
-    
-  })
-}
-
-let installPluginOnServer = function (pluginDir) {
-  let dirname;
-  let filename = path.basename(pluginDir);
-  let extension = filename.substring(filename.lastIndexOf(".") + 1);
-
-  extension ? dirName = filename.substring(0, filename.lastIndexOf(".")) : dirname = filename;
-  outputPath = path.join(pluginsPath, dirName);
+let installPluginOnAgent = function (pluginDir, obj) {
+  console.log("install plugin on agent");
+  console.log(path.join(pluginsPath, obj.name));
+  outputPath = path.join(pluginsPath, obj.name);
   if (!fs.existsSync(outputPath)) {
-      fs.mkdirSync(outputPath);
+    fs.mkdirSync(outputPath);
   }
-  
+
+  // unzipping the img
+  fs.createReadStream(pluginDir)
+    .pipe(unzip.Parse())
+    .on('entry', (entry) => {
+      let fileName = entry.path;
+      let type = entry.type;
+      let size = entry.size;
+      if (fileName === obj.imgUrl) {
+        entry.pipe(fs.createWriteStream(path.join(outputPath, fileName)));
+      }
+    });
+
+  BaseAgentsService.installExecuterPluginOnAgent(pluginDir).then(() => {
+    console.log("Finish installing plugin on agents");
+  }).catch(error => {
+    console.log("Error installing plugin on agenst", error);
+  });
+};
+
+let installPluginOnServer = function (pluginDir, obj) {
+  outputPath = path.join(pluginsPath, obj.name);
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+  }
+
   // unziping the file and installing the modules
   fs.createReadStream(pluginDir)
     .pipe(unzip.Parse())
@@ -103,21 +116,22 @@ let installPluginOnServer = function (pluginDir) {
       let fileName = entry.path;
       let type = entry.type;
       let size = entry.size;
-      entry.pipe(fs.createWriteStream(path.join(pluginsPath, dirName, fileName)));
+      entry.pipe(fs.createWriteStream(path.join(outputPath, fileName)));
     }).on('close', (data) => {
-      // when done unziping, install the packages.
-      let cmd = 'cd ' + outputPath + ' &&' + ' npm install ' + " && cd " + outputPath;
-      child_process.exec(cmd, function (error, stdout, stderr) {
-        if (error) {
-          console.log("ERROR", error, stderr);
-        }
-      });
+    // when done unzipping, install the packages.
+    let cmd = 'cd ' + outputPath + ' &&' + ' npm install ' + " && cd " + outputPath;
+    child_process.exec(cmd, function (error, stdout, stderr) {
+      if (error) {
+        console.log("ERROR", error, stderr);
+      }
     });
-}
+  });
+};
 
 
 module.exports = {
   createPlugin: function (pluginDir) {
+    console.log("Create plugin");
     return new Promise((resolve, reject) => {
       // parse the plugin config file
       fs.createReadStream(pluginDir)
@@ -132,10 +146,11 @@ module.exports = {
             entry.on('readable', function () {
               let obj = JSON.parse(writer.toString());
               // check the plugin type
-              if (obj.type === "executer")
-                installPluginOnAgent(pluginDir);
+              if (obj.type === "executer") {
+                installPluginOnAgent(pluginDir, obj);
+              }
               else if (obj.type === "trigger" || obj.type === "module" || obj.type === "server")
-                installPluginOnServer(pluginDir)
+                installPluginOnServer(pluginDir, obj);
               else
                 return reject("No type was provided for this plugin");
               Plugin.findOne({
@@ -171,5 +186,6 @@ module.exports = {
     return Plugin.find(query)
   },
   pluginsModules: pluginsModules,
+  pluginsPath: pluginsPath,
   uploadPath: uploadPath
 }

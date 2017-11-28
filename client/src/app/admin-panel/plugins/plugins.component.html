@@ -25,7 +25,9 @@
         <tbody *ngIf="plugins">
           <tr *ngFor="let plugin of plugins | filter:{term: filterTerm, param: 'name'}; let i = index">
             <td>
-              <img src="{{plugin.imgUrl}}">
+
+              <img class="img img-plugin img-responsive" src="{{serverUrl}}plugins/{{plugin.name}}/image" *ngIf="plugin.imgUrl">
+              <img class="img img-plugin img-responsive" src="assets/img/agents-small-01.png" *ngIf="!plugin.imgUrl">
             </td>
             <td>{{plugin?.name}}</td>
             <td>{{plugin?.type}}</td>

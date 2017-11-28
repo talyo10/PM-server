@@ -84,7 +84,7 @@ module.exports.routes = {
     'GET /map/versions/:mapId/:versionId': 'MapController.getVersion',
     'GET /map/:id/agents': 'MapController.getAgents',
     'get /map/:id/executions': 'MapController.getMapExecutionsList',
-    
+
     'POST /ScheduledJob/addJob': 'ScheduledJobController.addJob',
     'get /ScheduledJob/deleteJob/:id': 'ScheduledJobController.deleteJob',
     'get /ScheduledJob/getFutureJobs': 'ScheduledJobController.getFutureJobs',
@@ -95,7 +95,7 @@ module.exports.routes = {
     'get /BaseAgent/deleteAgent/:id': 'BaseAgentController.deleteAgent',
     'get /BaseAgent/statuses': 'BaseAgentController.getAgentsState',
     'get /agents/snodes': 'BaseAgentController.getSNodes',
-    
+
     'get /BaseAgent/deleteGroup/:id': 'BaseAgentController.deleteGroup',
     'post /BaseAgent/addGroup': 'BaseAgentController.addGroup',
     'POST /agents/snodes/:id/update': 'BaseAgentController.updateSnode',
@@ -114,8 +114,8 @@ module.exports.routes = {
 
     'get /getallagents': 'DedicatedAgentController.getAllAgents',
     'post /installPlugins': 'DedicatedAgentController.installAgents',
-    
-    'post /triggers/upload': 'PluginController.uploadPlugin',
+
+    'post /plugins/create': 'PluginController.uploadPlugin',
     'get /triggers': 'PluginController.triggersList',
     'get /triggers/map/:id': 'PluginController.findByMap',
     'delete /triggers/map/:id/delete': 'PluginController.mapTriggerDelete',
@@ -124,6 +124,7 @@ module.exports.routes = {
     'post /plugins/trigger/create': 'PluginController.createMapTrigger',
     'get /plugins/:query': "PluginController.pluginDetail",
     'get /plugins/:query/methods': 'PluginController.pluginMethods',
+    'get /plugins/:query/image': 'PluginController.pluginImage',
     'delete /plugins/:id/delete': 'PluginController.pluginDelete',
 
     'get /executions/:id': 'ExecutionController.executionDetail',
