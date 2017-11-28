@@ -86,7 +86,7 @@
         <ng-template let-col let-node="rowData" pTemplate="body">
         
           <span
-            *ngIf="node.data.name && !node.data.data"
+            *ngIf="node?.data?.name && !node.data.data"
             pDroppable="treedragdrop" (onDrop)="onDrop($event, node)" (onDragOver)="onDragOver($event, node)" (onDragLeave)="onDragLeave($event, node)"
             [ngClass]="{'drop': draggedNode}"
             pDraggable="treedragdrop" (onDragStart)="onDragStart($event, node)" (onDragEnd)="onDragEnd($event, node)"
@@ -96,13 +96,13 @@
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node?.data?.data?.key].alive, 'text-danger': !agentsStatus[node?.data?.data?.key].alive}"></i> {{node.data.name}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node?.data?.data?.key]?.alive, 'text-danger': !agentsStatus[node?.data?.data?.key]?.alive}"></i> {{node.data.name}}</span>
           <span
             *ngIf="!node.data.name"
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node?.data?.data?.key].alive, 'text-danger': !agentsStatus[node?.data?.data?.key].alive}"></i>   {{node.data.data.name}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node"><i class="fa fa-cloud" aria-hidden="true" [ngClass]="{'text-success': agentsStatus[node?.data?.data?.key]?.alive, 'text-danger': !agentsStatus[node?.data?.data?.key]?.alive}"></i>   {{node?.data?.data?.name}}</span>
         </ng-template>
       </p-column>
       <p-column>
@@ -115,7 +115,7 @@
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{node.data.data.url}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{node?.data?.data?.url}}</span>
         </ng-template>
       </p-column>
       <p-column>
@@ -128,7 +128,7 @@
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{agentsStatus[node?.data?.data?.key].freeSpace? agentsStatus[node?.data?.data?.key].freeSpace:' ---'}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{agentsStatus[node?.data?.data?.key]?.freeSpace? agentsStatus[node?.data?.data?.key]?.freeSpace:' ---'}}</span>
         </ng-template>
       </p-column>
       <p-column>
@@ -141,7 +141,7 @@
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{agentsStatus[node?.data?.data?.key].respTime? agentsStatus[node?.data?.data?.key].respTime:' ---'}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{agentsStatus[node?.data?.data?.key]?.respTime? agentsStatus[node?.data?.data?.key]?.respTime:' ---'}}</span>
         </ng-template>
       </p-column>
       <p-column>
@@ -150,11 +150,11 @@
         </ng-template>
         <ng-template let-col let-node="rowData" pTemplate="body">
             <span
-            *ngIf="node.data.data"
+            *ngIf="node.data?.data"
             pDraggable="treedragdrop"
             (onDragStart)="onDragStart($event, node)"
             (onDragEnd)="onDragEnd($event, node)"
-            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{node.data.data.arch}}</span>
+            [contextMenu]="serverCtx" [contextMenuSubject]="node">{{node?.data?.data?.arch}}</span>
         </ng-template>
       </p-column>
     </p-treeTable>
