@@ -7,6 +7,7 @@ import * as jQuery from 'jquery';
 import * as _ from 'lodash';
 import * as $ from 'backbone';
 import * as joint from 'jointjs';
+import { TriggerService } from '../../../shared/services/trigger.service';
 
 @Component({
   selector: 'app-map-toolbox',
@@ -27,7 +28,7 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
 
   req: any;
 
-  constructor(private agentsService: AgentsService) {
+  constructor(private agentsService: AgentsService, private triggersService: TriggerService) {
   }
 
   initDragPanel(graph) {
@@ -132,14 +133,21 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
       }, joint.shapes.basic.Generic.prototype.defaults)
     });
 
-    this.req = this.agentsService.all(false).subscribe((data) => {
-      this.agentsBlocks = _.cloneDeep(data.blocks);
-      this.initDragPanel(this.stencilGraph)(data.blocks);
-    });
+    this.req = this.triggersService.getPlugins().subscribe((data) => {
+      let plugins = [];
+      _.forEach(_.filter(data, (plugin) => {
+        return plugin['type'] === "executer";
+      }), (plugin) => {
+        plugins.push({ img_url: plugin["imgUrl"], text: plugin["name"] })
+      })
+
+      this.initDragPanel(this.stencilGraph)(plugins);
+
+    })
   }
 
   ngOnDestroy() {
-    if(this.req) {
+    if (this.req) {
       this.req.unsubscribe()
     }
   }
@@ -174,8 +182,8 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
 
         let cells = this.stencilGraph.getCells();
         _.forEach(cells, (cell) => {
-            let view = this.stencilPaper.findViewByModel(cell)
-            view.remove();
+          let view = this.stencilPaper.findViewByModel(cell)
+          view.remove();
         });
 
         this.initDragPanel(this.stencilGraph)(filteredBlocks);
