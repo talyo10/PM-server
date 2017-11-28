@@ -50,7 +50,7 @@ export class MapToolboxComponent implements OnInit, OnChanges, OnDestroy {
       let iteration = 0;
 
       _.forEach(blocks, (block: any) => {
-        let url = this.serverUrl + "plugins/" + block.text + "/image";
+        let url = "/plugins/" + block.text + "/image";
         let attr;
         block.img_url ? attr = { image: { 'xlink:href': url }, text: { text: block.text } } : attr = { image: { 'xlink:href': 'assets/img/agents-small-01.png' }, text: { text: block.text } };
         let node = mapBlock.clone().position(0, iteration * offset).attr(attr);
