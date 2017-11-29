@@ -125,7 +125,11 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
   }
 
   mapExecuted($event) {
-    this.messages.unshift(JSON.parse($event));
+    try {
+      this.messages.unshift(JSON.parse($event));
+    } catch (e) {
+      console.log($event);
+    }
   }
 
   changeMap($event) {
@@ -161,7 +165,7 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
     let mapEditor = jQuery(this.mapEditor.nativeElement);
     let mapMain = jQuery(this.mapMain.nativeElement);
     let messagesEl = jQuery(this.messagesEl.nativeElement);
-    
+
     rightPanel.width(this.minRightPanelWidh);
     leftPanel.width(this.minLeftPanelWidth);
     mapEditor.width(mapMain.width() - leftPanel.width() - rightPanel.width());
@@ -198,9 +202,9 @@ export class MapManagmentComponent implements OnInit, OnDestroy, AfterViewInit{
       messagesEl.height(event.rectangle.height);
     }
 
-    // resize the projects tree elemnt to include 
+    // resize the projects tree elemnt to include
     this.leftPanelComponent.resizeAgentsTree();
-    
+
     mapControl.height(mapMain.height() + 80 - messagesEl.height() + margin);
   }
 
