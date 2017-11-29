@@ -30,8 +30,8 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
   treeOptions: any;
   agentsStatusReq: any;
   snodeReq: any;
-  agentsStatus: {any};
-  
+  agentsStatus: Object = {};
+
 
   constructor(public dialog: NgbActiveModal, public serverService: ServersService, private mapService: MapService) { }
 
@@ -51,7 +51,7 @@ export class ServersPopupComponent implements OnInit, OnDestroy {
     });
 
     this.agentsStatusReq = this.serverService.getStatus().subscribe((status) => {
-      this.agentsStatus = status;
+      this.agentsStatus = status? status: {};
     })
   }
 
