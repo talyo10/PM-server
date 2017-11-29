@@ -254,7 +254,7 @@
             <div class="tbody-wrapper">
               <div class="tbody">
                 <div *ngFor="let param of currentAction.method.params" class="tr">
-                  <div class="cell first-action-col">{{param.name}}</div>
+                  <div class="cell first-action-col">{{param.viewName}}</div>
                   <div class="cell sec-action-col">
                     <label class="form-checkbox">
                       <input type="checkbox" [(ngModel)]="param.code"><i></i>

@@ -102,7 +102,7 @@ module.exports = {
           body: req.body
         }
 
-        let workerProcess = child_process.spawn(currentModule.execProggram, [currentModule.main, JSON.stringify(params), JSON.stringify(trigger)]);
+        let workerProcess = child_process.spawn(currentModule.execProgram, [currentModule.main, JSON.stringify(params), JSON.stringify(trigger)]);
 
         workerProcess.stdout.on('data', (data) => {
           console.log(`trigger info: ${data}`);

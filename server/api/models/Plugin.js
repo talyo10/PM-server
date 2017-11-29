@@ -15,6 +15,10 @@ module.exports = {
       type: 'string',
       enum: ["server", "executer", "trigger", "module"]
     },
+    execProgram: {
+      type: 'string',
+      required: true
+    },
     active: {
       type: 'boolean',
       defaultsTo: true
