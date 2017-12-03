@@ -17,6 +17,6 @@ docker run -p 8080:8080 pm
 ```
 
 
-Optional variables:
+* Optional variables:
     * MONGO_HOST (default 'localhost')
     * MONGO_PORT (default 27017)
