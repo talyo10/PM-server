@@ -1,17 +1,22 @@
-# production-map 
-
-## Method 1
-Starting server & client seperatly.
-run npm start from client & server folders:
-```
-npm start
-```
+# Productionmap
 
 
-## Method 2
-Building latest client and starting the server.
-From server folder run:
+## Docker installation
+### Install with mongoDB
 ```
-npm run-script run
+cd server
+docker-compose build
+docker-compose up
 ```
 
+### Install without mongoDB
+```
+cd server
+docker build -t pm .
+docker run -p 8080:8080 pm
+```
+
+
+* Optional variables:
+    * MONGO_HOST (default 'localhost')
+    * MONGO_PORT (default 27017)

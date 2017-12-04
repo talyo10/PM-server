@@ -68,8 +68,8 @@ module.exports.session = {
   ***************************************************************************/
 
   adapter: 'connect-mongo',
-  host: process.env.PM_DB_HOST,
-  port: process.env.PM_DB_PORT,
+  host: process.env.MONGO_HOST || 'localhost',
+  port: process.env.MONGO_PORT || 27017,
   db: 'production_map',
   collection: 'sessions',
 
