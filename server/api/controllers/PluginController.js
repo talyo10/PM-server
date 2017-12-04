@@ -17,7 +17,6 @@ let uploadPath = path.join(sails.config.appPath, "static", "upload");
 module.exports = {
   pluginsList: function (req, res) {
     Plugin.find().then((plugins) => {
-      console.log(plugins);
       res.json(plugins);
     }).catch((error) => {
       MessagesService.sendMessage("notification", "Error getting plugins", "error");
@@ -62,7 +61,6 @@ module.exports = {
         }
         PluginService.createPlugin(file.fd).then((obj) => {
           newPlugin = obj;
-          console.log("Created plugin");
           callback();
         });
 

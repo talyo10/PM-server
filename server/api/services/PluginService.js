@@ -138,13 +138,22 @@ module.exports = {
         .pipe(unzip.Parse())
         .on('entry', function (entry) {
           let fileName = entry.path;
-          let type = entry.type;
-          let size = entry.size;
           if (fileName === 'config.json') {
             let writer = new streams.WritableStream();
             entry.pipe(writer);
-            entry.on('readable', function () {
-              let obj = JSON.parse(writer.toString());
+            let body = '';
+            entry.on('data', (chunk) => {
+              console.log("Chunk");
+              body += chunk;
+            });
+
+            entry.on('end', () => {
+              let obj;
+              try {
+                obj = JSON.parse(body);
+              } catch (e) {
+                return reject("Error parsing config file: ", e);
+              }
               // check the plugin type
               if (obj.type === "executer") {
                 installPluginOnAgent(pluginDir, obj);
@@ -163,10 +172,11 @@ module.exports = {
                   name: obj.name
                 }, obj)
               }).then((plugin) => {
-                console.log("created a new plugin", plugin)
+                MessagesService.sendMessage("notification", "Plugin installed successfully", "success");
                 resolve(plugin);
               }).catch((error) => {
-                console.log("Error creating plugin", error)
+                MessagesService.sendMessage("notification", "Error creating plugin: " + error, "error");
+                console.log("Error creating plugin", error);
                 reject(error);
               })
             });
