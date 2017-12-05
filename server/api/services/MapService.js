@@ -776,6 +776,7 @@ function createExecutionModels(runningExecutionResults) {
   }))
 
 }
+
 function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
   MessagesService.sendMessage("update", "Start executing map", "info");
   MessagesService.sendMessage("notification", "Starting map executin", "info");
@@ -855,7 +856,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
     }
     if (!res) {
       sails.log.error("no filter function (this should not happen)");
-      MessagesService.sendMessage("update", "No filter function at '" + map.name + "'" , "info");
+      MessagesService.sendMessage("update", "No filter function at '" + map.name + "'", "info");
 
     }
     else if (res !== false) {
@@ -873,7 +874,7 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
         agents[mapAgent.key] = mapAgent;
       }
     }
-    if (Object.keys(agents).length === 0 ){
+    if (Object.keys(agents).length === 0) {
       MessagesService.sendMessage("update", "No agents selected or none is alive. Please check agents status at the agents tab.", "error");
     }
     executionResult.agents = agents;
@@ -952,10 +953,11 @@ module.exports = {
     });
   },
   getRenderedMapById: function (mapId) {
-    return getMap(mapId).then((map) => {
-      MapService.MapToItem(map);
-      return map;
-    })
+    return Map.findOne(mapId).populate('mapStructure')
+      .then(map => {
+        MapService.MapToItem(map);
+        return map;
+      });
   },
   getVersions: function (mapId) {
     return Map.findOne(mapId).then((map) => {
@@ -1189,6 +1191,17 @@ module.exports = {
     })
 
   },
+  addMapStructure: function (mapItem) {
+    let newStructure = {
+      map: mapItem.id,
+      links: mapItem.mapView.links,
+      nodes: mapItem.mapView.nodes,
+      content: JSON.stringify(mapItem.mapView.content),
+      attributes: mapItem.mapView.attributes,
+      code: mapItem.mapView.code
+    };
+    return MapStructure.create(newStructure);
+  },
   findMaps: function (query) {
     return Map.find(query)
   },
@@ -1196,8 +1209,8 @@ module.exports = {
     map.text = map.name;
     map.type = 'map';
     map.hasChildren = false;
-    map.versionIndex = map.versions.length - 1;
-    map.mapView = _.cloneDeep(map.versions[map.versionIndex].structure);
+    map.versionIndex = map.mapStructure.length - 1;
+    map.mapView = _.cloneDeep(map.mapStructure[map.versionIndex]);
     delete map.versions;
     delete map.inspect;
   },

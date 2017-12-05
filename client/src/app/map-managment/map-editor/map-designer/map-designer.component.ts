@@ -377,8 +377,7 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
           console.log("content");
           return;
         }
-        this.graph.fromJSON(JSON.parse(this.map.mapView.content));
-
+        this.graph.fromJSON(this.map.mapView.content);
       } catch (e) {
         console.log("Error loading map", e);
       }

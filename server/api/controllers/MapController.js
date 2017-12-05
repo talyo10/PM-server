@@ -22,6 +22,15 @@ module.exports = {
       res.badRequest();
     });
   },
+  addMapStructure: function (req, res) {
+    MapService.addMapStructure(req.body).then((mapStructure) => {
+      MessagesService.sendMessage("notification", "Updated map", "success");
+      res.json(mapStructure);
+    }).catch(error => {
+      console.log("Error saving map structure", error);
+      MessagesService.sendMessage("notification", "Error updating map: " + error, "error");
+    });
+  },
   addMapVersion: function (req, res) {
     MapService.addMapVersion(req.body).then((version) => {
       res.json(version);

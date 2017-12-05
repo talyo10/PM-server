@@ -76,7 +76,7 @@ module.exports.routes = {
     'POST /map/updateMapProject': 'MapController.updateMap',
     'post /map/:id/update': 'MapController.mapUpdate',
     'POST /map/:id/agents/update': 'MapController.updateMapAgents',
-    'POST /map/addMapVersion': 'MapController.addMapVersion',
+    'POST /map/addMapVersion': 'MapController.addMapStructure',
     'POST /map/createMap': 'MapController.addNewMap',
     'POST /map/updateVersionStatus': 'MapController.updateVersionStatus',
     'POST /map/duplicate/:mapId': 'MapController.duplicateMap',

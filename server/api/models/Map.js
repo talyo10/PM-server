@@ -41,8 +41,11 @@ module.exports = {
       collection: 'baseagent',
       via: 'agent',
       through: 'mapagent'
+    },
+    mapStructure: {
+      collection: 'MapStructure',
+      via: 'map'
     }
-
   }
 };
 
