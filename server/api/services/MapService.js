@@ -974,10 +974,20 @@ module.exports = {
     return TNode.update({ map: mapId }, { isActive: false }).then(() => Map.update(mapId, { isActive: false }));
   },
   addNewMap: function (parentId, map) {
-    var node = null;
-    var resultMap = null;
+    let node = null;
+    let resultMap = null;
+    let mapObj;
     return Map.create(map).then((newMap) => {
+      mapObj = newMap;
       newMap.mapView = JSON.parse(JSON.stringify(newMap.structure));
+
+      newMap.mapView = {
+        content: '',
+        nodes: {},
+        links: [],
+        attributes: [],
+        code: ''
+      };
 
       // create a start node
       newMap.mapView.nodes.Start = {
@@ -989,7 +999,7 @@ module.exports = {
       };
 
       // set default map content
-      var content = {
+      let content = {
         "cells": [
           {
             "type": "devs.PMStartPoint",
@@ -1030,15 +1040,14 @@ module.exports = {
       };
       newMap.mapView.content = JSON.stringify(content);
 
-      return addNewMapVersion(newMap)
+      return MapService.addMapStructure(newMap)
+    }).then(mapStructure => {
+      mapObj.mapStructure = [mapStructure];
 
-    }).then((updatedMap) => {
-      resultMap = updatedMap;
-      if (updatedMap.length > 0) {
-        updatedMap = updatedMap[0];
-      }
+      resultMap = mapObj;
+
       // creating a new node for the map.
-      return TNode.create({ name: map.name, type: 'map', map: updatedMap })
+      return TNode.create({ name: map.name, type: 'map', map: mapObj })
     }).then((newNode) => {
       node = newNode;
       return Project.findOne({ id: parentId })
@@ -1047,7 +1056,7 @@ module.exports = {
         TNode.findOne({ id: parentId }).then((parentNode) => {
           parentNode.childs.add(resultMap.id);
           node.parent = parentId;
-          parentNode.childs.add(resultMap.id)
+          parentNode.childs.add(resultMap.id);
           return TNode.update({ id: node.id }, node);
           // Map.update({ id: resultMap.id }, resultMap);
         })
@@ -1209,8 +1218,8 @@ module.exports = {
     map.text = map.name;
     map.type = 'map';
     map.hasChildren = false;
-    map.versionIndex = map.mapStructure.length - 1;
-    map.mapView = _.cloneDeep(map.mapStructure[map.versionIndex]);
+    map.versionIndex = map.mapStructure.length;
+    map.mapView = _.cloneDeep(map.mapStructure[map.versionIndex - 1]);
     delete map.versions;
     delete map.inspect;
   },
