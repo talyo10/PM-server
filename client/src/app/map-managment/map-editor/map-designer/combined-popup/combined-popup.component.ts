@@ -19,6 +19,7 @@ export class CombinedPopupComponent implements OnInit, OnDestroy {
   @Input() currentProcess: any;
 
   editingAction: boolean;
+  tab: string = "link";
   currentAction: any;
 
   addActionReq: any;
@@ -110,7 +111,7 @@ export class CombinedPopupComponent implements OnInit, OnDestroy {
         this.currentAction.server = plugin;
       })
     })
-
+    this.tab = "action";
     this.editingAction = true;
   }
 

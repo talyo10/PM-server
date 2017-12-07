@@ -1,4 +1,16 @@
-import { Component, OnInit, OnDestroy, Output, Input, EventEmitter, ViewEncapsulation, ViewContainerRef, ViewChild, OnChanges, SimpleChange } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Output,
+  Input,
+  EventEmitter,
+  ViewEncapsulation,
+  ViewContainerRef,
+  ViewChild,
+  OnChanges,
+  SimpleChange
+} from '@angular/core';
 
 import * as jQuery from 'jquery';
 import * as _ from 'lodash';
@@ -14,15 +26,15 @@ import { ProcessesComponentWindow } from './processes/processes.component';
 import { NewProcessComponentWindow } from './new-process/new-process.component';
 import { RenameNodeComponentWindow } from './rename-node/rename-node.component';
 import { DeleteNodeComponentWindow } from './delete-node/delete-node.component';
-import {CombinedPopupComponent} from "./combined-popup/combined-popup.component";
+import { CombinedPopupComponent } from "./combined-popup/combined-popup.component";
 
 @Component({
   selector: 'app-map-designer',
   templateUrl: './map-designer.component.html',
   encapsulation: ViewEncapsulation.None,
   styleUrls: ['../../../../../node_modules/jointjs/css/layout.css',
-              '../../../../../node_modules/jointjs/css/themes/default.css',
-              './map-designer.component.css']
+    '../../../../../node_modules/jointjs/css/themes/default.css',
+    './map-designer.component.css']
 })
 export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -47,7 +59,8 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private modalService: NgbModal, private mapService: MapService, private contextMenuService: ContextMenuService) {
     this._currentLink = null;
-    this.reconnectingLink = false;modalService;
+    this.reconnectingLink = false;
+    modalService;
     this.currentMapSubscription = this.mapService.getCurrentMapObservable()
       .subscribe(
         (map) => {
@@ -84,11 +97,11 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
         return (cellViewS.id !== cellViewT.id) && this.svgCheckPort('in', magnetT) && this.svgCheckPort('out', magnetS);
       },
       interactive: (cellView: any): any => {
-          if (cellView.model instanceof joint.dia.Link) {
-              // Disable the default vertex add functionality on pointerdown.
-              return { vertexAdd: false };
-          }
-          return true;
+        if (cellView.model instanceof joint.dia.Link) {
+          // Disable the default vertex add functionality on pointerdown.
+          return { vertexAdd: false };
+        }
+        return true;
       }
     });
 
@@ -155,6 +168,7 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
     this.graph.addCells([startShape]);
 
     this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
+      console.log("cell:pointerup");
       if (cellView.model.isLink()) {
         if (this._currentLink && !this.reconnectingLink) {
           let link = this._currentLink;
@@ -172,10 +186,13 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.paper.on('cell:contextmenu', (cellView, evt) => {
+      console.log("cell:contextmenu");
+
       this.openContextMenu(evt, cellView);
     });
 
     this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+      console.log("cell:pointerdown");
       /* if we changing existing link we want to save its process because only target block is related when using links */
       if (cellView.model.isLink()) {
         let mapLink = this.getLink(cellView.model.id);
@@ -187,12 +204,17 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.paper.on('cell:pointermove', () => {
+      console.log("cell:pointermove");
+
       this.updatePaper();
     });
 
     this.paper.on('cell:pointerdblclick', (cellView, evt, x, y) => {
-      if (!cellView.model.isLink())
+      console.log("cell: pointerdbclick");
+      if (!cellView.model.isLink()) {
+        console.log("Not a link");
         return;
+      }
       let link = cellView.model;
       let sourceId = link.get('source').id;
       let targetId = link.get('target').id;
@@ -200,12 +222,16 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
       let sourceBlock = this.getNode(sourceId);
       let targetBlock = this.getNode(targetId);
 
+      console.log("link: ", link, "\n maplink: ", mapLink);
+
       this.openProcessesModal(mapLink, sourceBlock, targetBlock);
     });
     this.graph.on('change:source change:target', (link) => {
+      console.log('change:source change:target');
       let sourceId = link.get('source').id;
       let targetId = link.get('target').id;
 
+      console.log(sourceId, targetId);
       if (targetId && sourceId) {
         this._currentLink = link;
       } else {
@@ -259,7 +285,9 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
             this.deleteCellView(cellView);
           }
         },
-        (error) => { console.log(error); });
+        (error) => {
+          console.log(error);
+        });
   }
 
   openDeleteModal(cellView: any) {
@@ -278,7 +306,9 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
             this.deleteCellView(cellView);
           }
         },
-        (error) => { console.log(error); });
+        (error) => {
+          console.log(error);
+        });
   }
 
   openRenameModal(cellView: any) {
@@ -295,12 +325,16 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
       .then((name: any) => {
           this.renameCellView(cell, name);
         },
-        (error) => { console.log(error); });
+        (error) => {
+          console.log(error);
+        });
   }
 
   getLink(linkId: any) {
     let res = {};
-    res = _.find(this.map.mapView.links, (link: any) => { return link.id === linkId; });
+    res = _.find(this.map.mapView.links, (link: any) => {
+      return link.id === linkId;
+    });
     return res;
   }
 
@@ -319,11 +353,13 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   connectNodes(linkId: any, sourceId: any, targetId: any) {
     let pLink = {
       id: linkId,
+      name: null,
       sourceId: sourceId,
       targetId: targetId,
       processes: [],
       result: '',
-      condition: false
+      condition: false,
+      correlateAgents: false
     };
     this.map.mapView.links.push(pLink);
     let mapLink = this.getLink(linkId);
@@ -335,7 +371,8 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addNode(id, name, type, node) {
-    let truncatedName = name.replace(' ', ''); /* TODO: replace all unallowed charcters */
+    let truncatedName = name.replace(' ', '');
+    /* TODO: replace all unallowed charcters */
     let nameIndex = _.keys(this.map.mapView.nodes).length;
     truncatedName = truncatedName + nameIndex;
     this.map.mapView.nodes[truncatedName] = {
@@ -351,14 +388,13 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
 
-
   updatePaper() {
     this.paper.fitToContent({
-        padding: 20, /* Use const padding from all edges at the fitting process */
-        minWidth: this.innerWidth,
-        minHeight: this.innerHeight,
-        gridWidth: this.gridSize,
-        gridHeight: this.gridSize
+      padding: 20, /* Use const padding from all edges at the fitting process */
+      minWidth: this.innerWidth,
+      minHeight: this.innerHeight,
+      gridWidth: this.gridSize,
+      gridHeight: this.gridSize
     });
   }
 
@@ -388,6 +424,7 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /* when changing the graph we want to update the inner content that saves the graph json */
+
   /* http://resources.jointjs.com/docs/jointjs/v1.1/joint.html#dia.Graph.prototype.toJSON */
   updateMapViewContentGraph() {
     let res = this.graph.toJSON();
@@ -417,8 +454,9 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
     this.updateMapViewContentGraph();
   }
 
-  renameCellView(cell: any, name: string)  {
-    let truncatedName = name.replace(' ', ''); /* TODO: replace all unallowed charcters */
+  renameCellView(cell: any, name: string) {
+    let truncatedName = name.replace(' ', '');
+    /* TODO: replace all unallowed charcters */
     for (var key in this.map.mapView.nodes) {
       let node = this.map.mapView.nodes[key];
       if (node.id === cell.id) {
@@ -432,7 +470,9 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   deleteLink(link) {
-    _.remove(this.map.mapView.links, (l: any) => { return l.id === link.id; });
+    _.remove(this.map.mapView.links, (l: any) => {
+      return l.id === link.id;
+    });
   }
 
   deleteNode(node) {
@@ -442,7 +482,9 @@ export class MapDesignerComponent implements OnInit, OnChanges, OnDestroy {
         delete this.map.mapView.nodes[key];
       }
     });
-    _.remove(this.graph.attributes.cells.models, (l: any) => { return l.id === node.id; });
+    _.remove(this.graph.attributes.cells.models, (l: any) => {
+      return l.id === node.id;
+    });
   }
 
   /* we use this function instead of the regular graph.removeLinks because we want to remove
