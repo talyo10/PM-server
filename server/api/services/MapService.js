@@ -224,6 +224,8 @@ function addNewMapVersion(map) {
 }
 
 function createExecutionModels(runningExecutionResults) {
+  console.log("****");
+  let processResults
   Execution.create({
     map: runningExecutionResults.map.id,
     startAgentsNumber: runningExecutionResults.map.agents.length,
@@ -234,31 +236,33 @@ function createExecutionModels(runningExecutionResults) {
   }).then((exec) => new Promise((resolve, reject) => {
     for (let i in runningExecutionResults.agents) {
       let agentResults = runningExecutionResults.agents[i];
+      console.log(agentResults.id, agentResults.status,);
       AgentExecutionResult.create({
         agent: agentResults.id,
-        status: agentResults.status,
-        result: agentResults.result,
+        status: agentResults.status === "available" ? "success" : "error",
         startTime: agentResults.startTime,
         finishTime: agentResults.finishTime,
         execution: exec.id
       }).then((agentExec) => {
         for (let k in agentResults.links) {
-          let processResults = agentResults.links[k].process;
+          processResults = agentResults.links[k].process;
           ProcessExecutionResult.create({
             status: processResults.status,
-            result: processResults.result,
+            result: processResults.results,
             startTime: processResults.startTime,
             finishTime: processResults.finishTime,
-            processName: processResult.name,
+            processName: processResults.name,
             agentExecution: agentExec.id
           }).then((processExec) => {
             for (let j in processResults.actions) {
               let actionResult = processResults.actions[j];
+              console.log(actionResult);
+              console.log(actionResult.status,actionResult.startTime,actionResult.finishTime,j,processExec.id,actionResult.result)
               ActionExecutionResult.create({
                 status: actionResult.status,
                 startTime: actionResult.startTime,
                 finishTime: actionResult.finishTime,
-                actionName: j,
+                actionName: actionResult.name,
                 processExecution: processExec.id,
                 result: actionResult.result
               }).then(() => {
@@ -314,7 +318,6 @@ function executeMapById(userId, mapId, versionIndex, cleanWorkspace) {
       },
       startTime: new Date()
     };
-
 
     let startNodes = mapGraph.sources(); // return all the nodes that dont have an in-link
 
@@ -383,13 +386,14 @@ function runNodeLinks(map, mapGraph, node, executionContext, executionAgents) {
           }
         }
         if (flag && executionContext.status !== "done") {
-          executionContext.status = "done";
+          executionContext.status = "success";
           MessagesService.sendMessage("update", "Finish map execution", "info");
           MessagesService.sendMessage("notification", "Finish map execution", "info");
 
           executionContext.agents = executionAgents;
           executionContext.finishTime = new Date();
           runningMaps[map.id] = sails.config.constants.runStatuses.Done;
+          createExecutionModels(executionContext);
         }
       }
     })
@@ -410,9 +414,14 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
     let agents = filterAgents(executionAgents, link);
     async.each(agents,
       (agent, agentCb) => {
+        if (executionAgents[agent.key].startTime) {
+          executionAgents[agent.key].startTime = new Date();
+        }
         if (executionAgents[agent.key].links[link.id]) {
           if (executionAgents[agent.key].links[link.id].status === "executing" || executionAgents[agent.key].links[link.id].status === "fail" || executionAgents[agent.key].links[link.id].status === "error" || executionAgents[agent.key].links[link.id].status === "success") {
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
+
             return;
           }
         }
@@ -437,6 +446,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
               MessagesService.sendMessage("update", "Error running link '" + link.name + "' condition: " + e, "error");
 
               agentCb();
+              executionAgents[agent.key].finishTime = new Date();
               return;
             }
             if (res === false) { // if the condition failed, stop with this link.
@@ -444,6 +454,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
               executionAgents[agent.key].links[link.id].result = "Didn't passed condition";
               console.log("Link didnt pass condition");
               agentCb();
+              executionAgents[agent.key].finishTime = new Date();
               return;
             }
           }
@@ -462,6 +473,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
             executionAgents[agent.key].links[link.id].result = "Error running filter agent function";
             executionAgents[agent.key].status = "available";
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
             return;
           }
 
@@ -471,6 +483,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
             executionAgents[agent.key].links[link.id].result = "Agent didn't pass link filter agents condition";
             executionAgents[agent.key].status = "available";
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
             return;
           }
         }
@@ -496,6 +509,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
           executionAgents[agent.key].links[link.id].result = "No process passed condition or none exists";
           executionAgents[agent.key].status = "available";
           agentCb();
+          executionAgents[agent.key].finishTime = new Date();
           return;
         }
 
@@ -511,6 +525,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
             executionAgents[agent.key].links[link.id].result = "Error running filter agent function";
             executionAgents[agent.key].status = "available";
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
             return;
           }
           if (res === false) {
@@ -519,11 +534,13 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
             executionAgents[agent.key].links[link.id].result = "Agent didn't pass process filter link condition";
             executionAgents[agent.key].status = "available";
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
             return;
           }
         }
 
         let actionExecutionFunctions = {};
+        selectedProcess.startTime = new Date();
         executionAgents[agent.key].links[link.id].process = selectedProcess;
         selectedProcess.actions.forEach(action => {
           actionExecutionFunctions[action.name + "(" + action.id + ")"] = executeAction(map, link, selectedProcess, _.cloneDeep(action), agent, executionContext, executionAgents);
@@ -536,13 +553,13 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
               addProcessResultToContext(executionAgents[agent.key].executionContext, link.id, selectedProcess.id, error, -1);
               if (runningMaps[map.id] !== sails.config.constants.runStatuses.Running) {
                 agentCb("Map stopped");
-                return ;
+                return;
               }
               executionAgents[agent.key].status = "stop"; // this will prevent the agent to run in further links.
               executionAgents[agent.key].links[link.id].status = "error";
               executionAgents[agent.key].links[link.id].process.status = "error";
               executionAgents[agent.key].links[link.id].process.results = error;
-              executionAgents[agent.key].links[link.id].process.finishTime = error;
+              executionAgents[agent.key].links[link.id].process.finishTime = new Date();
 
               MessagesService.sendMessage("update", "Process: '" + selectedProcess.name + "' finish with error: " + JSON.stringify(actionsResults), "error");
             } else {
@@ -551,6 +568,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
               executionAgents[agent.key].links[link.id].results = actionsResults;
               executionAgents[agent.key].links[link.id].process.status = "success";
               executionAgents[agent.key].links[link.id].process.results = actionsResults;
+              executionAgents[agent.key].links[link.id].process.finishTime = new Date();
               MessagesService.sendMessage("update", "Process: '" + selectedProcess.name + "' finish with result: " + JSON.stringify(actionsResults), "success");
             }
 
@@ -571,6 +589,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
               });
             }
             agentCb();
+            executionAgents[agent.key].finishTime = new Date();
           })
 
       }, (error) => {
@@ -598,6 +617,7 @@ function executeLink(map, mapGraph, node, executionContext, executionAgents) {
 
 function executeAction(map, link, process, action, agent, executionContext, executionAgents) {
   return (callback) => {
+    let sTime = new Date();
     if (runningMaps[map.id] !== sails.config.constants.runStatuses.Running)
       callback("Map stopped");
     let action_str = 'var currentAction = ' + JSON.stringify(action) + ";";
@@ -667,6 +687,8 @@ function executeAction(map, link, process, action, agent, executionContext, exec
           MessagesService.sendMessage("update", "Action '" + action.name + "' result: " + body.res, "success");
           executionAgents[agent.key].links[link.id].process.actions[key].status = "success";
           executionAgents[agent.key].links[link.id].process.actions[key].result = body;
+          executionAgents[agent.key].links[link.id].process.actions[key].finishTime = new Date();
+          executionAgents[agent.key].links[link.id].process.actions[key].startTime = sTime;
           addActionResultToContext(executionAgents[agent.key].executionContext, link.id, process.id, action.name, body.res, 0);
           callback(null, body);
           return;
@@ -681,6 +703,8 @@ function executeAction(map, link, process, action, agent, executionContext, exec
           addActionResultToContext(executionAgents[agent.key].executionContext, link.id, process.id, action.name, res, -1);
           executionAgents[agent.key].links[link.id].process.actions[key].status = "error";
           executionAgents[agent.key].links[link.id].process.actions[key].result = "Error " + res;
+          executionAgents[agent.key].links[link.id].process.actions[key].finishTime = new Date();
+
           if (action.mandatory) {
             console.log("The action was mandatory, its a fatal error");
             callback("Action '" + action.name + "' failed: " + res);

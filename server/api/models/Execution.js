@@ -17,8 +17,7 @@ module.exports = {
       via: 'execution',
     },
     status: {
-      type: 'string',
-      enum: ['success', 'error'],
+      type: 'string'
     },
     startAgentsNumber: {
       type: 'int'

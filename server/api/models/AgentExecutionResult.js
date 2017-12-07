@@ -12,8 +12,7 @@ module.exports = {
       model: 'BaseAgent'
     },
     status: {
-      type: 'string',
-      enum: ['success', 'error']
+      type: 'string'
     },
     result: {
       type: 'text'

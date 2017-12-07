@@ -12,11 +12,10 @@ module.exports = {
       type: 'string'
     },
     status: {
-      type: 'string',
-      enum: ['success', 'error']
+      type: 'string'
     },
     result: {
-      type: 'text'
+      type: 'json'
     },
     startTime: {
       type: 'datetime'

@@ -67,9 +67,9 @@ export class ActionDetailComponent implements OnInit {
   initResponseGraph() {
     let aggregate = {};
     this.action.agents.forEach((agent) => {
-      if (!aggregate[agent.result])
-        aggregate[agent.result] = 0;
-      aggregate[agent.result]++;
+      if (!aggregate[agent.result.res])
+        aggregate[agent.result.res] = 0;
+      aggregate[agent.result.res]++;
     });
     let data = [];
     let labels = [];
