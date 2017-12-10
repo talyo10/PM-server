@@ -219,7 +219,7 @@ module.exports = {
   },
   triggersList: function (req, res) {
     PluginService.filterPlugins({
-      type: "server"
+      type: ["server", "trigger"]
     }).then((plugins) => {
       res.json(plugins);
     }).catch((error) => {
