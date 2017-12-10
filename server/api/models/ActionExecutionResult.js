@@ -6,17 +6,16 @@
  */
 
 module.exports = {
-  
+
     attributes: {
       actionName: {
         type: 'string'
       },
       status: {
-        type: 'string',
-        enum: ['success', 'error']
+        type: 'string'
       },
       result: {
-        type: 'text'
+        type: 'json'
       },
       startTime: {
         type: 'datetime'
@@ -30,5 +29,4 @@ module.exports = {
       }
     }
   };
-  
-  
+

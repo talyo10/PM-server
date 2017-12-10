@@ -20,12 +20,84 @@
   <section class="content">
     <aside class="process-action-menu">
       <nav>
-        <a class="menu-item" (click)="editProcess()" [class.active]="!this.editingAction">Process</a>
-        <a class="menu-item" (click)="onEditActionClick()" [class.active]="this.editingAction">Action</a>
+        <a class="menu-item" (click)="tab = 'link'" [class.active]="tab === 'link'">Link</a>
+        <a class="menu-item" (click)="tab = 'process'" [class.active]="tab === 'process'">Processes</a>
+        <a class="menu-item" (click)="tab = 'action'" [class.active]="tab === 'action'">Actions</a>
       </nav>
     </aside>
 
-    <div class="process-edit" [hidden]="this.editingAction">
+    <div class="process-edit" [hidden]="tab !== 'link'">
+
+      <section class="action-content">
+        <div class="form-group has-chk-row">
+          <label class="form-checkbox chk-row">
+            <span class="form-label">Link Name</span>
+          </label>
+          <input type="text" class="form-control" [(ngModel)]="link.name">
+        </div>
+      </section>
+
+      <div class="separator"></div>
+
+      <section class="action-content">
+        <h3 class="actions-title">Conditions</h3>
+        <div class="form-group has-chk-row">
+          <label for="pr-chx-linkCondition" class="form-checkbox chk-row">
+            <input type="checkbox" id="pr-chx-linkCondition" [(ngModel)]="link.condition"><i></i>
+            <span class="form-label">Link condition</span>
+          </label>
+          <input type="text" class="form-control" [hidden]="!link.condition" [(ngModel)]="link.conditionCode">
+        </div>
+        <div class="form-group has-chk-row">
+          <label for="pr-chx-correlate" class="form-checkbox chk-row">
+            <input type="checkbox" id="pr-chx-correlate" [(ngModel)]="link.correlateAgents"><i></i>
+            <span class="form-label">Correlate agents</span>
+          </label>
+        </div>
+        <div class="form-group has-chk-row">
+
+          <label for="pr-chx-linkFilter" class="form-checkbox chk-row">
+            <input type="checkbox" id="pr-chx-linkFilter" [(ngModel)]="link.filterAgents"><i></i>
+            <span class="form-label">Filter Agents</span>
+          </label>
+          <input type="text" class="form-control" [hidden]="!link.filterAgents" [(ngModel)]="link.filterAgentsCode">
+        </div>
+      </section>
+
+      <div class="separator"></div>
+
+      <section class="action-content">
+        <h3 class="actions-title">Hook functions</h3>
+
+        <div class="form-group has-chk-row">
+          <label for="pr-chx-pre-run" class="form-checkbox chk-row">
+            <input type="checkbox" id="pr-chx-pre-run" [(ngModel)]="link.preRun"><i></i>
+            <span class="form-label">Pre run hook</span>
+          </label>
+          <input type="text" class="form-control" [hidden]="!link.preRun" [(ngModel)]="link.preRunCode">
+        </div>
+        <div class="form-group has-chk-row">
+          <label for="pr-chx-post-run" class="form-checkbox chk-row">
+            <input type="checkbox" id="pr-chx-post-run" [(ngModel)]="link.postRun"><i></i>
+            <span class="form-label">Post run hook</span>
+          </label>
+          <input type="text" class="form-control" [hidden]="!link.postRun" [(ngModel)]="link.postRunCode">
+        </div>
+
+
+      </section>
+
+      <div class="separator"></div>
+
+
+      <footer class="action-content text-right">
+        <button class="btn-event" type="button" (click)="onSaveClick()"><i class="pmap-28"></i>Save</button>
+        <!--<button class="btn-event btn-no-icon" type="button">Cancel</button>-->
+      </footer>
+
+    </div>
+
+    <div class="process-edit" [hidden]="tab !== 'process'">
 
       <section class="action-content">
         <div class="form-group has-chk-row">
@@ -45,19 +117,13 @@
       <div class="separator"></div>
 
       <section class="action-content">
-        <div class="form-group has-chk-row">
-          <label for="pr-chx-1" class="form-checkbox chk-row">
-            <input type="checkbox" id="pr-chx-1" [(ngModel)]="link.condition"><i></i>
-            <span class="form-label">Link has Condition</span>
-          </label>
-          <input type="text" class="form-control" [hidden]="!link.condition" [(ngModel)]="link.conditionCode">
-        </div>
+
         <div class="form-group has-chk-row">
           <label for="pr-chx-2" class="form-checkbox chk-row">
-            <input type="checkbox" id="pr-chx-2" [(ngModel)]="link.filterAgent"><i></i>
+            <input type="checkbox" id="pr-chx-2" [(ngModel)]="currentProcess.filterAgent"><i></i>
             <span class="form-label">Filter Agents</span>
           </label>
-          <input type="text" class="form-control" [hidden]="!link.filterAgent" [(ngModel)]="link.filterAgentCode">
+          <input type="text" class="form-control" [hidden]="!currentProcess.filterAgent" [(ngModel)]="currentProcess.filterAgentCode">
         </div>
       </section>
 
@@ -140,7 +206,7 @@
 
     </div>
 
-    <div class="action-edit" [hidden]="!this.editingAction">
+    <div class="action-edit" [hidden]="tab !== 'action'">
       <section class="action-content">
         <div class="form-group has-chk-row max-width no-padding-bottom no-margin-bottom">
           <label class="form-checkbox chk-row">
