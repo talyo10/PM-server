@@ -1,0 +1,36 @@
+<div class="main">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1 class="display-2">{{project?.name}} maps</h1>
+      <p class="lead">{{project?.description}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <p class="lead" *ngIf="!project?.maps || project?.maps?.length === 0">
+      No maps yet.
+      Go ahead and <a routerLink="/maps/create" [queryParams]="{'project': project?.id}">add a new map</a>.
+    </p>
+    <table class="table" *ngIf="project?.maps?.length > 0">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Created</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <tr *ngFor="let maps of project?.maps; let i = index">
+        <th scope="row">{{ i+1 }}</th>
+        <td><a [routerLink]="['/maps', maps.id]">{{ maps.name }}</a></td>
+        <td>{{ maps.description }}</td>
+        <td>{{ maps.createdAt | date: 'short' }}</td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+

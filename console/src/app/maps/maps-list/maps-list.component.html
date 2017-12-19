@@ -1,0 +1,27 @@
+<div class="main">
+  <h1 class="display-2">Maps</h1>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Created</th>
+      <th scope="col">Create by</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let map of maps; let i = index">
+      <th scope="row">{{ i+1 }}</th>
+      <td><a [routerLink]="[map.id]">{{ map.name }}</a></td>
+      <td>{{ map.description }}</td>
+      <td>{{ map.createdAt | date: 'short' }}</td>
+      <td>User 1</td>
+    </tr>
+
+    </tbody>
+  </table>
+</div>
+
+

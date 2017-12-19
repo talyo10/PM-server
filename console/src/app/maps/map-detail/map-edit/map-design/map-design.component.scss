@@ -1,0 +1,28 @@
+@import "~assets/sass/base";
+
+.wrapper {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  .map-management {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: white;
+    @extend .base-shadow;
+    @extend .side-bar;
+  }
+}
+
+/* port styling */
+.available-magnet {
+  fill: green;
+}
+
+/* element styling */
+.available-cell rect {
+  stroke-dasharray: 5, 2;
+}
+
+

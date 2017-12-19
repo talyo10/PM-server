@@ -1,0 +1,18 @@
+@import "~assets/sass/base";
+
+.pad {
+  margin-top: 10px;
+}
+
+.link {
+  cursor: pointer;
+  &:hover {
+    @extend .focus-shadow;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+}
+
+.main {
+  padding-left: 15px;
+  padding-right: 15px;
+}

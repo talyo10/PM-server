@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~assets/sass/variables";
+
+html, body {
+  height: 100%;
+}
+
+.bg-black {
+  color: $light-color;
+  background: $dark-color;
+}
+
+input, textarea, select {
+  &.ng-invalid.ng-touched {
+    border: 1px solid $error;
+  }
+}
+
+textarea {
+  overflow: hidden;
+}
+

@@ -1,0 +1,29 @@
+<div class="container">
+  <h4 class="display-5">Triggers</h4>
+  <hr class="my-4">
+  <span *ngIf="!triggers || triggers?.length === 0">No triggers yet.</span>
+  <div *ngIf="triggers?.length > 0">
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let trigger of triggers; let i = index;">
+        <span>{{ trigger.name }}</span>
+        <span>
+          <span>
+
+            <button type="button" class="btn btn-link" (click)="openTriggerFormModal(i)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-link" (click)="removeTrigger(i)">
+              <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </button>
+          </span>
+        </span>
+      </li>
+    </ul>
+  </div>
+  <div class="row bottom-section">
+    <div class="col-sm-12">
+      <button type="button" class="btn btn-primary btn-block" (click)="openTriggerFormModal()">Create new trigger</button>
+    </div>
+  </div>
+</div>

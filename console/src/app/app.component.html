@@ -1,0 +1,29 @@
+<div class="row root">
+  <div class="col-sm-1 bg-primary">
+    <h1 class="display-1 text-light">PM</h1>
+    <ul class="nav flex-column">
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="nav-link" routerLink="/projects">Projects</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="nav-link" routerLink="/maps">Maps</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="nav-link" routerLink="/admin">Admin</a>
+      </li>
+      <li dropdown class="nav-item dropdown">
+        <a class="nav-link" href dropdownToggle (click)="false">
+          <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
+        </a>
+        <div *dropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" routerLink="/maps/create">New Map</a>
+          <a class="dropdown-item" routerLink="/projects/create">New Project</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-11 main">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="wrapper row" #wrapper>
+  <div class="main" [ngClass]="{'col-12': !editing, 'col-8': editing}">
+    <h3 class="pane-title">Design</h3>
+    <div id="graph"></div>
+  </div>
+  <div class="map-management col-4" *ngIf="editing">
+    <app-process-form [process]="process" (saved)="onSave($event)" (close)="onClose($event)"
+                      (delete)="onDelete($event)"></app-process-form>
+  </div>
+
+</div>

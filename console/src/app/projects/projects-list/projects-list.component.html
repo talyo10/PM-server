@@ -1,0 +1,40 @@
+<div class="main">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1 class="display-2">Projects</h1>
+      <h5>Recently added</h5>
+    </div>
+    <div class="col-sm-4" *ngFor="let project of projects?.slice(-3)">
+      <div class="card link" [routerLink]="[project.id]">
+        <div class="card-body">
+          <h4 class="card-title">{{project.name}}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">{{project.createdAt | date: 'short'}}</h6>
+          <p class="card-text">{{project.description}}</p>
+          <a [routerLink]="[project.id]" class="card-link">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pad">
+    <h5>All projects</h5>
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Created</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let project of projects; let i = index">
+        <th scope="row">{{ i+1 }}</th>
+        <td><a [routerLink]="[project.id]">{{ project.name }}</a></td>
+        <td>{{ project.description }}</td>
+        <td>{{ project.createdAt | date: 'short' }}</td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
