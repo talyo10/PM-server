@@ -1,7 +1,7 @@
 .root {
   height: 100%;
   .main {
-    padding: 15px;
+    padding: 0px;
   }
 }
 
@@ -22,5 +22,12 @@
     }
 
   }
+}
+
+.search {
+  position: fixed;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 

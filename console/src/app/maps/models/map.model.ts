@@ -5,7 +5,8 @@ export class Map implements IMap {
   id?: string;
   name: string;
   description?: string;
-  createdAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   licence?: string;
   archived: boolean;
   agents?: [Agent];

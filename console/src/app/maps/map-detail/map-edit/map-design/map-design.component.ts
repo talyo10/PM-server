@@ -29,6 +29,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   process: Process;
   link: Link;
   init: boolean = false;
+  scale: number = 1;
 
   @ViewChild('wrapper') wrapper: ElementRef;
 
@@ -36,7 +37,6 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.wrapper.nativeElement.maxHeight = this.wrapper.nativeElement.offsetHeight;
     this.dropSubscription = this.designService.getDrop().subscribe(obj => {
       let offsetLeft = this.wrapper.nativeElement.offsetParent.offsetLeft;
@@ -51,8 +51,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.pluginsReq = this.pluginsService.list().subscribe(plugins => {
       this.plugins = plugins;
-    })
-
+    });
   }
 
   ngOnDestroy() {
@@ -66,7 +65,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       el: $("#graph"),
       width: this.wrapper.nativeElement.offsetWidth,
       height: this.wrapper.nativeElement.offsetHeight,
-      gridSize: 1,
+      gridSize: this.scale,
       model: this.graph,
       snapLinks: { radius: 75 },
       linkPinning: false,
@@ -100,48 +99,30 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         this.drawGraph();
       }
     });
-
   }
 
-  // drawGraph() {
-  //   let m1 = new joint.shapes.devs.Model({
-  //     position: { x: 50, y: 50 },
-  //     size: { width: 110, height: 75 },
-  //     inPorts: [' '],
-  //     outPorts: ['  '],
-  //     ports: {
-  //       groups: {
-  //         'in': {
-  //           attrs: {
-  //             '.port-body': {
-  //               fill: '#2c2c2c',
-  //               stroke: '#a2a2a2',
-  //               magnet: 'active'
-  //             }
-  //           }
-  //         },
-  //         'out': {
-  //           attrs: {
-  //             '.port-body': {
-  //               fill: '#a2a2a2',
-  //               stroke: '#a2a2a2'
-  //             }
-  //           }
-  //         }
-  //       }
-  //     },
-  //     attrs: {
-  //       '.label': { text: 'Command Line', 'ref-y': 0.83, 'y-alignment': 'middle', fill: '#f1f1f1', 'font-size': 13 },
-  //       '.body': { stroke: '#3c3e41', fill: '#2c2c2c', 'rx': 6, 'ry': 6 },
-  //       '.port-body': { r: 7.5, stroke: 'gray', fill: '#2c2c2c', magnet: 'active' },
-  //       rect: { fill: '#2c2c2c', stroke: '#a2a2a2' }
-  //     }
-  //   });
-  //
-  //   m1.position();
-  //   let c = m1.clone();
-  //   c.attributes.attrs['.label'].text = obj.cell.model.attributes.attrs.text.text;
-  // }
+  addNewLink(cell) {
+    console.log("Add new link");
+    console.log(this.link);
+    if (!this.link)
+      return;
+    let link = _.find(this.mapStructure.links, (o) => {
+      return (o.targetId === this.link.targetId && o.sourceId === this.link.sourceId)
+    });
+    if (link) {
+      console.log("A link already exists between those nodes");
+      return;
+    }
+
+    this.link.uuid = cell.model.id;
+    if (!this.mapStructure.links)
+      this.mapStructure.links = [this.link];
+    else
+      this.mapStructure.links.push(this.link);
+    this.mapStructure.content = JSON.stringify(this.graph.toJSON());
+    console.log(this.mapStructure);
+    this.mapsService.setCurrentMapStructure(this.mapStructure);
+  }
 
   addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
     let m1 = new joint.shapes.devs.Model({
@@ -207,8 +188,36 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       this.graph.fromJSON(JSON.parse(this.mapStructure.content));
   }
 
+  editProcess(process) {
+    this.process = process;
+    if (this.editing) {
+      this.editing = false;
+      setTimeout(() => {
+        this.editing = true;
+      }, 300);
+    } else {
+      this.editing = true;
+    }
+  }
+
   listeners() {
     let self = this;
+    let move = false;
+    let initialPosition = { x: 0, y: 0 };
+    this.paper.on('blank:pointerdown', (event, x, y) => {
+      initialPosition = { x: x * this.scale, y: y * this.scale};
+      move = true;
+    });
+
+    $("#graph").mousemove((event) => {
+      if (move)
+        self.paper.translate(event.offsetX - initialPosition.x, event.offsetY - initialPosition.y);
+    });
+
+    this.paper.on('blank:pointerup', (event, x, y) => {
+      move = false;
+    });
+
     this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
       if (cellView.model.isLink()) {
         let link = _.find(this.mapStructure.links, (o) => {
@@ -241,7 +250,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       }
     });
 
-    this.graph.on('remove', function(cell, collection, opt) {
+    this.graph.on('remove', function (cell, collection, opt) {
       if (cell.isLink()) {
         let linkIndex = _.findIndex(self.mapStructure.links, (o) => {
           return o.uuid === cell.id
@@ -252,48 +261,13 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     })
   }
 
-  addNewLink(cell) {
-    console.log("Add new link");
-    console.log(this.link);
-    if (!this.link)
-      return;
-    let link = _.find(this.mapStructure.links, (o) => {
-      return (o.targetId === this.link.targetId && o.sourceId === this.link.sourceId)
-    });
-    if (link) {
-      console.log("A link already exists between those nodes");
-      return;
-    }
-
-    this.link.uuid = cell.model.id;
-    if (!this.mapStructure.links)
-      this.mapStructure.links = [this.link];
-    else
-      this.mapStructure.links.push(this.link);
-    this.mapStructure.content = JSON.stringify(this.graph.toJSON());
-    console.log(this.mapStructure);
-    this.mapsService.setCurrentMapStructure(this.mapStructure);
-  }
-
-  editProcess(process) {
-    this.process = process;
-    if (this.editing) {
-      this.editing = false;
-      setTimeout(() => {
-        this.editing = true;
-      }, 300);
-    } else {
-      this.editing = true;
-    }
-  }
-
   onClose(event) {
     this.editing = false;
     this.process = null;
   }
 
   onDelete(event) {
-    let processIndex = _.findIndex(this.mapStructure.processes, (o) =>{
+    let processIndex = _.findIndex(this.mapStructure.processes, (o) => {
       return o.uuid === this.process.uuid
     });
     this.mapStructure.processes.splice(processIndex, 1);
@@ -313,6 +287,11 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.mapStructure.processes[index].condition = process.condition;
     this.mapStructure.processes[index].actions = process.actions;
     this.mapsService.setCurrentMapStructure(this.mapStructure);
+  }
+
+  onScale(scale) {
+    this.scale += scale;
+    this.paper.scale(this.scale, this.scale);
   }
 
 }

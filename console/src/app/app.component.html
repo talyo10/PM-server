@@ -5,25 +5,38 @@
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <a class="nav-link" routerLink="/projects">Projects</a>
       </li>
+
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <a class="nav-link" routerLink="/maps">Maps</a>
       </li>
+
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <a class="nav-link" routerLink="/admin">Admin</a>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSearch()"><i class="fa fa-search fa-2x" aria-hidden="true"></i></a>
+      </li>
+
       <li dropdown class="nav-item dropdown">
         <a class="nav-link" href dropdownToggle (click)="false">
           <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
         </a>
+
         <div *dropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" routerLink="/maps/create">New Map</a>
           <a class="dropdown-item" routerLink="/projects/create">New Project</a>
-          <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
+
     </ul>
   </div>
   <div class="col-sm-11 main">
     <router-outlet></router-outlet>
   </div>
+</div>
+
+
+<div class="search bg-light col-4 animated slideInLeft" *ngIf="search">
+  <app-search (close)="toggleSearch()"></app-search>
 </div>

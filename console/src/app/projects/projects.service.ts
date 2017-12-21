@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
+
 import { environment } from "../../environments/environment";
 import { Project } from "./models/project.model";
 
@@ -18,6 +19,11 @@ export class ProjectsService {
 
   detail(projectId) {
     return this.http.get<Project>(serverUrl + "api/projects/" + projectId)
+  }
+
+  filter(query) {
+    let params = new HttpParams().set('q', query);
+    return this.http.get<[Project]>(serverUrl + "api/maps/", { params: params })
   }
 
   list() {

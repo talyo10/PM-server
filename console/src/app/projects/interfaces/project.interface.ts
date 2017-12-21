@@ -6,6 +6,7 @@ export interface IProject {
   name: string,
   description?: String,
   createdAt?: Date,
+  updatedAt?: Date,
   archived?: boolean,
   maps?: [string] | [IMap]
 }

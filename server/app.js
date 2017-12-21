@@ -8,8 +8,6 @@ const bootstrap = require("./helpers/bootstrap").bootstrap;
 
 const app = express();
 
-// Signing morgan logger
-
 /////////////////////
 // configurations //
 ///////////////////
@@ -17,6 +15,8 @@ const app = express();
 // morgan logger
 app.use(morgan('dev'));
 
+
+// enable cors
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 
-// Connect to db
+/* Connect to db */
 mongoose.connect('mongodb://127.0.0.1:27017/refactor', {
     useMongoClient: true
 }).then(() => {
@@ -34,19 +34,24 @@ mongoose.connect('mongodb://127.0.0.1:27017/refactor', {
 }).catch(() => {
     console.log(`Error Connecting to the Mongodb`);
 });
-mongoose.Promise = global.Promise;
+mongoose.Promise = require('bluebird');
 
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 
+// Angular dist output folder
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/plugins', express.static(path.join(__dirname, 'libs', 'plugins')));
+app.use('/media', express.static(path.join(__dirname, 'media_cdn')));
+
 
 //////////////////////
 /////// routes //////
 ////////////////////
 
-// api references
+/* api references */
 const mapsApi = require("./api/routes/maps.routes");
 const pluginsApi = require("./api/routes/plugins.routes");
 const agentsApi = require("./api/routes/agents.routes");
@@ -56,6 +61,14 @@ app.use('/api/maps', mapsApi);
 app.use('/api/plugins', pluginsApi);
 app.use('/api/agents', agentsApi);
 app.use('/api/projects', projectsApi);
+
+
+
+// Send all other requests to the Angular app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  });
+
 
 //Set Port
 const port = process.env.PORT || '3000';

@@ -6,7 +6,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { MapsService } from "../maps.service";
 import { Map } from "../models/map.model";
-import { ActionParam, MapStructure } from "../models/map-structure.model";
+import { MapStructure } from "../models/map-structure.model";
 
 @Component({
   selector: 'app-map-detail',
@@ -41,6 +41,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
         this.mapStructureReq = this.mapsService.getMapStructure(this.id).subscribe(structure => {
           if (structure === null) {
             structure = new MapStructure();
+            structure.map = params["id"];
           }
           this.mapsService.setCurrentMapStructure(structure);
         })
@@ -107,6 +108,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
     if (this.structureEdited) {
       delete this.mapStructure._id;
       delete this.mapStructure.id;
+      delete this.mapStructure.createdAt;
       this.mapsService.createMapStructure(this.map.id, this.mapStructure).subscribe(() => {
         this.originalMapStructure = _.cloneDeep(this.mapStructure);
         this.structureEdited = false;

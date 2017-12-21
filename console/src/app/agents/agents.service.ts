@@ -6,6 +6,7 @@ import { TreeNode } from "primeng/primeng";
 import * as _ from "lodash";
 
 import { Agent } from "./models/agent.model";
+import { SNode } from "./models/snode.model";
 
 const serverUrl = environment.serverUrl;
 
@@ -38,12 +39,20 @@ export class AgentsService {
     return tree
   }
 
+  delete(agentId) {
+    return this.http.delete(serverUrl + "api/agents/" + agentId + "/delete", { responseType: 'text' as 'json' })
+  }
+
   list() {
     return this.http.get<[Agent]>(serverUrl + "api/agents")
   }
 
   status() {
     return this.http.get<any>(serverUrl + "api/agents/status")
+  }
+
+  update(agent) {
+    return this.http.put<Agent>(serverUrl + "api/agents/" + agent._id + "/update", agent);
   }
 
 }

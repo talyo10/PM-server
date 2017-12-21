@@ -5,11 +5,18 @@
       <p class="lead">{{project?.description}}</p>
     </div>
   </div>
+  <div class="d-flex flex-row-reverse">
+    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
+    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  </div>
+
   <div class="row">
     <p class="lead" *ngIf="!project?.maps || project?.maps?.length === 0">
       No maps yet.
       Go ahead and <a routerLink="/maps/create" [queryParams]="{'project': project?.id}">add a new map</a>.
     </p>
+
+
     <table class="table" *ngIf="project?.maps?.length > 0">
       <thead>
       <tr>
@@ -21,7 +28,7 @@
       </thead>
       <tbody>
 
-      <tr *ngFor="let maps of project?.maps; let i = index">
+      <tr *ngFor="let maps of project?.maps | filter:{term: filterTerm, param: 'name'}; let i = index">
         <th scope="row">{{ i+1 }}</th>
         <td><a [routerLink]="['/maps', maps.id]">{{ maps.name }}</a></td>
         <td>{{ maps.description }}</td>

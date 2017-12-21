@@ -7,6 +7,7 @@ export class Project implements IProject {
   name: string;
   description?: String;
   createdAt?: Date;
+  updatedAt?: Date;
   archived?: boolean;
   maps?: [string] | [Map];
 }

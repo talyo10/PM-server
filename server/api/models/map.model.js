@@ -5,10 +5,9 @@ let mapSchema = new Schema({
     name: { type: String, required: true },
     description: String,
     licence: String,
-    createdAt: { type: Date, default: Date.now },
     archived: { type: Boolean, default: false },
     agents: [{ type: Schema.Types.ObjectId, ref: 'Agent' }]
-});
+}, { timestamps: true });
 
 mapSchema.set('toJSON', {
     transform: function (doc, ret, options) {

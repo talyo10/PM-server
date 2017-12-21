@@ -17,6 +17,8 @@ import { ProjectsListComponent } from "./projects/projects-list/projects-list.co
 import { ProjectDetailsComponent } from "./projects/project-details/project-details.component";
 import { ProjectCreateComponent } from "./projects/project-create/project-create.component";
 import { AdminComponent } from "./admin/admin.component";
+import { AgentsListComponent } from "./agents/agents-list/agents-list.component";
+import { MapSettingComponent } from "./maps/map-detail/map-setting/map-setting.component";
 
 const appRoutes: Routes = [
   // maps
@@ -31,11 +33,19 @@ const appRoutes: Routes = [
   },
   {
     path: 'maps/:id',
+    redirectTo: 'maps/:id/edit/design',
+  },
+  {
+    path: 'maps/:id',
     component: MapDetailComponent,
     children: [
       {
         path: 'metadata',
         component: MapMetadataComponent
+      },
+      {
+        path: 'settings',
+        component: MapSettingComponent
       },
       {
         path: 'edit',
@@ -81,11 +91,19 @@ const appRoutes: Routes = [
 //  admin
   {
     path: 'admin',
+    redirectTo: 'admin/plugins',
+  },
+  {
+    path: 'admin',
     component: AdminComponent,
     children: [
       {
         path: 'plugins',
         component: PluginsListComponent
+      },
+      {
+        path: 'agents',
+        component: AgentsListComponent
       }
     ]
   }

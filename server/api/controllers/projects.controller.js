@@ -46,7 +46,8 @@ module.exports = {
 
     /* filter projects */
     filter: (req, res) => {
-        projectsService.filter(req.body).then(projects => {
+        console.log(req.query);
+        projectsService.filter(req.query).then(projects => {
             res.json(projects);
         }).catch((error) => {
             console.log("Error creating new project: ", error);

@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  search: boolean = false;
+
+
+  toggleSearch() {
+    this.search = !this.search;
+  }
+
 }

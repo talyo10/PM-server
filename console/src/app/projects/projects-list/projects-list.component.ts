@@ -10,6 +10,7 @@ import { Project } from "../models/project.model";
 export class ProjectsListComponent implements OnInit {
   projects: [Project];
   projectsReq: any;
+  filterTerm: string;
   constructor(private projectsService: ProjectsService) { }
 
   ngOnInit() {

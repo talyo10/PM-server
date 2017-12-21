@@ -1,8 +1,13 @@
-<div class="container">
-  <h1>Plugins</h1>
+<div class="main">
+  <h1 class="display-1"><i class="fa fa-plug" aria-hidden="true"></i>  Plugins</h1>
 
-  <app-plugin-upload></app-plugin-upload>
+  <!--<app-plugin-upload></app-plugin-upload>-->
 
+  <div class="d-flex">
+    <div class="mr-auto p-2"><button class="btn btn-primary" (click)="onOpenModal()">Upload a plugin</button></div>
+    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
+    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  </div>
   <table class="table" *ngIf="plugins && plugins?.length > 0">
     <thead>
     <tr>
@@ -14,7 +19,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let plugin of plugins; let i = index">
+    <tr *ngFor="let plugin of plugins | filter:{term: filterTerm, param: 'name'}; let i = index">
       <th scope="row">{{ i + 1 }}</th>
       <td>{{ plugin.name }}</td>
       <td>{{ plugin.description }}</td>

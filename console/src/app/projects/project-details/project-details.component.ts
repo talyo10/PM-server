@@ -13,6 +13,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   id: string;
   projectReq: any;
   routeReq: any;
+  filterTerm: string;
 
   constructor(private route: ActivatedRoute, private projectsService: ProjectsService) {
   }

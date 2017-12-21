@@ -14,7 +14,10 @@ import { MapStructure } from "../../../models/map-structure.model";
 export class MapCodeComponent implements OnInit {
   structure: MapStructure;
   mapSubscription: Subscription;
-  editorOptions = { language: 'javascript' };
+  editorOptions = {
+    theme: 'vs-dark',
+    language: 'javascript'
+  };
   code: string;
 
   constructor(private mapsService: MapsService) {

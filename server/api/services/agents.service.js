@@ -132,6 +132,10 @@ module.exports = {
     },
     followAgent: followAgentStatus,
     unfollowAgent: unfollowAgentStatus,
+    /* update an agent */
+    update: (agentId, agent) => {
+        return Agent.findByIdAndUpdate(agentId, agent, { new: true });
+    },
     /* exporting the agents status */
     agentsStatus: getAgentStatus
 };

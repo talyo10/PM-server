@@ -4,7 +4,7 @@
   height: 100%;
 }
 .pane-title {
-  @extend .pane-title;
+  @extend .pane-header;
 }
 
 .code-editor {

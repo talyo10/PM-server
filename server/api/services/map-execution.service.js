@@ -1,4 +1,6 @@
 const vm = require("vm");
+const fs = require("fs");
+const path = require("path");
 
 const graphlib = require('graphlib');
 const _ = require("lodash");
@@ -11,11 +13,20 @@ const mapsService = require("./maps.service");
 const pluginsService = require("../services/plugins.service");
 
 
+let libpm = '';
+fs.readFile(path.join(path.dirname(path.dirname(__dirname)), 'libs', 'sdk.js'), 'utf8', function (err, data) {
+    // opens the lib_production file. this file is used for user to use overwrite custom function at map code
+    if (err) {
+        return console.log(err);
+    }
+    libpm = data;
+});
+
+
 function createContext(mapObj, context) {
     try {
         vm.createContext(context);
-        // vm.runInNewContext(libpm + "\n" + mapObj.code, context); // fill context with map context TODO: add libpm
-        vm.runInNewContext(mapObj.code, context);
+        vm.runInNewContext(libpm + "\n" + mapObj.code, context);
         return 0;
     } catch (error) {
         return error;
@@ -92,8 +103,7 @@ function executeMap(mapId, versionIndex, cleanWorkspace) {
             if (mapAgent.key && agents[mapAgent.key] && agents[mapAgent.key].alive) {
                 mapAgent.status = "available";
                 mapAgent.executionContext = vm.createContext(_.cloneDeep(executionContext)); // cloning the execution context for each agent
-                // vm.runInNewContext(libpm + "\n" + mapStructure.code, mapAgent.executionContext); TODO: add libpm
-                vm.runInNewContext(mapStructure.code, mapAgent.executionContext);
+                vm.runInNewContext(libpm + "\n" + mapStructure.code, mapAgent.executionContext);
                 executionAgents[mapAgent.key] = mapAgent;
             }
         }
@@ -455,7 +465,7 @@ function summarizeExecution(executionContext) {
         let agentsResult = {
             processes: [],
             agent: agent._id,
-            status: agent.status === "available"? 'success': agent.status,
+            status: agent.status === "available" ? 'success' : agent.status,
             startTime: agent.startTime,
             finishTime: agent.finishTime
         };
@@ -475,7 +485,7 @@ function summarizeExecution(executionContext) {
                 finishTime: process.finishTime,
             };
             for (let k in process.actions) {
-            let actionResult = {};
+                let actionResult = {};
                 let action = process.actions[k];
                 actionResult.action = k;
                 actionResult.name = action.name;
@@ -499,6 +509,6 @@ function summarizeExecution(executionContext) {
 module.exports = {
     execute: executeMap,
     results: (mapId) => {
-        return MapResult.find({ map: mapId })
+        return MapResult.find({ map: mapId }, null, { sort: { startTime: -1 } })
     }
 }

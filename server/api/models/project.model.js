@@ -4,10 +4,9 @@ const Schema = mongoose.Schema;
 let projectSchema = new Schema({
     name: { type: String, required: true },
     description: String,
-    createdAt: { type: Date, default: Date.now },
     archived: { type: Boolean, default: false },
     maps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Map' }]
-});
+}, { timestamps: true });
 
 projectSchema.set('toJSON', {
     transform: function (doc, ret, options) {

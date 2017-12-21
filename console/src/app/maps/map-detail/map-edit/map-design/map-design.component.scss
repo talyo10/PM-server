@@ -9,12 +9,14 @@
     right: 0;
     top: 0;
     height: 100%;
-    background: white;
     @extend .base-shadow;
     @extend .side-bar;
   }
 }
 
+.pane-header {
+  @extend .pane-header;
+}
 /* port styling */
 .available-magnet {
   fill: green;

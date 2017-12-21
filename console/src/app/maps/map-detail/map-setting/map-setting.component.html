@@ -1,0 +1,19 @@
+<div class="main">
+  <div class="col-6">
+
+    <div class="form-row">
+      <div class="col-10">
+        <select name="" id="" class="form-control" [(ngModel)]="structureId">
+          <option disabled>Select version from list</option>
+          <option *ngFor="let structure of structures; let i = index" [ngValue]="structure.id">{{structures.length - i}} ({{ structure.id }}, {{structure.createdAt | date: 'short'}})</option>
+        </select>
+      </div>
+      <div class="col-2">
+        <button class="btn btn-primary btn-block" (click)="changeStructure()">Go</button>
+      </div>
+
+    </div>
+    <button class="btn btn-outline-primary btn-block">Duplicate map</button>
+    <button class="btn btn-outline-danger btn-block" (click)="archiveMap()">Archive map</button>
+  </div>
+</div>

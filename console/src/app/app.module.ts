@@ -12,6 +12,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TreeTableModule, SharedModule } from 'primeng/primeng';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { FilterPipe } from './shared/filter.pipe';
 
 
 // map components etc.
@@ -37,6 +38,7 @@ import { TriggerFormComponent } from './maps/map-detail/map-edit/map-enviroment-
 import { ProcessResultComponent } from './maps/map-detail/map-results/process-result/process-result.component';
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MapSettingComponent } from './maps/map-detail/map-setting/map-setting.component';
 
 
 // plugins components etc.
@@ -46,6 +48,8 @@ import { PluginsListComponent } from './plugins/plugins-list/plugins-list.compon
 
 // agents etc
 import { AgentsService } from "./agents/agents.service";
+import { AgentsListComponent } from './agents/agents-list/agents-list.component';
+import { DataTableModule } from 'primeng/primeng';
 
 //projects tex
 import { ProjectsListComponent } from './projects/projects-list/projects-list.component';
@@ -54,6 +58,8 @@ import { ProjectsService } from "./projects/projects.service";
 import { ProjectCreateComponent } from './projects/project-create/project-create.component';
 import { ActionResultComponent } from './maps/map-detail/map-results/action-result/action-result.component';
 import { AdminComponent } from './admin/admin.component';
+import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
+import { SearchComponent } from './search/search.component';
 
 
 @NgModule({
@@ -69,6 +75,7 @@ import { AdminComponent } from './admin/admin.component';
     MapCreateComponent,
     MapEnvironmentPaneComponent,
     MapAgentsComponent,
+    MapSettingComponent,
     SelectAgentComponent,
     MapAttributesComponent,
     AddAttributeComponent,
@@ -83,7 +90,11 @@ import { AdminComponent } from './admin/admin.component';
     ProjectDetailsComponent,
     ProjectCreateComponent,
     ActionResultComponent,
-    AdminComponent
+    AdminComponent,
+    AgentsListComponent,
+    AddFolderComponent,
+    FilterPipe,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
@@ -96,6 +107,7 @@ import { AdminComponent } from './admin/admin.component';
     // primeng
     TreeTableModule,
     SharedModule,
+    DataTableModule,
     // ngx-bootstrap
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
@@ -105,7 +117,7 @@ import { AdminComponent } from './admin/admin.component';
 
     AppRoutingModule
   ],
-  entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent],
+  entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
   providers: [MapsService, PluginsService, AgentsService, ProjectsService],
   bootstrap: [AppComponent]
 })

@@ -14,9 +14,13 @@
     <li class="nav-item" routerLinkActive="active">
       <a class="nav-link" [routerLink]="['results']">Execution Results</a>
     </li>
+    <li class="nav-item" routerLinkActive="active">
+      <a class="nav-link" [routerLink]="['settings']">Settings</a>
+    </li>
     <li class="nav-item pull-right">
       <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-outline-primary" (click)="discardChanges()"
+        <button type="button" class="btn btn-outline-primary" (click)="openSettingsModal()"><i class="fa fa-cog" aria-hidden="true"></i>
+        </button><button type="button" class="btn btn-outline-primary" (click)="discardChanges()"
                 *ngIf="edited || structureEdited" disabled><i class="fa fa-undo" aria-hidden="true"></i> Discard
         </button>
         <button type="button" class="btn btn-outline-primary" (click)="saveMap()" *ngIf="!edited && !structureEdited"

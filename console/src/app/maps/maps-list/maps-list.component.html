@@ -1,6 +1,9 @@
 <div class="main">
   <h1 class="display-2">Maps</h1>
-
+  <div class="d-flex flex-row-reverse">
+    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
+    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  </div>
   <table class="table">
     <thead>
     <tr>
@@ -8,16 +11,16 @@
       <th scope="col">Name</th>
       <th scope="col">Description</th>
       <th scope="col">Created</th>
-      <th scope="col">Create by</th>
+      <th scope="col">Updated</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let map of maps; let i = index">
+    <tr *ngFor="let map of maps | filter:{term: filterTerm, param: 'name'}; let i = index">
       <th scope="row">{{ i+1 }}</th>
       <td><a [routerLink]="[map.id]">{{ map.name }}</a></td>
       <td>{{ map.description }}</td>
       <td>{{ map.createdAt | date: 'short' }}</td>
-      <td>User 1</td>
+      <td>{{ map.updatedAt | date: 'short' }}</td>
     </tr>
 
     </tbody>

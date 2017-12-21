@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { MapsService } from "../maps.service";
-import {Map} from "../models/map.model";
+import { Map } from "../models/map.model";
 
 @Component({
   selector: 'app-maps-list',
@@ -11,7 +11,10 @@ import {Map} from "../models/map.model";
 export class MapsListComponent implements OnInit, OnDestroy {
   maps: [Map];
   mapReq: any;
-  constructor(private mapsService: MapsService) { }
+  filterTerm: string;
+
+  constructor(private mapsService: MapsService) {
+  }
 
   ngOnInit() {
     this.mapReq = this.mapsService.allMaps().subscribe((maps) => {

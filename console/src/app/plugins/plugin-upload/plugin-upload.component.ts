@@ -4,6 +4,8 @@ import { environment } from '../../../environments/environment';
 import 'rxjs/add/operator/finally';
 
 import { PluginsService } from "../plugins.service";
+import { BsModalRef } from "ngx-bootstrap";
+import { Subject } from "rxjs/Subject";
 
 
 const serverUrl = environment.serverUrl;
@@ -14,8 +16,10 @@ const serverUrl = environment.serverUrl;
   styleUrls: ['./plugin-upload.component.scss']
 })
 export class PluginUploadComponent implements OnInit {
+  uploading: boolean = false;
+  public closing: Subject<any> = new Subject<any>();
 
-  constructor(private pluginsService: PluginsService) {
+  constructor(private pluginsService: PluginsService, public bsModalRef: BsModalRef) {
   }
 
   ngOnInit() {
@@ -31,8 +35,11 @@ export class PluginUploadComponent implements OnInit {
     }
     const formData = new FormData();
     formData.append('file', file);
+    this.uploading = true;
     this.pluginsService.upload(formData)
       .finally(() => {
+        this.uploading = false;
+        this.onClose();
       })
       .subscribe(res => {
           console.log(res);
@@ -40,8 +47,11 @@ export class PluginUploadComponent implements OnInit {
         error => {
           console.log(error);
         });
+  }
 
-
+  onClose() {
+    this.closing.next();
+    this.bsModalRef.hide();
   }
 
 }

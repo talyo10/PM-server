@@ -25,6 +25,8 @@ export class ActionResultComponent implements OnInit {
     let results = {};
     for (let i in this.action.result) {
       let action = this.action.result[i];
+      if (!action || !action.result)
+        continue
       if (action.result.res) {
 
         if (!results[action.result.res])

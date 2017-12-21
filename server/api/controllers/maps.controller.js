@@ -19,17 +19,7 @@ module.exports = {
             res.status(500).send(error);
         })
     },
-    /* create new structure */
-    createStructure: (req, res) => {
-        let mapId = req.params.id;
-        req.body.map = mapId;
-        mapsService.createStructure(req.body).then(structure => {
-            res.json(structure)
-        }).catch((error) => {
-            console.log("Error creating map structure: ", error);
-            res.status(500).send(error);
-        })
-    },
+
     detail: (req, res) => {
         mapsService.get(req.params.id).then((map) => {
             return res.status(200).json(map);
@@ -39,7 +29,7 @@ module.exports = {
         });
     },
     filter: (req, res) => {
-        let query = req.body;
+        let query = req.query;
         mapsService.filter(query).then((maps) => {
             return res.status(200).json(maps);
         }).catch((error) => {
@@ -67,6 +57,26 @@ module.exports = {
         });
     },
 
+    /* structure */
+    /* create new structure */
+    createStructure: (req, res) => {
+        let mapId = req.params.id;
+        req.body.map = mapId;
+        mapsService.createStructure(req.body).then(structure => {
+            res.json(structure)
+        }).catch((error) => {
+            console.log("Error creating map structure: ", error);
+            res.status(500).send(error);
+        })
+    },
+    getStructureList: (req, res) => {
+        mapsService.structureList(req.params.id).then(structures => {
+            res.json(structures)
+        }).catch((error) => {
+            console.log("Error finding map structures: ", error);
+            res.status(500).send(error);
+        })
+    },
 
     /* execution */
     /* execute a map */

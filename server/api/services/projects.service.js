@@ -9,7 +9,7 @@ module.exports = {
 
     /* add a map to project */
     addMap: (projectId, mapId) => {
-        return Project.findOne({_id: projectId}).then((project) => {
+        return Project.findOne({ _id: projectId }).then((project) => {
             if (!project) {
                 throw new Error("No project was found with id " + projectId);
             }
@@ -31,6 +31,25 @@ module.exports = {
 
     /* filter projects */
     filter: (query = {}) => {
+        if (query.q) {
+            // if there's is a query, filter on the name and the description
+            return Project.find({
+                $or: [
+                    {
+                        name:
+                            {
+                                $regex: `.*${query.q}.*`
+                            }
+                    },
+                    {
+                        description:
+                            {
+                                $regex: `.*${query.q}.*`
+                            }
+                    }
+                ]
+            })
+        }
         return Project.find(query)
 
     },

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 
 import { Observable } from "rxjs/Observable";
@@ -41,6 +41,11 @@ export class MapsService {
     return this.http.get<Map>(serverUrl + "api/maps/" + id)
   }
 
+  filterMaps(query): Observable<[Map]> {
+    let params = new HttpParams().set('q', query);
+    return this.http.get<[Map]>(serverUrl + "api/maps/", { params: params })
+  }
+
   setCurrentMap(map: Map) {
     this.currentMap.next(map);
   }
@@ -48,6 +53,7 @@ export class MapsService {
   updateMap(map: Map) {
     return this.http.put<Map>(serverUrl + "api/maps/" + map.id + "/update", map)
   }
+
 
   /* map execution */
 
@@ -81,6 +87,10 @@ export class MapsService {
     this.currentMapStructure.next(structure);
   }
 
+  structuresList(mapId) {
+    return this.http.get<[MapStructure]>(serverUrl + "api/maps/" + mapId + "/structures")
+  }
+
   /* map triggers */
 
   createTrigger(mapId, trigger) {
@@ -88,7 +98,8 @@ export class MapsService {
   }
 
   deleteTrigger(mapId, triggerId) {
-    return this.http.delete<any>(serverUrl + "api/maps/" + mapId + "/triggers/" + triggerId + "/delete", { responseType: 'text' });
+    const options = { responseType: 'text' as 'json' };
+    return this.http.delete<any>(serverUrl + "api/maps/" + mapId + "/triggers/" + triggerId + "/delete", options);
   }
 
   triggersList(mapId) {
