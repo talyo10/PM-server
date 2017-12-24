@@ -7,6 +7,7 @@
         We didn't find any execution
       </div>
       <div class="list-group">
+        <button type="button" class="list-group-item list-group-item-action" (click)="onSelectResult()">Map logs</button>
         <button type="button" class="list-group-item list-group-item-action"
                 [ngClass]="{'active': result._id === selectedResult?._id }"
                 *ngFor="let result of results; let i = index" (click)="onSelectResult(result)">{{ i + 1 }}
@@ -16,8 +17,26 @@
     </div>
     <div class="col-10 main-result">
       <h3 class="pane-title">Results</h3>
+      <div class="result" *ngIf="!selectedResult">
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Type</th>
+            <th scope="col">Message</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let log of executionLogs; let i = index;" class="animated flash">
+            <td>{{ log.createdAt | date: 'medium' }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.message }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="result" *ngIf="selectedResult">
-        <div class="card-deck  ">
+        <div class="card-deck ">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Run id</h4>
@@ -70,6 +89,23 @@
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Run logs</h4>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col">Time</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                  *ngFor="let log of executionLogs | filter:{term: selectedResult.runId, param: 'runId'}; let i = index;">
+                  <td>{{ log.createdAt | date: 'medium' }}</td>
+                  <td>{{ log.status }}</td>
+                  <td>{{ log.message }}</td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

@@ -46,6 +46,7 @@ export class Process implements IProcess {
   actions: [Action];
   plugin: Plugin;
   createdAt: Date;
+  correlateAgents: boolean;
   x?: number;
   y?: number;
   uuid: string;

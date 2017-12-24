@@ -5,6 +5,7 @@ const http = require('http');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bootstrap = require("./helpers/bootstrap").bootstrap;
+const socket = require('socket.io');
 
 const app = express();
 
@@ -26,6 +27,13 @@ app.use((req, res, next) => {
 });
 
 
+const server = http.createServer(app);
+io = socket(server);
+io.on('connection', function(socket){
+    console.log('a user connected');
+});
+
+
 /* Connect to db */
 mongoose.connect('mongodb://127.0.0.1:27017/refactor', {
     useMongoClient: true
@@ -40,6 +48,11 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
 
 // Angular dist output folder
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -74,9 +87,11 @@ app.get('*', (req, res) => {
 const port = process.env.PORT || '3000';
 app.set('port', port);
 
-const server = http.createServer(app);
 
 server.listen(port, () => {
     console.log(`Running on localhost:${port}`);
     bootstrap(app);
 });
+
+
+

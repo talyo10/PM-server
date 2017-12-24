@@ -9,6 +9,7 @@ import { Map } from "./models/map.model";
 import { MapStructure } from "./models/map-structure.model";
 import { MapTrigger } from "./models/map-trigger.model";
 import { MapResult } from "./models/execution-result.model";
+import { MapExecutionLogs } from "./models/map-logs.model";
 
 
 const serverUrl = environment.serverUrl;
@@ -59,6 +60,10 @@ export class MapsService {
 
   execute(mapId) {
     return this.http.get(serverUrl + "api/maps/" + mapId + "/execute")
+  }
+
+  logsList(mapId) {
+    return this.http.get<MapExecutionLogs[]>(serverUrl + "api/maps/" + mapId + "/results/logs")
   }
 
   executionResults(mapId) {

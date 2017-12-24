@@ -60,6 +60,7 @@ import { ActionResultComponent } from './maps/map-detail/map-results/action-resu
 import { AdminComponent } from './admin/admin.component';
 import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
 import { SearchComponent } from './search/search.component';
+import { SocketService } from "./maps/socket.service";
 
 
 @NgModule({
@@ -118,7 +119,7 @@ import { SearchComponent } from './search/search.component';
     AppRoutingModule
   ],
   entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
-  providers: [MapsService, PluginsService, AgentsService, ProjectsService],
+  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

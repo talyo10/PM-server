@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { MapsService } from "../../maps.service";
 import { MapStructure } from "../../models/map-structure.model";
 import { MapResult } from "../../models/execution-result.model";
+import { SocketService } from "../../socket.service";
 
 @Component({
   selector: 'app-map-results',
@@ -20,6 +21,9 @@ export class MapResultsComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   selectedResult: MapResult;
   selectedResultStructure: MapStructure;
+  executionLogs: any[];
+  executionLogsReq: any;
+  messagesSubscription: Subscription;
   selectedProcess: any;
   processChunks: [[any]];
   processChunksIndex: number = 0;
@@ -33,7 +37,7 @@ export class MapResultsComponent implements OnInit, OnDestroy {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
   };
 
-  constructor(private mapsService: MapsService) {
+  constructor(private mapsService: MapsService, private socketService: SocketService) {
   }
 
   ngOnInit() {
@@ -44,8 +48,16 @@ export class MapResultsComponent implements OnInit, OnDestroy {
       this.resultsReq = this.mapsService.executionResults(this.mapStructure.map).subscribe(results => {
         this.results = results;
         this.loading = false;
-      })
+      });
+      this.executionLogsReq = this.mapsService.logsList(this.mapStructure.map).subscribe(logs => {
+        this.executionLogs = logs;
+        this.messagesSubscription = this.socketService.getMessagesAsObservable().subscribe(message => {
+          console.log(message);
+          this.executionLogs.unshift(message)
+        })
+      });
     });
+
 
   }
 
@@ -53,9 +65,15 @@ export class MapResultsComponent implements OnInit, OnDestroy {
     this.mapStructureSubscription.unsubscribe();
     if (this.resultsReq)
       this.resultsReq.unsubscribe();
+    if (this.executionLogsReq)
+      this.executionLogsReq.unsubscribe();
   }
 
-  onSelectResult(result) {
+  onSelectResult(result?) {
+    if (!result) {
+      this.selectedResult = null;
+      return ;
+    }
     this.selectedResult = result;
     this.mapsService.getMapStructure(this.mapStructure.map, result.structure).subscribe(structure => {
       this.selectedResultStructure = structure;
@@ -143,7 +161,7 @@ export class MapResultsComponent implements OnInit, OnDestroy {
 
   nextActionChunk() {
     if (this.actionChunksIndex === this.actionChunks.length - 1)
-      return ;
+      return;
     this.actionChunksIndex++;
   }
 

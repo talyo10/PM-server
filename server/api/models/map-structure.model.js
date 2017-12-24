@@ -26,6 +26,7 @@ let processSchema = new Schema({
     default_execution: Boolean,
     preRun: String,
     postRun: String,
+    correlateAgents: { type: Boolean, default: false },
     mandatory: { type: Boolean, default: false },
     condition: String,
     createdAt: { type: Date, default: Date.now },

@@ -49,3 +49,10 @@
 .result-cards {
   position: relative;
 }
+
+.card-deck {
+  max-height: 250px;
+  .card {
+    overflow-y: scroll;
+  }
+}

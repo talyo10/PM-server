@@ -8,6 +8,7 @@ const async = require("async");
 const request = require("request");
 
 const MapResult = require("../models/map-results.model");
+const MapExecutionLog = require("../models/map-execution-log.model");
 const agentsService = require("./agents.service");
 const mapsService = require("./maps.service");
 const pluginsService = require("../services/plugins.service");
@@ -49,7 +50,8 @@ function buildMapGraph(map) {
     return map_graph;
 }
 
-function executeMap(mapId, versionIndex, cleanWorkspace) {
+function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
+
     function guidGenerator() {
         let S4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -60,7 +62,14 @@ function executeMap(mapId, versionIndex, cleanWorkspace) {
     // the function get a map Id and a versionIndex
     // TODO: add execution by sourceID
     let runId = guidGenerator();
-
+    MapExecutionLog.create({
+        map: mapId,
+        runId: runId,
+        message: "Starting map execution",
+        status: "info"
+    }).then((log) => {
+        socket.emit('update', log);
+    });
     let map;
     let mapStructure;
     let mapAgents;
@@ -109,6 +118,14 @@ function executeMap(mapId, versionIndex, cleanWorkspace) {
         }
         if (Object.keys(executionAgents).length === 0) {
             console.log("No agents selected or no live agents");
+            MapExecutionLog.create({
+                map: mapId,
+                runId: runId,
+                message: "No agents selected or no live agents",
+                status: "error"
+            }).then((log) => {
+                socket.emit('update', log);
+            });
             return;
         }
 
@@ -120,12 +137,20 @@ function executeMap(mapId, versionIndex, cleanWorkspace) {
         }
 
         startNodes.forEach(node => {
-            executeProcess(map, mapGraph, node, _.cloneDeep(executionContext), executionAgents);
+            executeProcess(map, mapGraph, node, _.cloneDeep(executionContext), executionAgents, socket);
         });
 
         return startNodes
     }).catch(error => {
         console.log("Error: ", error);
+        MapExecutionLog.create({
+            map: mapId,
+            runId: runId,
+            message: error,
+            status: "error"
+        }).then((log) => {
+            socket.emit('update', log);
+        });
     })
 }
 
@@ -136,11 +161,12 @@ function filterAgents(executionAgents) {
     return agents;
 }
 
-function executeProcess(map, mapGraph, node, executionContext, executionAgents) {
+function executeProcess(map, mapGraph, node, executionContext, executionAgents, socket) {
     if (!node) {
         console.log("No node provided");
         return;
     }
+
 
     executionContext.agents = executionAgents; // adding the context the latest agents result (so user could access them with the code);
     let process = mapGraph.node(node);
@@ -170,6 +196,16 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                     plugin: { name: plugin.name, _id: plugin._id },
                     _id: process.id
                 };
+
+                MapExecutionLog.create({
+                    map: map._id,
+                    runId: executionContext.runId,
+                    message: `'${process.name}': executing process (${agent.name})`,
+                    status: "error"
+                }).then((log) => {
+                    socket.emit('update', log);
+                });
+
                 executionAgents[agent.key].agent = agent._id;
                 let agentStr = 'var currentAgent = ' + JSON.stringify(agent);
                 vm.runInNewContext(agentStr, executionAgents[agent.key].executionContext);
@@ -181,6 +217,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                         res = vm.runInNewContext(process.condition, executionAgents[agent.key].executionContext);
                     } catch (e) {
                         console.log("Error running process condition", e);
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}': Error running process condition: ${JSON.stringify(e)}`,
+                            status: "error"
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                         agentCb();
                         executionAgents[agent.key].finishTime = new Date();
                         executionAgents[agent.key].processes[node].status = "error";
@@ -198,6 +242,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                         executionAgents[agent.key].processes[node].status = "error";
                         executionAgents[agent.key].processes[node].result = "Didn't passed condition";
                         console.log("Process didn't pass condition");
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}': Process didn't pass condition`,
+                            status: "error"
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                         executionAgents[agent.key].finishTime = new Date();
                         agentCb();
                         if (process.mandatory) {
@@ -218,6 +270,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
 
                     } catch (e) {
                         console.log("Error trying to run filter agent function", e);
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}': Error running agent filter function: ${JSON.stringify(e)}`,
+                            status: "error"
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
 
                         executionAgents[agent.key].processes[node].status = "error";
                         executionAgents[agent.key].processes[node].result = "Error running filter agent function" + e;
@@ -233,6 +293,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
 
                     if (!res) {
                         console.log("Agent didn't pass filter agent condition");
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}': agent '${agent.name}' didn't pass filter function`,
+                            status: "error"
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                         executionAgents[agent.key].processes[node].status = "error";
                         executionAgents[agent.key].processes[node].result = "Agent didn't pass filter condition";
                         if (process.mandatory) {
@@ -254,13 +322,21 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                         res = vm.runInNewContext(process.preRun, executionAgents[agent.key].executionContext);
                         executionAgents[agent.key].processes[node].preRun = res; // storing the result so user can use it later...
                     } catch (e) {
-                        console.log("Error running pre link function");
+                        console.log("Error running pre process function");
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}': error running pre-process function`,
+                            status: "error"
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                     }
                 }
 
                 let actionExecutionFunctions = {};
                 process.actions.forEach(action => {
-                    actionExecutionFunctions[action.name + "(" + action.id + ")"] = executeAction(map, process, _.cloneDeep(action), plugin, agent, executionContext, executionAgents);
+                    actionExecutionFunctions[action.name + "(" + action.id + ")"] = executeAction(map, process, _.cloneDeep(action), plugin, agent, executionContext, executionAgents, socket);
                     // actionExecutionFunctions.push(executeAction(map, link, selectedProcess, _.cloneDeep(action), agent, executionAgents[agent.key].executionContext, executionAgents)); //other option is to pass it as an array, but result would be massy.
                 });
                 async.series(actionExecutionFunctions,
@@ -272,6 +348,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                         if (error) { // a mandatory action failed
 
                             console.log("Fatal error: ", error);
+                            MapExecutionLog.create({
+                                map: map._id,
+                                runId: executionContext.runId,
+                                message: `'${process.name}': A mandatory action failed`,
+                                status: "error"
+                            }).then((log) => {
+                                socket.emit('update', log);
+                            });
                             executionAgents[agent.key].processes[node].status = "error";
                             executionAgents[agent.key].status = "error"; // stopping agent
                             if (process.mandatory) { // if the process is mandatory, should stop agent..
@@ -283,7 +367,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                             executionAgents[agent.key].processes[node].status = "success";
                             executionAgents[agent.key].status = "available";
                         }
-
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `'${process.name}' results: ${JSON.stringify(actionsResults)}`,
+                            status: executionAgents[agent.key].processes[node].status
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                         if (!process.correlateAgents) {
                             console.log("Dont have to correlate");
                             successors.forEach(successor => {
@@ -300,6 +391,14 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                                 executionAgents[agent.key].processes[node].postRun = res; // storing the result so user can use it later...
                             } catch (e) {
                                 console.log("Error running post process function");
+                                MapExecutionLog.create({
+                                    map: map._id,
+                                    runId: executionContext.runId,
+                                    message: `'${process.name}': Error running post process function`,
+                                    status: "error"
+                                }).then((log) => {
+                                    socket.emit('update', log);
+                                });
                             }
                         }
 
@@ -346,7 +445,15 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents) 
                         }
                     }
                     if (flag && executionContext.status !== "done") {
-                        console.log(": map done :")
+                        console.log(": map done :");
+                        MapExecutionLog.create({
+                            map: map._id,
+                            runId: executionContext.runId,
+                            message: `Finish running map`,
+                            status: 'success'
+                        }).then((log) => {
+                            socket.emit('update', log);
+                        });
                         executionContext.status = "done";
                         executionContext.agents = executionAgents;
                         executionContext.finishTime = new Date();
@@ -367,7 +474,7 @@ function evaluateParam(param, context) {
 
 }
 
-function executeAction(map, process, action, plugin, agent, executionContext, executionAgents) {
+function executeAction(map, process, action, plugin, agent, executionContext, executionAgents, socket) {
     return (callback) => {
         sTime = new Date();
         let action_str = 'var currentAction = ' + JSON.stringify(action) + ";";
@@ -397,7 +504,14 @@ function executeAction(map, process, action, plugin, agent, executionContext, ex
             name: plugin.name
         };
         executionAgents[agent.key].processes[process.uuid].actions[key] = action;
-
+        MapExecutionLog.create({
+            map: map._id,
+            runId: executionContext.runId,
+            message: `'${action.name}': executing action (${agent.name})`,
+            status: 'info'
+        }).then((log) => {
+            socket.emit('update', log);
+        });
         request.post(
             agent.url + '/task/register',
             {
@@ -424,6 +538,14 @@ function executeAction(map, process, action, plugin, agent, executionContext, ex
                     executionAgents[agent.key].processes[process.uuid].actions[key].result = body;
                     executionAgents[agent.key].processes[process.uuid].actions[key].startTime = sTime;
                     callback(null, body);
+                    MapExecutionLog.create({
+                        map: map._id,
+                        runId: executionContext.runId,
+                        message: `'${action.name}' result: ${JSON.stringify(body)} (${agent.name})`,
+                        status: 'success'
+                    }).then((log) => {
+                        socket.emit('update', log);
+                    });
                     return;
                 }
                 else {
@@ -431,6 +553,14 @@ function executeAction(map, process, action, plugin, agent, executionContext, ex
                     if (!res) {
                         res = error;
                     }
+                    MapExecutionLog.create({
+                        map: map._id,
+                        runId: executionContext.runId,
+                        message: `'${action.name}': Error running action on (${agent.name}): ${JSON.stringify(res)  }`,
+                        status: 'success'
+                    }).then((log) => {
+                        socket.emit('update', log);
+                    });
                     executionAgents[agent.key].processes[process.uuid].actions[key].status = "error";
                     executionAgents[agent.key].processes[process.uuid].actions[key].result = "Error " + res;
 
@@ -508,6 +638,9 @@ function summarizeExecution(executionContext) {
 
 module.exports = {
     execute: executeMap,
+    logs: (mapId) => {
+        return MapExecutionLog.find({ map: mapId }, null, { sort: { createdAt: -1 } })
+    },
     results: (mapId) => {
         return MapResult.find({ map: mapId }, null, { sort: { startTime: -1 } })
     }

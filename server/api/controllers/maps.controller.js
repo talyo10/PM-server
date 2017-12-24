@@ -81,13 +81,23 @@ module.exports = {
     /* execution */
     /* execute a map */
     execute: (req, res) => {
-        mapsExecutionService.execute(req.params.id, null, null).then((r) => {
+        mapsExecutionService.execute(req.params.id, null, null, req.io).then((r) => {
             res.json(r);
         }).catch(error => {
             console.log("Error executing map: ", error);
             return res.status(500).json(error);
         });
     },
+
+    logs: (req, res) => {
+        mapsExecutionService.logs(req.params.id).then((results) => {
+            res.json(results);
+        }).catch(error => {
+            console.log("Error getting execution results: ", error);
+            return res.status(500).json(error);
+        });
+    },
+
     results: (req, res) => {
         mapsExecutionService.results(req.params.id).then((results) => {
             res.json(results);

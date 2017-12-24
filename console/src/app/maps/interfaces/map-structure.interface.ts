@@ -38,6 +38,7 @@ export interface IProcess {
   actions: [IAction],
   plugin: IPlugin,
   createdAt: Date,
+  correlateAgents: boolean,
   x?: number,
   y?: number,
   uuid: string

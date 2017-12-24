@@ -12,12 +12,6 @@ module.exports = {
     /* The function will be called every time an agent is registering to the server (agent startup) */
     add: (req, res) => {
         agentsService.add(req.body).then(agent => {
-            let snode = { name: agent.name, agent: agent._id };
-            snodeService.create(snode).then(() => {
-                console.log("Created snode");
-            }).catch((error) => {
-                console.log("Error creating snode", error);
-            });
             // add agent to follow list
             agentsService.followAgent(agent);
             // deploy all plugins on agents

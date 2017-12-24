@@ -26,7 +26,7 @@ export class MapAttributesComponent implements OnInit {
     });
   }
 
-  openAddAtrributeModal(attr) {
+  openAddAtrributeModal(attr?) {
     let modal: BsModalRef;
     modal = this.modalService.show(AddAttributeComponent);
     modal.content.result.subscribe(result => {

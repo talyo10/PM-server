@@ -12,6 +12,7 @@ export class ActionResultComponent implements OnInit {
   @Input('action') action: any;
   tab: string = "summary";
   agResults: [{ name: string, value: number }];
+  agResponse: [{ name: string, value: number }];
   agents: any[];
 
 
@@ -26,7 +27,7 @@ export class ActionResultComponent implements OnInit {
     for (let i in this.action.result) {
       let action = this.action.result[i];
       if (!action || !action.result)
-        continue
+        continue;
       if (action.result.res) {
 
         if (!results[action.result.res])
@@ -38,7 +39,14 @@ export class ActionResultComponent implements OnInit {
         results[action.result].value++;
       }
     }
-    this.agResults = _.toArray(results);
+    this.agResponse = _.toArray(results);
+    let agResults = this.agents.reduce((total, current) => {
+      total[current.status] = (total[current.status] || 0) + 1;
+      return total;
+    }, {});
+    Object.keys(agResults).map((key, index) => {
+      agResults[key] = {name: key, value: agResults[key]}
+    });
+    this.agResults = _.toArray(agResults);
   }
-
 }
