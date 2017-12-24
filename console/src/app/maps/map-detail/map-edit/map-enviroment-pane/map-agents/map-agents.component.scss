@@ -1,0 +1,6 @@
+@import "~assets/sass/variables";
+@import "~assets/sass/base";
+
+.bottom-section {
+  @extend .btn-clock-bottom;
+}

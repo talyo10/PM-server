@@ -1,0 +1,49 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~assets/sass/variables";
+@import "~assets/sass/base";
+
+html, body {
+  height: 100%;
+  @extend .main-background;
+}
+
+.pane-title {
+  @extend .pane-header;
+}
+
+.bg-black {
+  color: $light-color;
+  background: $dark-color;
+}
+
+input, textarea, select {
+  @extend .dark-input;
+}
+
+input, textarea, select {
+  &.ng-invalid.ng-touched {
+    border: 1px solid $error;
+  }
+}
+
+textarea {
+  overflow: hidden;
+}
+
+.main {
+  overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* make scrollbar invisible */
+  }
+}
+
+.card {
+  @extend .card;
+}
+
+.list-group-item.active {
+  background-color: $blue-dark-2;
+  border-color: $blue-dark-2;
+}

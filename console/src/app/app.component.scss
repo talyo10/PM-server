@@ -1,0 +1,33 @@
+.root {
+  height: 100%;
+  .main {
+    padding: 0px;
+  }
+}
+
+.nav {
+  align-items: center;
+  li.nav-item {
+    &.active {
+      a.nav-link {
+        color: #fff;
+      }
+    }
+    a.nav-link {
+      color: #c7c7c7;
+      &:hover {
+        color: #fff;
+        transition: color 0.5s ease-out;
+      }
+    }
+
+  }
+}
+
+.search {
+  position: fixed;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+

@@ -1,0 +1,17 @@
+@import "~assets/sass/base";
+
+
+.side-bar {
+  @extend .base-shadow;
+  @extend .side-bar;
+}
+
+.router-wrapper {
+  height: 100%;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+  height: 100%;
+}

@@ -1,0 +1,24 @@
+<div class="container">
+  <hr class="my-4">
+  <span *ngIf="map?.agents?.length === 0">No agents selected for this map</span>
+  <div *ngIf="map?.agents?.length > 0">
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let agent of map.agents; let i = index;">
+        <span>{{ agent?.name }}</span>
+        <span>
+             <span
+               [ngClass]="{'text-success': statuses[agent?.key]?.alive, 'text-danger': !statuses[agent?.key]?.alive}"
+               *ngIf="statuses">
+          <i class="fa fa-circle" aria-hidden="true"></i>
+        </span>
+          </span>
+      </li>
+    </ul>
+  </div>
+  <div class="row bottom-section">
+    <div class="col-sm-12">
+      <button type="button" class="btn btn-primary btn-block" (click)="openSelectAgentsModal()">Select agents</button>
+    </div>
+  </div>
+</div>

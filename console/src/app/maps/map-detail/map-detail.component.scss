@@ -1,0 +1,30 @@
+@import "~assets/sass/base";
+@import "~assets/sass/mixins";
+@import "~assets/sass/variables";
+
+.map-nav {
+  @include border-box($dark-color, 1px, 0, 1px, 0);
+  line-height: 45px;
+  margin-bottom: 2px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nav-item {
+  &.active {
+    border-bottom: 5px solid $primary-color;
+  }
+}
+
+h1 {
+  padding-left: 15px;
+}
+.router-wrapper {
+  height: calc(100% - 145px);
+}
+
+.pull-right {
+  position: absolute;
+  right: 50px;
+  top: 100px;
+}
