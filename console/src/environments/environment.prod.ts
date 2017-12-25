@@ -1,6 +1,4 @@
-import { SERVER_URL } from './private';
-
 export const environment = {
   production: true,
-  serverUrl: SERVER_URL
+  serverUrl: 'http://54.93.225.228:3000'
 };
