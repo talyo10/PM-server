@@ -45,6 +45,8 @@ import { MapSettingComponent } from './maps/map-detail/map-setting/map-setting.c
 import { CalendarContainerComponent } from './calendar/calendar-container/calendar-container.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { CalendarModule } from 'angular-calendar';
+
 
 // plugins components etc.
 import { PluginsService } from './plugins/plugins.service';
@@ -126,6 +128,9 @@ import { CalendarComponent } from './calendar/calendar/calendar.component';
     BsDatepickerModule.forRoot(),
     TimepickerModule.forRoot(),
     NgxChartsModule,
+
+    // angular-calendar
+    CalendarModule.forRoot(),
 
     AppRoutingModule
   ],
