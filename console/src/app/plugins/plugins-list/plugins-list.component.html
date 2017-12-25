@@ -11,7 +11,7 @@
   <table class="table" *ngIf="plugins && plugins?.length > 0">
     <thead>
     <tr>
-      <th scope="col">#</th>
+      <th scope="col"></th>
       <th scope="col">Name</th>
       <th scope="col">Description</th>
       <th scope="col">Version</th>
@@ -20,7 +20,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let plugin of plugins | filter:{term: filterTerm, param: 'name'}; let i = index">
-      <th scope="row">{{ i + 1 }}</th>
+      <td><img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail"></td>
       <td>{{ plugin.name }}</td>
       <td>{{ plugin.description }}</td>
       <td>{{ plugin.version }}</td>
