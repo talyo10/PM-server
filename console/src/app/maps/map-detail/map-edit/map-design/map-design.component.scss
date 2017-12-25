@@ -1,4 +1,5 @@
 @import "~assets/sass/base";
+@import "~assets/sass/variables";
 
 .wrapper {
   height: 100%;
@@ -14,9 +15,14 @@
   }
 }
 
+.graph {
+  background: $grey-dark-1;
+}
+
 .pane-header {
   @extend .pane-header;
 }
+
 /* port styling */
 .available-magnet {
   fill: green;
@@ -26,5 +32,4 @@
 .available-cell rect {
   stroke-dasharray: 5, 2;
 }
-
 

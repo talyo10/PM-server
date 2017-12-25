@@ -69,11 +69,21 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       gridSize: this.scale,
       model: this.graph,
       snapLinks: { radius: 75 },
-      linkPinning: false,
+      linkPinning: true,
       embeddingMode: false,
       defaultLink: new joint.dia.Link({
-        // router: { name: 'manhattan' },
+        router: { name: 'manhattan' },
         connector: { name: 'rounded' },
+        attrs: {
+          '.connection': {
+            stroke: '#87939A',
+            'stroke-width': 3
+          },
+          '.marker-target': {
+            fill: '#87939A',
+            d: 'M 10 0 L 0 5 L 10 10 z'
+          }
+        }
       }),
       markAvailable: true,
       validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
