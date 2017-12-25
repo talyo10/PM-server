@@ -52,6 +52,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.pluginsReq = this.pluginsService.list().subscribe(plugins => {
       this.plugins = plugins;
     });
+    this.defineShape();
   }
 
   ngOnDestroy() {
@@ -72,7 +73,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       embeddingMode: false,
       defaultLink: new joint.dia.Link({
         // router: { name: 'manhattan' },
-        connector: { name: 'rounded' }
+        connector: { name: 'rounded' },
       }),
       markAvailable: true,
       validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
@@ -124,63 +125,161 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.mapsService.setCurrentMapStructure(this.mapStructure);
   }
 
-  addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
-    let m1 = new joint.shapes.devs.Model({
-      position: { x: 50, y: 50 },
-      size: { width: 110, height: 75 },
-      inPorts: [' '],
-      outPorts: ['  '],
-      ports: {
-        groups: {
-          'in': {
-            attrs: {
-              '.port-body': {
-                fill: '#2c2c2c',
-                stroke: '#a2a2a2',
-                magnet: 'active'
+  defineShape() {
+    joint.shapes.devs['MyImageModel'] = joint.shapes.devs.Model.extend({
+
+      markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><image/><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+
+      defaults: joint.util.deepSupplement({
+
+        type: 'devs.MyImageModel',
+        size: {
+          width: 80,
+          height: 80
+        },
+        attrs: {
+          rect: {
+            stroke: '#d1d1d1',
+            fill: {
+              type: 'linearGradient',
+              stops: [{
+                offset: '0%',
+                color: 'white'
+              }, {
+                offset: '50%',
+                color: '#d1d1d1'
+              }],
+              attrs: {
+                x1: '0%',
+                y1: '0%',
+                x2: '0%',
+                y2: '100%'
               }
             }
           },
-          'out': {
-            attrs: {
-              '.port-body': {
-                fill: '#a2a2a2',
-                stroke: '#a2a2a2'
-              }
-            }
+          circle: {
+            stroke: 'gray'
+          },
+          '.label': {
+            text: '',
+            'ref-y': -20
+          },
+          '.inPorts circle': {
+            fill: '#c8c8c8'
+          },
+          '.outPorts circle': {
+            fill: '#262626'
+          },
+          image: {
+            'xlink:href': 'http://via.placeholder.com/350x150',
+            width: 80,
+            height: 50,
+            'ref-x': .5,
+            'ref-y': .5,
+            ref: 'rect',
+            'x-alignment': 'middle',
+            'y-alignment': 'middle'
           }
         }
+      }, joint.shapes.devs.Model.prototype.defaults)
+    });
+  }
+
+  addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
+    console.log('should add a new process');
+    const pluginName = obj.cell.model.attributes.attrs.text.text;
+    const plugin = this.plugins.find((p) => {
+      return p.name === pluginName;
+    });
+
+    const imageModel = new joint.shapes.devs['MyImageModel']({
+      position: {
+        x: obj.x,
+        y: obj.y
       },
+      size: {
+        width: 110,
+        height: 75
+      },
+      inPorts: [' '],
+      outPorts: ['  '],
       attrs: {
-        '.label': { text: 'Command Line', 'ref-y': 0.83, 'y-alignment': 'middle', fill: '#f1f1f1', 'font-size': 13 },
-        '.body': { stroke: '#3c3e41', fill: '#2c2c2c', 'rx': 6, 'ry': 6 },
-        '.port-body': { r: 7.5, stroke: 'gray', fill: '#2c2c2c', magnet: 'active' },
-        rect: { fill: '#2c2c2c', stroke: '#a2a2a2' }
+        '.label': { text: pluginName },
+        image: { 'xlink:href': `plugins/${pluginName}/${plugin.imgUrl}`}
       }
     });
-
-    m1.position(obj.x - offsetLeft - 450, obj.y - offsetTop + 350);
-    let c = m1.clone();
-    c.attributes.attrs['.label'].text = obj.cell.model.attributes.attrs.text.text;
-    // c.attributes.position(obj.x - offsetLeft, obj.y - offsetTop);
-    this.graph.addCell(c);
+    this.graph.addCell(imageModel);
+    console.log(joint.shapes.devs['MyImageModel']);
     let p = new Process();
-    p.plugin = _.find(this.plugins, (o) => {
-      return o.name === c.attributes.attrs['.label'].text
-    });
-    p.uuid = <string>c.id;
-    p.x = c.attributes.position.x;
-    p.y = c.attributes.position.y;
+    p.plugin = plugin;
+    p.uuid = <string>imageModel.id;
 
-    if (!this.mapStructure.processes)
+    if (!this.mapStructure.processes) {
       this.mapStructure.processes = [p];
-    else
+    } else {
       this.mapStructure.processes.push(p);
+    }
     this.mapStructure.content = JSON.stringify(this.graph.toJSON());
     this.mapsService.setCurrentMapStructure(this.mapStructure);
     console.log(this.mapStructure);
 
     this.editProcess(this.mapStructure.processes[this.mapStructure.processes.length - 1]);
+    // let m1 = new joint.shapes.devs.Model({
+    //   position: { x: 50, y: 50 },
+    //   size: { width: 110, height: 75 },
+    //   inPorts: [' '],
+    //   outPorts: ['  '],
+    //   ports: {
+    //     groups: {
+    //       'in': {
+    //         attrs: {
+    //           '.port-body': {
+    //             fill: '#2c2c2c',
+    //             stroke: '#a2a2a2',
+    //             magnet: 'active'
+    //           }
+    //         }
+    //       },
+    //       'out': {
+    //         attrs: {
+    //           '.port-body': {
+    //             fill: '#a2a2a2',
+    //             stroke: '#a2a2a2'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   },
+    //   attrs: {
+    //     '.label': { text: 'Command Line', 'ref-y': 0.83, 'y-alignment': 'middle', fill: '#f1f1f1', 'font-size': 13 },
+    //     '.body': { stroke: '#3c3e41', fill: '#2c2c2c', 'rx': 6, 'ry': 6 },
+    //     '.port-body': { r: 7.5, stroke: 'gray', fill: '#2c2c2c', magnet: 'active' },
+    //     rect: { fill: '#2c2c2c', stroke: '#a2a2a2' }
+    //   }
+    // });
+    //
+    // m1.position(obj.x - offsetLeft - 450, obj.y - offsetTop + 350);
+    // let c = m1.clone();
+    // c.attributes.attrs['.label'].text = obj.cell.model.attributes.attrs.text.text;
+    // // c.attributes.position(obj.x - offsetLeft, obj.y - offsetTop);
+    // this.graph.addCell(c);
+    // let p = new Process();
+    // p.plugin = _.find(this.plugins, (o) => {
+    //   return o.name === c.attributes.attrs['.label'].text
+    // });
+    // p.uuid = <string>c.id;
+    // p.x = c.attributes.position.x;
+    // p.y = c.attributes.position.y;
+    //
+    // if (!this.mapStructure.processes)
+    //   this.mapStructure.processes = [p];
+    // else
+    //   this.mapStructure.processes.push(p);
+    // this.mapStructure.content = JSON.stringify(this.graph.toJSON());
+    // this.mapsService.setCurrentMapStructure(this.mapStructure);
+    // console.log(this.mapStructure);
+    //
+    // this.editProcess(this.mapStructure.processes[this.mapStructure.processes.length - 1]);
   }
 
   drawGraph() {
@@ -205,7 +304,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     let move = false;
     let initialPosition = { x: 0, y: 0 };
     this.paper.on('blank:pointerdown', (event, x, y) => {
-      initialPosition = { x: x * this.scale, y: y * this.scale};
+      initialPosition = { x: x * this.scale, y: y * this.scale };
       move = true;
     });
 
