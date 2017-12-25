@@ -64,3 +64,5 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+private.ts

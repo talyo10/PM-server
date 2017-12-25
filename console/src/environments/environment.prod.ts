@@ -1,4 +1,6 @@
+import { SERVER_URL } from './private';
+
 export const environment = {
   production: true,
-  serverUrl: 'http://localhost:3000/'
+  serverUrl: SERVER_URL
 };

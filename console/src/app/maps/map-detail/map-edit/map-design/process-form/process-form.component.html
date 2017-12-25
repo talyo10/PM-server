@@ -104,7 +104,7 @@
       <button type="button" class="btn btn-outline-secondary btn-sm btn-block" (click)="addNewAction()">Add action
       </button>
       <div formArrayName="actions">
-        <div *ngFor="let action of processForm.controls.actions.controls; let i=index">
+        <div *ngFor="let action of processForm.controls.actions['controls']; let i=index">
           <div class="d-flex justify-content-between">
             <span *ngIf="processForm.get('actions').at(i).get('name').value">{{processForm.get('actions').at(i).get('name').value}} (#{{i + 1}})</span>
             <span *ngIf="!processForm.get('actions').at(i).get('name').value">Action #{{i + 1}}</span>
