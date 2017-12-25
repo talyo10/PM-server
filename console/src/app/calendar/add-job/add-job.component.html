@@ -1,0 +1,41 @@
+Add a new scheduled job
+
+<form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
+  <div class="form-group">
+    <label for="project">Project</label>
+    <select class="form-control" formControlName="project" id="project" (change)="onSelectProject()">
+      <option disabled>Select a project</option>
+      <option *ngFor="let project of projects" [ngValue]="project._id">{{project.name}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="project">Project</label>
+    <select class="form-control" formControlName="map" id="map">
+      <option disabled *ngIf="selectedProject">Select a map</option>
+      <option disabled *ngIf="!selectedProject">Select a project first</option>
+      <option *ngFor="let map of selectedProject?.maps" [ngValue]="map._id" [disabled]="!selectedProject">{{map.name}}</option>
+    </select>
+  </div>
+
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="radio" formControlName="type" name="type" id="type1" value="once" >
+      Once
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="radio" formControlName="type" name="type" id="type2" value="repeated">
+      Repeated
+    </label>
+  </div>
+  <div class="form-group">
+    <label>Date:</label>
+    <input type="text" id="date" bsDatepicker class="form-control" formControlName="date"/>
+  </div>
+  <div class="form-group">
+    <label>Time:</label>
+    <timepicker formControlName="time"></timepicker>
+  </div>
+  <button type="submit" class="btn btn-primary btn-block" >Create</button>
+</form>

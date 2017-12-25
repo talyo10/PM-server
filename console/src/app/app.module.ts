@@ -16,9 +16,10 @@ import { FilterPipe } from './shared/filter.pipe';
 
 
 // map components etc.
+import { MapsService } from "./maps/maps.service";
+import { SocketService } from "./maps/socket.service";
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MapDetailComponent } from './maps/map-detail/map-detail.component';
-import { MapsService } from "./maps/maps.service";
 import { MapPropertiesComponent } from './maps/map-detail/map-properties/map-properties.component';
 import { MapDesignComponent } from './maps/map-detail/map-edit/map-design/map-design.component';
 import { MapResultsComponent } from './maps/map-detail/map-results/map-results.component';
@@ -40,6 +41,10 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MapSettingComponent } from './maps/map-detail/map-setting/map-setting.component';
 
+// calendar
+import { CalendarContainerComponent } from './calendar/calendar-container/calendar-container.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 // plugins components etc.
 import { PluginsService } from './plugins/plugins.service';
@@ -60,7 +65,8 @@ import { ActionResultComponent } from './maps/map-detail/map-results/action-resu
 import { AdminComponent } from './admin/admin.component';
 import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
 import { SearchComponent } from './search/search.component';
-import { SocketService } from "./maps/socket.service";
+import { AddJobComponent } from './calendar/add-job/add-job.component';
+import { CalendarComponent } from './calendar/calendar/calendar.component';
 
 
 @NgModule({
@@ -95,7 +101,10 @@ import { SocketService } from "./maps/socket.service";
     AgentsListComponent,
     AddFolderComponent,
     FilterPipe,
-    SearchComponent
+    SearchComponent,
+    CalendarContainerComponent,
+    AddJobComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -103,6 +112,7 @@ import { SocketService } from "./maps/socket.service";
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
+    BrowserAnimationsModule,
 
     MonacoEditorModule,
     // primeng
@@ -113,8 +123,9 @@ import { SocketService } from "./maps/socket.service";
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
+    BsDatepickerModule.forRoot(),
+    TimepickerModule.forRoot(),
     NgxChartsModule,
-    BrowserAnimationsModule,
 
     AppRoutingModule
   ],

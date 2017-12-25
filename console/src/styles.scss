@@ -47,3 +47,10 @@ textarea {
   background-color: $blue-dark-2;
   border-color: $blue-dark-2;
 }
+
+
+.bs-datepicker-body, bs-datepicker-head {
+  background: $grey-dark-1;
+  border: 1px solid $grey-light-1;
+  border-radius: 5px;
+}
