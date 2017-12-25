@@ -3,7 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 
 // map components
 import { MapDetailComponent } from "./maps/map-detail/map-detail.component";
-import { MapMetadataComponent } from "./maps/map-detail/map-metadata/map-metadata.component";
+import { MapPropertiesComponent } from "./maps/map-detail/map-properties/map-properties.component";
 import { MapCodeComponent } from "./maps/map-detail/map-edit/map-code/map-code.component";
 import { MapDesignComponent } from "./maps/map-detail/map-edit/map-design/map-design.component";
 import { MapResultsComponent } from "./maps/map-detail/map-results/map-results.component";
@@ -40,8 +40,8 @@ const appRoutes: Routes = [
     component: MapDetailComponent,
     children: [
       {
-        path: 'metadata',
-        component: MapMetadataComponent
+        path: 'properties',
+        component: MapPropertiesComponent
       },
       {
         path: 'settings',

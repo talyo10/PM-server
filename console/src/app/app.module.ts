@@ -19,7 +19,7 @@ import { FilterPipe } from './shared/filter.pipe';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MapDetailComponent } from './maps/map-detail/map-detail.component';
 import { MapsService } from "./maps/maps.service";
-import { MapMetadataComponent } from './maps/map-detail/map-metadata/map-metadata.component';
+import { MapPropertiesComponent } from './maps/map-detail/map-properties/map-properties.component';
 import { MapDesignComponent } from './maps/map-detail/map-edit/map-design/map-design.component';
 import { MapResultsComponent } from './maps/map-detail/map-results/map-results.component';
 import { MapCodeComponent } from './maps/map-detail/map-edit/map-code/map-code.component';
@@ -67,7 +67,7 @@ import { SocketService } from "./maps/socket.service";
   declarations: [
     AppComponent,
     MapDetailComponent,
-    MapMetadataComponent,
+    MapPropertiesComponent,
     MapDesignComponent,
     MapResultsComponent,
     MapCodeComponent,
