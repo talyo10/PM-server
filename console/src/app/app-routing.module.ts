@@ -40,7 +40,7 @@ const appRoutes: Routes = [
     component: MapDetailComponent,
     children: [
       {
-        path: 'metadata',
+        path: 'properties',
         component: MapPropertiesComponent
       },
       {
