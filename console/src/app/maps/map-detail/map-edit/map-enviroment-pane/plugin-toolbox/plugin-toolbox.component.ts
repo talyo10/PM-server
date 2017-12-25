@@ -60,15 +60,15 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
     });
 
     this.stencilPaper.on('cell:pointerdown', (cellView, event, x, y) => {
-        this.flyCell(cellView, event, x, y)
+        this.flyCell(cellView, event, x, y);
       }
-    )
+    );
   }
 
   flyCell(cellView, event, x, y) {
     let self = this;
 
-    $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
+    $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;background: transparent"></div>');
     var flyGraph = new joint.dia.Graph,
       flyPaper = new joint.dia.Paper({
         el: $('#flyPaper'),
