@@ -7,10 +7,10 @@ import { Map } from "../../models/map.model";
 
 @Component({
   selector: 'app-map-metadata',
-  templateUrl: './map-metadata.component.html',
-  styleUrls: ['./map-metadata.component.scss']
+  templateUrl: './map-properties.component.html',
+  styleUrls: ['./map-properties.component.scss']
 })
-export class MapMetadataComponent implements OnInit {
+export class MapPropertiesComponent implements OnInit {
   map: Map;
   mapSubscription: Subscription;
   constructor(private mapsService: MapsService) { }
@@ -18,8 +18,7 @@ export class MapMetadataComponent implements OnInit {
   ngOnInit() {
     this.mapSubscription = this.mapsService.getCurrentMap().subscribe(map => {
       this.map = map;
-    })
-
+    });
   }
 
 }
