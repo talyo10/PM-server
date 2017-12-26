@@ -84,6 +84,10 @@ const appRoutes: Routes = [
     component: ProjectCreateComponent
   },
   {
+    path: 'projects/update',
+    component: ProjectCreateComponent
+  },
+  {
     path: 'projects/:id',
     component: ProjectDetailsComponent
   },
