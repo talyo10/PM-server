@@ -29,13 +29,14 @@ app.use((req, res, next) => {
 
 const server = http.createServer(app);
 io = socket(server);
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
     console.log('a user connected');
 });
 
 
+const db = (process.env.MONGO_HOST || 'localhost') + ":" + (process.env.MONGO_PORT || 27017) + "/" + (process.env.DB_NAME || 'refactor');
 /* Connect to db */
-mongoose.connect('mongodb://127.0.0.1:27017/refactor', {
+mongoose.connect(`mongodb://${db}`, {
     useMongoClient: true
 }).then(() => {
     console.log(`Succesfully Connected to the Mongodb Database  at URL : mongodb://127.0.0.1:27017/refactor`);
@@ -76,11 +77,10 @@ app.use('/api/agents', agentsApi);
 app.use('/api/projects', projectsApi);
 
 
-
 // Send all other requests to the Angular app
 app.all('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-  });
+});
 
 
 //Set Port
