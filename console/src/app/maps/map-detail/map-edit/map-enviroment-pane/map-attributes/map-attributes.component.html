@@ -5,7 +5,7 @@
         *ngFor="let attr of mapStructure?.attributes; let i = index;">
       <span>"{{attr.name}}" = "{{attr.value}}"</span>
       <span>
-        <button type="button" class="btn btn-link" (click)="openAddAtrributeModal(attr)">
+        <button type="button" class="btn btn-link" (click)="openAddAtrributeModal(i)">
           <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
         </button>
         <button type="button" class="btn btn-link" (click)="removeAttribute(i)">

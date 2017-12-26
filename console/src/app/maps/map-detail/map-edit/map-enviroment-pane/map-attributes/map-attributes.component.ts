@@ -26,20 +26,25 @@ export class MapAttributesComponent implements OnInit {
     });
   }
 
-  openAddAtrributeModal(attr?) {
+  openAddAtrributeModal(index?) {
+    const attribute = this.mapStructure.attributes[index];
+    const attributesNames = this.mapStructure.attributes.reduce((total, current, i) => {
+      if (index !== i) {
+        total.push(current.name);
+      }
+      return total;
+    }, []);
     let modal: BsModalRef;
     modal = this.modalService.show(AddAttributeComponent);
+    modal.content.attribute = attribute;
+    modal.content.forbiddenNames = attributesNames;
     modal.content.result.subscribe(result => {
-      console.log(result);
-      let attr = _.find(this.mapStructure.attributes, (o) => {
-        return o.name === result.name
-      });
-      if (!attr) {
-        this.mapStructure.attributes.push(result);
-        this.mapsService.setCurrentMapStructure(this.mapStructure);
+      if (index || index === 0) {
+        this.mapStructure.attributes[index] = result;
       } else {
-        console.log("Attribute with this name exists");
+        this.mapStructure.attributes.push(result);
       }
+      this.mapsService.setCurrentMapStructure(this.mapStructure);
     });
 
   }
