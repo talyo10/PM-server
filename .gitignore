@@ -1,7 +1,7 @@
 project
 /.idea/
 static_cdn/
-libs/
+
 
 // angular gitignore
 .DS_STORE
