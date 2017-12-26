@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { Project } from '../models/project.model';
   templateUrl: './project-create.component.html',
   styleUrls: ['./project-create.component.scss']
 })
-export class ProjectCreateComponent implements OnInit {
+export class ProjectCreateComponent implements OnInit, OnDestroy {
   projectForm: FormGroup;
   paramsReq: any;
   project: Project;
@@ -37,6 +37,10 @@ export class ProjectCreateComponent implements OnInit {
       name: new FormControl(null, Validators.required),
       description: new FormControl(),
     });
+  }
+
+  ngOnDestroy() {
+    this.paramsReq.unsubscribe();
   }
 
   setFormData(data: { name: string, description: string }) {
