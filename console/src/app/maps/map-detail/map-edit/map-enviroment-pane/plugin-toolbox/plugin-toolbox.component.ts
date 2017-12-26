@@ -30,26 +30,68 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
     this.stencilPaper = new joint.dia.Paper({
       el: $("#stencil"),
       width: 400,
-      height: 300,
+      height: 80,
       gridSize: 1,
       model: this.stencilGraph,
       interactive: false
     });
 
-    let r1 = new joint.shapes.basic.Rect({
-      position: {
-        x: 10,
-        y: 10
-      },
-      size: {
-        width: 100,
-        height: 40
-      },
-      attrs: {
-        text: {
-          text: 'Rect1'
+    joint.shapes.devs['MyImageModel'] = joint.shapes.devs.Model.extend({
+
+      markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><image/><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+
+      defaults: joint.util.deepSupplement({
+
+        type: 'devs.MyImageModel',
+        size: {
+          width: 80,
+          height: 80
+        },
+        attrs: {
+          rect: {
+            stroke: '#d1d1d1',
+            fill: {
+              type: 'linearGradient',
+              stops: [{
+                offset: '0%',
+                color: 'white'
+              }, {
+                offset: '50%',
+                color: '#d1d1d1'
+              }],
+              attrs: {
+                x1: '0%',
+                y1: '0%',
+                x2: '0%',
+                y2: '100%'
+              }
+            }
+          },
+          circle: {
+            stroke: 'gray'
+          },
+          '.label': {
+            text: '',
+            'ref-y': 0
+          },
+          '.inPorts circle': {
+            fill: '#c8c8c8'
+          },
+          '.outPorts circle': {
+            fill: '#262626'
+          },
+          image: {
+            'xlink:href': 'http://via.placeholder.com/350x150',
+            width: 80,
+            height: 50,
+            'ref-x': .5,
+            'ref-y': .5,
+            ref: 'rect',
+            'x-alignment': 'middle',
+            'y-alignment': 'middle'
+          }
         }
-      }
+      }, joint.shapes.devs.Model.prototype.defaults)
     });
 
     this.pluginsReq = this.pluginsService.list().subscribe(plugins => {
@@ -67,7 +109,6 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
   flyCell(cellView, event, x, y) {
     let self = this;
-
     $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;background: transparent"></div>');
     var flyGraph = new joint.dia.Graph,
       flyPaper = new joint.dia.Paper({
@@ -110,22 +151,30 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
 
   addPluginsToGraph() {
-    let PMCell = joint.dia.Element.define('examples.Ellipse', {
-      markup: '<g class="rotatable"><g class="scalable"><rect/></g><text/></g>',
-      attrs: {
-        rect: {
-          fill: 'white',
-          stroke: 'black',
-        },
-        size: { width: 90, height: 62 },
-      }
-    });
-    let itteration = 0;
+    let plugins = [];
+    let iteration = 0;
     this.plugins.forEach(plugin => {
-      let attr = { text: { text: plugin.name } };
-      this.stencilGraph.addCell((new PMCell).attr(attr).position(0, itteration * 62));
-      itteration++;
+      let imageModel = new joint.shapes.devs['MyImageModel']({
+        position: {
+          x: 20,
+          y: iteration * 80
+        },
+        size: {
+          width: 110,
+          height: 75
+        },
+        inPorts: [' '],
+        outPorts: ['  '],
+        attrs: {
+          '.label': { text: plugin.name },
+          image: { 'xlink:href': `plugins/${plugin.name}/${plugin.imgUrl}` }
+        }
+      });
+      plugins.push(imageModel);
+      iteration++;
     });
+    this.stencilPaper.setDimensions(400, iteration * 80);
+    this.stencilGraph.addCells(plugins);
   }
 
 
