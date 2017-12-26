@@ -51,8 +51,8 @@ export class MapsService {
     this.currentMap.next(map);
   }
 
-  updateMap(map: Map) {
-    return this.http.put<Map>(serverUrl + "api/maps/" + map.id + "/update", map)
+  updateMap(mapId: string, map: Map) {
+    return this.http.put<Map>(serverUrl + "api/maps/" + mapId + "/update", map);
   }
 
 

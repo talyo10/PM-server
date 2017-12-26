@@ -32,6 +32,10 @@ const appRoutes: Routes = [
     component: MapCreateComponent
   },
   {
+    path: 'maps/update',
+    component: MapCreateComponent
+  },
+  {
     path: 'maps/:id',
     redirectTo: 'maps/:id/edit/design',
   },

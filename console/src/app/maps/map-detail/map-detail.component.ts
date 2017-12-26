@@ -98,7 +98,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
 
   saveMap() {
     if (this.edited) {
-      this.mapsService.updateMap(this.map).subscribe(() => {
+      this.mapsService.updateMap(this.map.id, this.map).subscribe(() => {
         this.originalMap = _.cloneDeep(this.map);
         this.edited = false;
       }, error => {

@@ -49,7 +49,8 @@ module.exports = {
         });
     },
     update: (req, res) => {
-        mapsService.update(req.body).then(map => {
+        const mapId = req.params.id;
+        mapsService.update(mapId, req.body).then(map => {
             return res.send('');
         }).catch((error) => {
             console.log("Error updating map: ", error);
