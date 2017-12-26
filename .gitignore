@@ -1,7 +1,7 @@
 project
 /.idea/
 static_cdn/
-
+package-lock.json
 
 // angular gitignore
 .DS_STORE
