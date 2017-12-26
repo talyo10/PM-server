@@ -1,5 +1,6 @@
 const agentsService = require("../api/services/agents.service");
 const pluginsService = require("../api/services/plugins.service");
+const scheduledJobsService = require("../api/services/scheduled-job.service");
 
 module.exports = {
     bootstrap: (app) => {
@@ -7,6 +8,8 @@ module.exports = {
         agentsService.restartAgentsStatus();
         console.log("Reloading plugins");
         pluginsService.loadModules(app);
+        console.log("Loading scheduled jobs");
+        scheduledJobsService.loadJobs();
         // setTimeout(() => {
         //     pluginsService.loadPlugins();
         // }, 3000);
