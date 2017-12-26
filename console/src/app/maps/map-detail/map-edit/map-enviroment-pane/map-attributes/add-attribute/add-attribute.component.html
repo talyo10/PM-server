@@ -10,6 +10,7 @@
       <div class="form-group">
         <label for="name">Name</label>
         <input type="text" class="form-control" id="name" formControlName="name">
+        <small *ngIf="attributeForm.get('name').invalid && (attributeForm.get('name').dirty || attributeForm.get('name').touched) && attributeForm.get('name').errors.forbiddenName" class="form-text text-danger">An attribute with this name already exists</small>
       </div>
       <div class="form-group">
         <label>Type</label>
@@ -39,7 +40,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-primary" (click)="onClose()">Cancel</button>
-        <button type="submit" class="btn-primary btn" [disabled]="attributeForm.invalid">Add</button>
+        <button type="submit" class="btn-primary btn" [disabled]="attributeForm.invalid">{{ attribute? 'Save': 'Add' }}</button>
       </div>
     </div>
   </form>
