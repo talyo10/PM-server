@@ -126,7 +126,7 @@ module.exports = {
             return res.status(500).json(error);
         });
     },
-   /* get triggers list for given map */
+    /* get triggers list for given map */
     triggersList: (req, res) => {
         triggersService.list(req.params.id).then(triggers => {
             return res.json(triggers);
