@@ -26,9 +26,9 @@ router.delete("/:id/triggers/:triggerId/delete", mapController.triggerDelete);
 router.put("/:id/triggers/:triggerId/update", mapController.triggerUpdate);
 
 /* schedule jobs - should be updated */
-router.post("/scheduledJob/addJob", mapController.addJob);
-router.get("/scheduledJob/deleteJob/:id", mapController.deleteJob);
-router.get("/scheduledJob/getFutureJobs", mapController.getFutureJobs);
+router.get("/:id/jobs", mapController.filterJobs);
+router.post("/:id/jobs/create", mapController.createJob);
+router.delete("/:id/jobs/delete/:id", mapController.deleteJob);
 router.put("/scheduledJob/updateJob", mapController.updateJob);
 
 module.exports = router;
