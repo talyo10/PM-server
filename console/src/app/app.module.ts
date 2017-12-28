@@ -1,11 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from "./app-routing.module";
+import { AppRoutingModule } from './app-routing.module';
 
 // shared
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -16,8 +16,8 @@ import { FilterPipe } from './shared/filter.pipe';
 
 
 // map components etc.
-import { MapsService } from "./maps/maps.service";
-import { SocketService } from "./maps/socket.service";
+import { MapsService } from './maps/maps.service';
+import { SocketService } from './maps/socket.service';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MapDetailComponent } from './maps/map-detail/map-detail.component';
 import { MapPropertiesComponent } from './maps/map-detail/map-properties/map-properties.component';
@@ -37,15 +37,9 @@ import { AddAttributeComponent } from './maps/map-detail/map-edit/map-enviroment
 import { MapTriggersComponent } from './maps/map-detail/map-edit/map-enviroment-pane/map-triggers/map-triggers.component';
 import { TriggerFormComponent } from './maps/map-detail/map-edit/map-enviroment-pane/map-triggers/trigger-form/trigger-form.component';
 import { ProcessResultComponent } from './maps/map-detail/map-results/process-result/process-result.component';
-import { NgxChartsModule } from "@swimlane/ngx-charts";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapSettingComponent } from './maps/map-detail/map-setting/map-setting.component';
-
-// calendar
-import { CalendarContainerComponent } from './calendar/calendar-container/calendar-container.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { CalendarModule } from 'angular-calendar';
 
 
 // plugins components etc.
@@ -54,21 +48,23 @@ import { PluginUploadComponent } from './plugins/plugin-upload/plugin-upload.com
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 
 // agents etc
-import { AgentsService } from "./agents/agents.service";
+import { AgentsService } from './agents/agents.service';
 import { AgentsListComponent } from './agents/agents-list/agents-list.component';
 import { DataTableModule } from 'primeng/primeng';
 
-//projects tex
+// projects tex
 import { ProjectsListComponent } from './projects/projects-list/projects-list.component';
 import { ProjectDetailsComponent } from './projects/project-details/project-details.component';
-import { ProjectsService } from "./projects/projects.service";
+import { ProjectsService } from './projects/projects.service';
 import { ProjectCreateComponent } from './projects/project-create/project-create.component';
 import { ActionResultComponent } from './maps/map-detail/map-results/action-result/action-result.component';
 import { AdminComponent } from './admin/admin.component';
 import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
 import { SearchComponent } from './search/search.component';
-import { AddJobComponent } from './calendar/add-job/add-job.component';
-import { CalendarComponent } from './calendar/calendar/calendar.component';
+
+// calendar
+import { CalendarModule } from './calendar/calendar.module';
+import { CalendarService } from './calendar/calendar.service';
 
 
 @NgModule({
@@ -103,10 +99,10 @@ import { CalendarComponent } from './calendar/calendar/calendar.component';
     AgentsListComponent,
     AddFolderComponent,
     FilterPipe,
-    SearchComponent,
-    CalendarContainerComponent,
-    AddJobComponent,
-    CalendarComponent,
+    SearchComponent
+    // CalendarContainerComponent,
+    // AddJobComponent,
+    // CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -125,17 +121,15 @@ import { CalendarComponent } from './calendar/calendar/calendar.component';
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
-    BsDatepickerModule.forRoot(),
-    TimepickerModule.forRoot(),
+
     NgxChartsModule,
 
-    // angular-calendar
-    CalendarModule.forRoot(),
 
-    AppRoutingModule
+    AppRoutingModule,
+    CalendarModule
   ],
   entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
-  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService],
+  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
