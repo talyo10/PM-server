@@ -10,7 +10,8 @@ import {
   endOfMonth,
   isSameDay,
   isSameMonth,
-  addHours
+  addHours,
+  addWeeks
 } from 'date-fns';
 import { CalendarEvent } from 'angular-calendar';
 
@@ -64,19 +65,95 @@ export class CalendarComponent implements OnInit {
   }
 
   addNewEvent(event) {
+    event = Array.isArray(event) ? [...event] : [event];
     this.events.push(event);
+    this.events = [...this.events, ...event];
     this.refreshCalendar.next();
   }
 
+
+  createMonthEventsFromCron(job) {
+    const cron = job.cron
+    let crons = [];
+    let r = cron.split(' ');
+    if (cron === '* * * * *' || cron === '*/1 * * * *') {
+      for (let i = 0; i < 31; i++) {
+        crons.push(
+          {
+            start: startOfDay(addDays(new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1), i)),
+            title: (<Map>job.map).name,
+            color: colors.yellow,
+            job: job,
+            datetime: job.datetime,
+            map: job.map
+          }
+        );
+      }
+    } else {
+      if (r[2] !== '*') {
+        if (r[3] === '*') { // certain day on every month
+          crons.push(
+            {
+              start: startOfDay(addDays(new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1), r[2] - 1)),
+              title: (<Map>job.map).name,
+              color: colors.yellow,
+              job: job,
+              datetime: job.datetime,
+              map: job.map
+            }
+          );
+        } else { // every month in certain day
+          crons.push(
+            {
+              start: startOfDay(new Date(this.viewDate.getFullYear(), r[3], 1)),
+              title: (<Map>job.map).name,
+              color: colors.yellow,
+              job: job,
+              datetime: job.datetime,
+              map: job.map
+            }
+          );
+        }
+      } else {
+        if (r[4] !== '*') {
+          if (r[3] === '*') { // every week in certain day
+            let todayDay = (new Date()).getDay();
+            addDays(new Date(), r[4] - todayDay);
+            for (let i = 0; i < 4; i++) {
+              crons.push(
+                {
+                  start: startOfDay(addWeeks(addDays(new Date(), r[4] - todayDay), i)),
+                  title: (<Map>job.map).name,
+                  color: colors.yellow,
+                  job: job,
+                  datetime: job.datetime,
+                  map: job.map
+                }
+              );
+
+            }
+          }
+        }
+      }
+    }
+
+    return crons;
+  }
+
   createCalendarEventFromJob(job: Job) {
-    return {
-      start: startOfDay(job.datetime),
-      title: (<Map>job.map).name,
-      color: colors.yellow,
-      job: job,
-      datetime: job.datetime,
-      map: job.map
-    };
+    if (job.cron) {
+      return this.createMonthEventsFromCron(job);
+    } else {
+      return [{
+        start: startOfDay(job.datetime),
+        title: (<Map>job.map).name,
+        color: colors.yellow,
+        job: job,
+        datetime: job.datetime,
+        map: job.map
+      }];
+    }
+
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
