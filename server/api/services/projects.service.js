@@ -9,14 +9,7 @@ module.exports = {
 
     /* add a map to project */
     addMap: (projectId, mapId) => {
-        return Project.findOne({ _id: projectId }).then((project) => {
-            if (!project) {
-                throw new Error("No project was found with id " + projectId);
-            }
-            project.maps.push(mapId);
-            project.save();
-            return project;
-        })
+        return Project.update({ _id: projectId }, { $push: { maps: mapId } });
     },
 
     /* get project details */

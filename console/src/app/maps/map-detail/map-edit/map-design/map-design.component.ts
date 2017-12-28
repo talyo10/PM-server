@@ -197,9 +197,10 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
 
   addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
     console.log('should add a new process');
-    const pluginName = obj.cell.model.attributes.attrs.text.text;
-    const plugin = this.plugins.find((p) => {
-      return p.name === pluginName;
+    console.log(obj.cell.model.attributes.attrs['.label'].text);
+    const pluginName = obj.cell.model.attributes.attrs['.label'].text;
+    const plugin = this.plugins.find((o) => {
+      return o.name === pluginName;
     });
 
     const imageModel = new joint.shapes.devs['MyImageModel']({
@@ -215,7 +216,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       outPorts: ['  '],
       attrs: {
         '.label': { text: pluginName },
-        image: { 'xlink:href': `plugins/${pluginName}/${plugin.imgUrl}`}
+        image: { 'xlink:href': `plugins/${pluginName}/${plugin.imgUrl}` }
       }
     });
     this.graph.addCell(imageModel);
