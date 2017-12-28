@@ -1,28 +1,43 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { Subject } from 'rxjs/Subject';
 import { environment } from '../../environments/environment';
-import { Job } from "./models/job.model";
+import { Job } from './models/job.model';
 
 const serverUrl = environment.serverUrl;
 
 
 @Injectable()
 export class CalendarService {
+  newJob: Subject<any> = new Subject();
 
   constructor(private http: HttpClient) {
   }
 
-  deleteJob(jobId) {
-    return this.http.get(serverUrl + 'api/maps/scheduledJob/deleteJob/' + jobId, { responseType: 'text' as 'json' });
+  create(mapId: string, job) {
+    console.log('HI');
+    return this.http.post<Job>(`${serverUrl}api/maps/${mapId}/jobs/create`, job);
   }
 
-  addJob(job) {
-    return this.http.post<Job>(serverUrl + 'api/maps/scheduledJob/addJob', job);
+  deleteJob(mapId, jobId) {
+    return this.http.delete<string>(`${serverUrl}api/maps/${mapId}/jobs/${jobId}/delete`, { responseType: 'text' as 'json' });
   }
 
   getFutureJobs() {
     return this.http.get<Job[]>(serverUrl + 'api/maps/scheduledJob/getFutureJobs');
+  }
+
+  newJobAsObservable() {
+    return this.newJob.asObservable();
+  }
+
+  list() {
+    return this.http.get<Job[]>(`${serverUrl}api/maps/jobs`);
+  }
+
+  setNewJob(job: Job) {
+    this.newJob.next(job);
   }
 
   updateJob(job) {
