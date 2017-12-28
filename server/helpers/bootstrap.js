@@ -9,7 +9,7 @@ module.exports = {
         console.log("Reloading plugins");
         pluginsService.loadModules(app);
         console.log("Loading scheduled jobs");
-        scheduledJobsService.loadJobs();
+        scheduledJobsService.loadJobs(app);
         // setTimeout(() => {
         //     pluginsService.loadPlugins();
         // }, 3000);
