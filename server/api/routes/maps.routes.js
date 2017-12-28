@@ -5,6 +5,8 @@ const mapController = require("../controllers/maps.controller");
 
 router.get("/", mapController.filter);
 router.post("/create", mapController.create);
+router.get("/jobs", mapController.filterJobs); // scheduled jobs route
+
 router.get("/:id", mapController.detail);
 
 /* map execution */
@@ -26,9 +28,8 @@ router.delete("/:id/triggers/:triggerId/delete", mapController.triggerDelete);
 router.put("/:id/triggers/:triggerId/update", mapController.triggerUpdate);
 
 /* schedule jobs - should be updated */
-router.get("/:id/jobs", mapController.filterJobs);
 router.post("/:id/jobs/create", mapController.createJob);
-router.delete("/:id/jobs/delete/:id", mapController.deleteJob);
+router.delete("/:id/jobs/:jobId/delete", mapController.deleteJob);
 router.put("/scheduledJob/updateJob", mapController.updateJob);
 
 module.exports = router;

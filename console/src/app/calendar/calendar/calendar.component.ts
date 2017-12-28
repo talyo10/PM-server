@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 import {
   startOfDay,
   endOfDay,
@@ -10,7 +12,12 @@ import {
   isSameMonth,
   addHours
 } from 'date-fns';
-import { CalendarEvent } from "angular-calendar";
+import { CalendarEvent } from 'angular-calendar';
+
+
+import { CalendarService } from '../calendar.service';
+import { Job } from '../models/job.model';
+import { Map } from '../../maps/models/map.model';
 
 const colors: any = {
   // TODO: add color pallet
@@ -35,13 +42,42 @@ const colors: any = {
 })
 export class CalendarComponent implements OnInit {
   viewDate = new Date();
-  events: any;
+  events: CalendarEvent[] = [];
   activeDayIsOpen: boolean = false;
+  refreshCalendar: Subject<any> = new Subject();
+  newJobSubscription: Subscription;
 
-  constructor() {
+  constructor(private calendarService: CalendarService) {
   }
 
   ngOnInit() {
+    this.calendarService.list().subscribe(jobs => {
+      console.log(jobs);
+      jobs.forEach(job => {
+        this.addNewEvent(this.createCalendarEventFromJob(job));
+      });
+    });
+    this.newJobSubscription = this.calendarService.newJobAsObservable().subscribe(job => {
+      if (job) {
+        this.addNewEvent(this.createCalendarEventFromJob(job));
+      }
+    });
+  }
+
+  addNewEvent(event) {
+    this.events.push(event);
+    this.refreshCalendar.next();
+  }
+
+  createCalendarEventFromJob(job: Job) {
+    return {
+      start: startOfDay(job.datetime),
+      title: (<Map>job.map).name,
+      color: colors.yellow,
+      job: job,
+      datetime: job.datetime,
+      map: job.map
+    };
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -54,5 +90,18 @@ export class CalendarComponent implements OnInit {
         this.viewDate = date;
       }
     }
+  }
+
+  deleteJob(jobId) {
+    let index;
+    const event = this.events.find((o, i) => {
+      index = i;
+      return jobId === (<any>o).job.id;
+    });
+
+    this.calendarService.deleteJob((<any>event).map.id, (<any>event).job.id).subscribe(() => {
+      this.events.splice(index, 1);
+      this.refreshCalendar.next();
+    });
   }
 }

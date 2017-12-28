@@ -158,7 +158,7 @@ module.exports = {
         });
     },
     deleteJob: (req, res) => {
-        scheduledJobsService.delete(req.param('id')).then(() => {
+        scheduledJobsService.delete(req.params.jobId).then(() => {
             return res.status(200).send('OK');
         }).catch((error) => {
             return res.status(500).send(error);

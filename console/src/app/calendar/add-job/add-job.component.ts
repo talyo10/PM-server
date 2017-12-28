@@ -52,7 +52,7 @@ export class AddJobComponent implements OnInit {
 
     form.datetime = datetime;
       this.calendarService.create(form.map, form).subscribe(job => {
-        console.log(job);
+        this.calendarService.setNewJob(job);
       });
   }
 

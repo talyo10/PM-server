@@ -32,7 +32,7 @@ module.exports = {
     },
     filter: () => {
         // TODO: add filtering by query
-        return ScheduledJob.find({})
+        return ScheduledJob.find({}).populate('map');
     },
     /* return jobs that should happen in the future */
     getFutureJobs: () => {
