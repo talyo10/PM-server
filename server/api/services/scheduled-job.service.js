@@ -13,8 +13,10 @@ module.exports = {
      * every job is saved in the jobs object, which will allow us to conveniently cancel it (see remove jobs);
      * */
     addScheduledJob: (job) => {
-        jobs[job._id] = scheduler.scheduleJob(job.datetime, function () {
-            mapsExecutionService.execute(job.map, -1, 0, socket); // TODO: it should pass the socket
+
+        jobs[job._id] = scheduler.scheduleJob((job.datetime || job.cron), function () {
+            // mapsExecutionService.execute(job.map, -1, 0, socket); // TODO: it should pass the socket
+            console.log(new Date());
         });
     },
     /* creating new job */

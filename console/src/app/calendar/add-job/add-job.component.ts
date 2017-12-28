@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+
+
 import { ProjectsService } from '../../projects/projects.service';
 import { Project } from '../../projects/models/project.model';
 import { CalendarService } from '../calendar.service';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { CrontabComponent } from './crontab/crontab.component';
 
 @Component({
   selector: 'app-add-job',
@@ -15,7 +19,8 @@ export class AddJobComponent implements OnInit {
   projectsReq: any;
   form: FormGroup;
 
-  constructor(private calendarService: CalendarService, private projectsService: ProjectsService) {
+
+  constructor(private calendarService: CalendarService, private projectsService: ProjectsService, private modalService: BsModalService) {
   }
 
   ngOnInit() {
@@ -38,22 +43,34 @@ export class AddJobComponent implements OnInit {
       project: new FormControl(null, Validators.required),
       map: new FormControl(null, Validators.required),
       type: new FormControl('once', Validators.required),
-      date: new FormControl(null, Validators.required),
-      time: new FormControl(null, Validators.required)
+      date: new FormControl(null),
+      time: new FormControl(null),
+      cron: new FormControl(null)
     });
   }
 
   onSubmit(form) {
     console.log(form);
     const time = form.time;
-    console.log(time);
     const date = form.date;
-    const datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
+    if (time && date) {
+      const datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
+      form.datetime = datetime;
+    }
 
-    form.datetime = datetime;
-      this.calendarService.create(form.map, form).subscribe(job => {
-        this.calendarService.setNewJob(job);
-      });
+    this.calendarService.create(form.map, form).subscribe(job => {
+      this.calendarService.setNewJob(job);
+    });
+  }
+
+  openCrontab() {
+    let modal: BsModalRef;
+    modal = this.modalService.show(CrontabComponent);
+    modal.content.cron = this.form.controls.cron.value;
+    modal.content.result.subscribe(cron => {
+      console.log(cron);
+      this.form.controls.cron.setValue(cron);
+    });
   }
 
 }
