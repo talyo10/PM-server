@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ProjectsService } from "../../projects/projects.service";
-import { MapsService } from "../../maps/maps.service";
-import { Project } from "../../projects/models/project.model";
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ProjectsService } from '../../projects/projects.service';
+import { Project } from '../../projects/models/project.model';
+import { CalendarService } from '../calendar.service';
 
 @Component({
   selector: 'app-add-job',
@@ -15,7 +15,7 @@ export class AddJobComponent implements OnInit {
   projectsReq: any;
   form: FormGroup;
 
-  constructor(private mapsService: MapsService, private projectsService: ProjectsService) {
+  constructor(private calendarService: CalendarService, private projectsService: ProjectsService) {
   }
 
   ngOnInit() {
@@ -35,16 +35,25 @@ export class AddJobComponent implements OnInit {
 
   initForm(): FormGroup {
     return new FormGroup({
-      project: new FormControl(),
-      map: new FormControl(),
-      type: new FormControl(),
-      date: new FormControl(),
-      time: new FormControl()
+      project: new FormControl(null, Validators.required),
+      map: new FormControl(null, Validators.required),
+      type: new FormControl('once', Validators.required),
+      date: new FormControl(null, Validators.required),
+      time: new FormControl(null, Validators.required)
     });
   }
 
   onSubmit(form) {
     console.log(form);
+    const time = form.time;
+    console.log(time);
+    const date = form.date;
+    const datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
+
+    form.datetime = datetime;
+      this.calendarService.create(form.map, form).subscribe(job => {
+        console.log(job);
+      });
   }
 
 }

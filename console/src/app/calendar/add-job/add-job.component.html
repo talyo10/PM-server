@@ -9,10 +9,9 @@ Add a new scheduled job
     </select>
   </div>
   <div class="form-group">
-    <label for="project">Project</label>
+    <label for="project">Map</label>
     <select class="form-control" formControlName="map" id="map">
-      <option disabled *ngIf="selectedProject">Select a map</option>
-      <option disabled *ngIf="!selectedProject">Select a project first</option>
+      <option disabled>Select a map</option>
       <option *ngFor="let map of selectedProject?.maps" [ngValue]="map._id" [disabled]="!selectedProject">{{map.name}}</option>
     </select>
   </div>
@@ -37,5 +36,5 @@ Add a new scheduled job
     <label>Time:</label>
     <timepicker formControlName="time"></timepicker>
   </div>
-  <button type="submit" class="btn btn-primary btn-block" >Create</button>
+  <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid">Create</button>
 </form>

@@ -5,8 +5,7 @@ export class Job {
   project: string | Project;
   map: string | Map;
   type: string;
-  date: Date;
-  time: Date;
+  datetime: Date;
   cron: string;
   createdAt?: Date;
   updatedAt?: Date;

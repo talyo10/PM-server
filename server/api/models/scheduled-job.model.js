@@ -6,8 +6,7 @@ let scheduledJobSchema = new Schema({
     map: { type: Schema.Types.ObjectId, ref: 'Map', required: true },
     type: { type: String, enum: ['once', 'repeated'], required: true, default: 'once' },
     cron: String,
-    date: { type: Date, required: true},
-    time: { type: Date, required: true}
+    datetime: { type: Date, required: true},
 }, { timestamps: true });
 
 scheduledJobSchema.set('toJSON', {
