@@ -52,7 +52,6 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.calendarService.list().subscribe(jobs => {
-      console.log(jobs);
       jobs.forEach(job => {
         this.addNewEvent(this.createCalendarEventFromJob(job));
       });

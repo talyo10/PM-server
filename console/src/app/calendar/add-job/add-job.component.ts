@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 import { ProjectsService } from '../../projects/projects.service';
 import { Project } from '../../projects/models/project.model';
 import { CalendarService } from '../calendar.service';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { CrontabComponent } from './crontab/crontab.component';
 
 @Component({
@@ -50,7 +50,6 @@ export class AddJobComponent implements OnInit {
   }
 
   onSubmit(form) {
-    console.log(form);
     const time = form.time;
     const date = form.date;
     if (time && date) {
@@ -68,7 +67,6 @@ export class AddJobComponent implements OnInit {
     modal = this.modalService.show(CrontabComponent);
     modal.content.cron = this.form.controls.cron.value;
     modal.content.result.subscribe(cron => {
-      console.log(cron);
       this.form.controls.cron.setValue(cron);
     });
   }

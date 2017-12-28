@@ -15,8 +15,7 @@ module.exports = {
     addScheduledJob: (job) => {
 
         jobs[job._id] = scheduler.scheduleJob((job.datetime || job.cron), function () {
-            // mapsExecutionService.execute(job.map, -1, 0, socket); // TODO: it should pass the socket
-            console.log(new Date());
+            mapsExecutionService.execute(job.map, -1, 0, socket); // TODO: it should pass the socket
         });
     },
     /* creating new job */
