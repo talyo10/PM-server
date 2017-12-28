@@ -1,0 +1,63 @@
+<!-- prev today next -->
+<div class="col-md-4">
+  <div class="btn-group">
+    <div
+      class="btn btn-primary"
+      mwlCalendarPreviousView
+      [view]="'month'"
+      [(viewDate)]="viewDate"
+      (viewDateChange)="activeDayIsOpen = false">
+      Previous
+    </div>
+    <div
+      class="btn btn-outline-secondary"
+      mwlCalendarToday
+      [(viewDate)]="viewDate">
+      Today
+    </div>
+    <div
+      class="btn btn-primary"
+      mwlCalendarNextView
+      [view]="'month'"
+      [(viewDate)]="viewDate"
+      (viewDateChange)="activeDayIsOpen = false">
+      Next
+    </div>
+  </div>
+</div>
+
+<!-- month header -->
+<div class="col-md-4">
+  <h3>{{ viewDate | calendarDate:('month' + 'ViewTitle'):'en' }}</h3>
+</div>
+
+<!-- cell template -->
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+  <div class="cal-cell-top">
+    <span class="cal-day-badge" *ngIf="day.badgeTotal > 0">{{ day.badgeTotal }}</span>
+    <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+  </div>
+</ng-template>
+
+<ng-template #eventTemplate let-events="events" let-locale="locale">
+  <div *ngFor="let event of events; let i = index" class="event">
+    <span class="text-info"><i class="fa fa-{{ event.job.type === 'once' ? 'clock-o' : 'repeat' }}"
+                               aria-hidden="true"></i></span>
+    <span>{{ event.title }}</span>
+    <span *ngIf="event.datetime">{{ event.datetime | date: 'shortTime' }}</span>
+    <span *ngIf="event.job.cron">{{ event.job.cron }}</span>
+    <span><i class="fa fa-trash-o" (click)="deleteJob(event.job.id)"></i></span>
+  </div>
+</ng-template>
+
+<!-- calendar -->
+<mwl-calendar-month-view
+  [viewDate]="viewDate"
+  [events]="events"
+  [activeDayIsOpen]="activeDayIsOpen"
+  [refresh]="refreshCalendar"
+  [cellTemplate]="customCellTemplate"
+  [openDayEventsTemplate]="eventTemplate"
+  (dayClicked)="dayClicked($event.day)">
+</mwl-calendar-month-view>
+

@@ -19,6 +19,7 @@ import { ProjectCreateComponent } from "./projects/project-create/project-create
 import { AdminComponent } from "./admin/admin.component";
 import { AgentsListComponent } from "./agents/agents-list/agents-list.component";
 import { MapSettingComponent } from "./maps/map-detail/map-setting/map-setting.component";
+import { CalendarContainerComponent } from "./calendar/calendar-container/calendar-container.component";
 
 const appRoutes: Routes = [
   // maps
@@ -104,6 +105,10 @@ const appRoutes: Routes = [
       {
         path: 'agents',
         component: AgentsListComponent
+      },
+      {
+        path: 'calendar',
+        component: CalendarContainerComponent
       }
     ]
   }

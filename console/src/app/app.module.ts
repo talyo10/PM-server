@@ -1,11 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from "./app-routing.module";
+import { AppRoutingModule } from './app-routing.module';
 
 // shared
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -16,9 +16,10 @@ import { FilterPipe } from './shared/filter.pipe';
 
 
 // map components etc.
+import { MapsService } from './maps/maps.service';
+import { SocketService } from './maps/socket.service';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MapDetailComponent } from './maps/map-detail/map-detail.component';
-import { MapsService } from "./maps/maps.service";
 import { MapPropertiesComponent } from './maps/map-detail/map-properties/map-properties.component';
 import { MapDesignComponent } from './maps/map-detail/map-edit/map-design/map-design.component';
 import { MapResultsComponent } from './maps/map-detail/map-results/map-results.component';
@@ -36,8 +37,8 @@ import { AddAttributeComponent } from './maps/map-detail/map-edit/map-enviroment
 import { MapTriggersComponent } from './maps/map-detail/map-edit/map-enviroment-pane/map-triggers/map-triggers.component';
 import { TriggerFormComponent } from './maps/map-detail/map-edit/map-enviroment-pane/map-triggers/trigger-form/trigger-form.component';
 import { ProcessResultComponent } from './maps/map-detail/map-results/process-result/process-result.component';
-import { NgxChartsModule } from "@swimlane/ngx-charts";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapSettingComponent } from './maps/map-detail/map-setting/map-setting.component';
 
 
@@ -47,20 +48,23 @@ import { PluginUploadComponent } from './plugins/plugin-upload/plugin-upload.com
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 
 // agents etc
-import { AgentsService } from "./agents/agents.service";
+import { AgentsService } from './agents/agents.service';
 import { AgentsListComponent } from './agents/agents-list/agents-list.component';
 import { DataTableModule } from 'primeng/primeng';
 
-//projects tex
+// projects tex
 import { ProjectsListComponent } from './projects/projects-list/projects-list.component';
 import { ProjectDetailsComponent } from './projects/project-details/project-details.component';
-import { ProjectsService } from "./projects/projects.service";
+import { ProjectsService } from './projects/projects.service';
 import { ProjectCreateComponent } from './projects/project-create/project-create.component';
 import { ActionResultComponent } from './maps/map-detail/map-results/action-result/action-result.component';
 import { AdminComponent } from './admin/admin.component';
 import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
 import { SearchComponent } from './search/search.component';
-import { SocketService } from "./maps/socket.service";
+
+// calendar
+import { CalendarModule } from './calendar/calendar.module';
+import { CalendarService } from './calendar/calendar.service';
 
 
 @NgModule({
@@ -96,6 +100,9 @@ import { SocketService } from "./maps/socket.service";
     AddFolderComponent,
     FilterPipe,
     SearchComponent
+    // CalendarContainerComponent,
+    // AddJobComponent,
+    // CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -103,6 +110,7 @@ import { SocketService } from "./maps/socket.service";
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
+    BrowserAnimationsModule,
 
     MonacoEditorModule,
     // primeng
@@ -113,13 +121,15 @@ import { SocketService } from "./maps/socket.service";
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
-    NgxChartsModule,
-    BrowserAnimationsModule,
 
-    AppRoutingModule
+    NgxChartsModule,
+
+
+    AppRoutingModule,
+    CalendarModule
   ],
   entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
-  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService],
+  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

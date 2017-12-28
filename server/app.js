@@ -86,7 +86,7 @@ app.all('*', (req, res) => {
 //Set Port
 const port = process.env.PORT || '3000';
 app.set('port', port);
-
+app.io = io;
 
 server.listen(port, () => {
     console.log(`Running on localhost:${port}`);

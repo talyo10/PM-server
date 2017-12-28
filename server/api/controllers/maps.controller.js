@@ -2,6 +2,7 @@ let mapsService = require("../services/maps.service");
 let projectsService = require("../services/projects.service");
 let mapsExecutionService = require("../services/map-execution.service");
 let triggersService = require("../services/triggers.service");
+let scheduledJobsService = require("../services/scheduled-job.service");
 
 
 module.exports = {
@@ -142,6 +143,47 @@ module.exports = {
         }).catch((error) => {
             console.log("Error updating triggers: ", error);
             return res.status(500).json(error);
+        });
+    },
+
+    /* scheduled jobs
+     * TODO: change to standalone plugin (that is old implantation)
+     * */
+    createJob: (req, res) => {
+        scheduledJobsService.create(req.body).then((job) => {
+            return res.json(job);
+        }).catch((error) => {
+            console.log("Error creating a new job ", error);
+            return res.status(500).send(error);
+        });
+    },
+    deleteJob: (req, res) => {
+        scheduledJobsService.delete(req.params.jobId).then(() => {
+            return res.status(200).send('OK');
+        }).catch((error) => {
+            return res.status(500).send(error);
+        });
+    },
+    filterJobs: (req, res) => {
+        scheduledJobsService.filter().then(jobs => {
+            return res.json(jobs)
+        }).catch((error) => {
+            console.log("Error finding jobs ", error);
+            return res.status(500).send(error);
+        });
+    },
+    getFutureJobs: (req, res) => {
+        scheduledJobsService.getFutureJobs().then((jobs) => {
+            res.send(jobs);
+        }).catch((error) => {
+            return res.status(500).send(error);
+        });
+    },
+    updateJob: function (req, res) {
+        scheduledJobsService.update(req.body).then((job) => {
+            return res.json(job[0]);
+        }).catch((error) => {
+            return res.status(500).send(error);
         });
     }
 };
