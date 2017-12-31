@@ -11,6 +11,7 @@ module.exports = {
         pluginsService.filterPlugins({}).then((plugins) => {
             return res.json(plugins);
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops', message: `We couldn't get plugins list`, type: 'error' });
             console.log("Error filtering plugins", error);
             return res.status(500).send(error);
         })
@@ -21,15 +22,16 @@ module.exports = {
         console.log("Uploading file");
         let file = req.file;
         let extension = path.extname(file.originalname);
-        console.log(extension);
         if (extension && _.indexOf([".zip", ".rar"], extension) === -1) {
             return res.status(500).send("Bad foramt")
         }
 
         pluginsService.createPlugin(req.file.path, req).then((obj) => {
             console.log("Finish uploading");
+            req.io.emit('notification', { title: 'Installed new plugin', message: `You can now use ${obj.name}`, type: 'success' });
             return res.json(obj);
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops', message: `Error while installing plugin`, type: 'error' });
             console.log("Error uploading plugin", error);
             return res.status(500).send(error);
         })
@@ -37,8 +39,11 @@ module.exports = {
 
     pluginDelete: (req, res) => {
         pluginsService.pluginDelete(req.params.id).then(() => {
+            req.io.emit('notification', { title: 'Plugin deleted', message: ``, type: 'success' });
+
             return res.status(200).send();
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops', message: `Error deleting plugin`, type: 'error' });
             console.log("Error deleting plugin", error);
             return res.status(500).send(error);
         });

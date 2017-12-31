@@ -17,7 +17,7 @@ import { FilterPipe } from './shared/filter.pipe';
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
-import { SocketService } from './maps/socket.service';
+import { SocketService } from './shared/socket.service';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { MapDetailComponent } from './maps/map-detail/map-detail.component';
 import { MapPropertiesComponent } from './maps/map-detail/map-properties/map-properties.component';
@@ -65,6 +65,7 @@ import { SearchComponent } from './search/search.component';
 // calendar
 import { CalendarModule } from './calendar/calendar.module';
 import { CalendarService } from './calendar/calendar.service';
+import { ToastyModule } from 'ng2-toasty';
 
 
 @NgModule({
@@ -121,9 +122,8 @@ import { CalendarService } from './calendar/calendar.service';
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
-
+    ToastyModule.forRoot(),
     NgxChartsModule,
-
 
     AppRoutingModule,
     CalendarModule
