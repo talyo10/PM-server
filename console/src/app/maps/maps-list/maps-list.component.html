@@ -1,8 +1,14 @@
 <div class="main">
-  <h1 class="display-2">Maps</h1>
-  <div class="d-flex flex-row-reverse">
-    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
-    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  <h1 class="section-title">Maps</h1>
+  <div class="filter d-flex flex-row-reverse">
+
+    <div class="p-2">
+      <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
+      <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
+      <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
+    </div>
+
+    <!--<div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>-->
   </div>
   <table class="table">
     <thead>

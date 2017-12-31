@@ -13,6 +13,23 @@
 }
 
 .main {
+  margin-top: 39px;
+  margin-left: 50px;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.card {
+  height: 150px;
+  overflow-y: hidden;
+}
+
+.filter {
+  div {
+    i {
+      position: relative;
+      top: 30px;
+      left: 175px;
+    }
+  }
 }

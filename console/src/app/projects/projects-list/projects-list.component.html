@@ -1,27 +1,32 @@
 <div class="main">
   <div class="row">
     <div class="col-sm-12">
-      <h1 class="display-2">Projects</h1>
-      <h5>Recently added</h5>
+      <h1 class="section-title">Projects</h1>
+      <h5 class="section-sub-title">Recently added</h5>
     </div>
     <div class="col-sm-4" *ngFor="let project of projects?.slice(-3)">
       <div class="card link" [routerLink]="[project.id]">
         <div class="card-body">
           <h4 class="card-title">{{project.name}}</h4>
-          <h6 class="card-subtitle mb-2 text-muted">{{project.createdAt | date: 'short'}}</h6>
+          <h6 class="card-subtitle mb-2">{{project.createdAt | date: 'short'}}</h6>
           <p class="card-text">{{project.description}}</p>
-          <a [routerLink]="[project.id]" class="card-link">View</a>
+          <a [routerLink]="[project.id]" class="card-link"><i class="fa fa-eye" aria-hidden="true"></i> View</a>
         </div>
       </div>
     </div>
   </div>
   <hr>
   <div class="pad">
-    <div class="d-flex flex-row-reverse">
-      <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
-      <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+
+    <h5 class="section-sub-title">All projects</h5>
+    <div class="filter d-flex flex-row-reverse">
+      <div class="p-2">
+        <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
+        <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
+        <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
+      </div>
+
     </div>
-    <h5>All projects</h5>
     <table class="table">
       <thead>
       <tr>

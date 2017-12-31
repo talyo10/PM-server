@@ -1,5 +1,20 @@
 @import "variables";
 
+
+.section-title {
+  font-size: 28px;
+  line-height: 18px;
+  color: $text-color;
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
+.section-sub-title {
+  font-size: 18px;
+  line-height: 18px;
+  color: $text-color;
+}
+
 .btn-clock-bottom {
   position: absolute;
   bottom: 5px;
@@ -35,8 +50,8 @@
 }
 
 .main-background {
-  background-color: $grey-dark-1;
-  color: $grey-light-1;
+  background-color: $background;
+  color: $greyish-text;
 }
 
 .reset-padding {
@@ -50,9 +65,23 @@
 }
 
 .card {
-  background-color: $grey-dark-5;
-  color: $grey-light-1;
-  &:hover {
-    @extend .focus-shadow;
+  background-color: $card-background;
+  color: $text-color;
+  .card-body {
+    font-size: 14px;
+    line-height: 24px;
+    .card-title {
+      color: $turquoise-blue;
+      font-size: 18px;
+      line-height: 18px;
+    }
   }
+  &:hover {
+    background-color: $hover-card;
+    box-shadow: 0px 4px 1px 0 rgba(0, 0, 0, 0.11);
+  }
+}
+
+.bg-primary {
+  background-color: $turquoise-blue;
 }
