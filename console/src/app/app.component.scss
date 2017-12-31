@@ -1,8 +1,17 @@
+@import '~assets/sass/variables';
+
 .root {
   height: 100%;
   .pm-sidebar {
     max-width: 80px;
     flex: 0 0 80px;
+    background-color: $turquoise-blue;
+    img {
+      width: 52px;
+      margin-top: 23px;
+      margin-left: 14px;
+    }
+
   }
   .main {
     padding: 0px;
@@ -13,20 +22,13 @@
 
 .nav {
   align-items: center;
+  padding: 45px;
   li.nav-item {
-    &.active {
-      a.nav-link {
-        color: #fff;
-      }
-    }
     a.nav-link {
-      color: #c7c7c7;
-      &:hover {
-        color: #fff;
-        transition: color 0.5s ease-out;
-      }
+      color: $text-color;
+      margin-bottom: 44px;
+      font-size: 25px;
     }
-
   }
 }
 
