@@ -5,7 +5,7 @@ export class Project implements IProject {
   id?: string;
   _id?: string;
   name: string;
-  description?: String;
+  description?: string;
   createdAt?: Date;
   updatedAt?: Date;
   archived?: boolean;

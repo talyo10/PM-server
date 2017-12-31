@@ -33,4 +33,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       this.projectReq.unsubscribe();
   }
 
+  editProject() {
+
+  }
+
 }

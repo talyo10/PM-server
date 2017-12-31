@@ -49,9 +49,16 @@ module.exports = {
             return res.status(500).json(error);
         });
     },
+    /* update a map with new body
+    * This will also call the projects service to update the maps of the relevant projects.
+    * */
     update: (req, res) => {
-        mapsService.update(req.body).then(map => {
-            return res.send('');
+        const mapId = req.params.id;
+        mapsService.update(mapId, req.body).then((map) => {
+            console.log(map);
+            return projectsService.updateMap(mapId, req.body.project);
+        }).then(() => {
+            return res.send('OK');
         }).catch((error) => {
             console.log("Error updating map: ", error);
             return res.status(500).json(error);
