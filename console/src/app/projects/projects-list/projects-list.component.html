@@ -4,7 +4,7 @@
       <h1 class="section-title">Projects</h1>
       <h5 class="section-sub-title">Recently added</h5>
     </div>
-    <div class="col-sm-4" *ngFor="let project of projects?.slice(-3)">
+    <div class="col-3" *ngFor="let project of projects?.slice(-4)">
       <div class="card link" [routerLink]="[project.id]">
         <div class="card-body">
           <h4 class="card-title">{{project.name}}</h4>
