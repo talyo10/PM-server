@@ -50,6 +50,15 @@ module.exports = {
     /* update a project */
     update: (project) => {
         return Project.findByIdAndUpdate(project._id, project)
+    },
+    /* Updating the maps list of the project.
+    */
+    updateMap: (mapId, projectId) => {
+        return Project.update({ maps: mapId }, { $pull: { maps: mapId } }) // remove the map from all
+            .then(projects => {
+            return module.exports.addMap(projectId, mapId); // add map to the selected project
+        });
+
     }
 
 };
