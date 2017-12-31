@@ -7,6 +7,14 @@ html, body {
   @extend .main-background;
 }
 
+.section-title {
+  @extend .section-title;
+}
+
+.section-sub-title {
+  @extend .section-sub-title;
+}
+
 .pane-title {
   @extend .pane-header;
 }
@@ -34,8 +42,8 @@ textarea {
   overflow-y: scroll;
 
   ::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* make scrollbar invisible */
+    width: 0px; /* remove scrollbar space */
+    background: transparent; /* make scrollbar invisible */
   }
 }
 
@@ -48,9 +56,37 @@ textarea {
   border-color: $blue-dark-2;
 }
 
-
 .bs-datepicker-body, bs-datepicker-head {
   background: $grey-dark-1;
   border: 1px solid $grey-light-1;
   border-radius: 5px;
+}
+
+a {
+  color: $turquoise-blue;
+}
+
+
+table, .table {
+  color: #dddddd;
+  thead {
+    th {
+      border-bottom: 1px solid $cool-grey;
+    }
+  }
+  tr {
+    height: 48px;
+    &:hover {
+      background-color: $hover-color;
+      border-left: 4px solid $turquoise-blue;
+    }
+  }
+  th, td {
+    border-top: 0px;
+    border-bottom: 1px solid $cool-grey;
+    a {
+      text-decoration: underline;
+    }
+
+  }
 }
