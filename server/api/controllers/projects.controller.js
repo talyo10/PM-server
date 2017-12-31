@@ -57,6 +57,8 @@ module.exports = {
 
     /* update a project */
     update: (req, res) => {
+        let project = req.body;
+        project._id = req.params.id;
         projectsService.update(req.body).then(project => {
             res.json(project);
         }).catch((error) => {

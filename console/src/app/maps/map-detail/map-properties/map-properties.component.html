@@ -3,6 +3,7 @@
     <div class="col-sm-12">
       <div class="jumbotron">
         <h3>{{ map?.description }}</h3>
+        <a routerLink="/maps/update" [queryParams]="{'map': map?.id}" class="btn btn-primary">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
         <hr class="my-4">
         <p>Created at: {{ map?.createdAt | date: 'short'}}</p>
       </div>

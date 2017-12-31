@@ -45,10 +45,10 @@ module.exports = {
         })
     },
     structureList: (mapId) => {
-        return MapStructure.find({ map: mapId }, '_id createdAt', { sort: {createdAt: -1}})
+        return MapStructure.find({ map: mapId }, '_id createdAt', { sort: { createdAt: -1 } })
     },
-    update: (map) => {
-        return Map.findByIdAndUpdate(map._id, map).populate('agents')
+    update: (mapId, map) => {
+        return Map.findByIdAndUpdate(mapId, map, { new: true }).populate('agents')
     },
 
 };

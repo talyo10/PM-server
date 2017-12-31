@@ -33,6 +33,10 @@ const appRoutes: Routes = [
     component: MapCreateComponent
   },
   {
+    path: 'maps/update',
+    component: MapCreateComponent
+  },
+  {
     path: 'maps/:id',
     redirectTo: 'maps/:id/edit/design',
   },
@@ -82,6 +86,10 @@ const appRoutes: Routes = [
   },
   {
     path: 'projects/create',
+    component: ProjectCreateComponent
+  },
+  {
+    path: 'projects/update',
     component: ProjectCreateComponent
   },
   {
