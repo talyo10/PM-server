@@ -1,7 +1,13 @@
 .root {
   height: 100%;
+  .pm-sidebar {
+    max-width: 80px;
+    flex: 0 0 80px;
+  }
   .main {
     padding: 0px;
+    flex: 0 0 calc(100% - 80px);
+    max-width: calc(100% - 80px);
   }
 }
 
