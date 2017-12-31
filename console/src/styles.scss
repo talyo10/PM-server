@@ -32,7 +32,11 @@ input, textarea, select {
   &.ng-invalid.ng-touched {
     border: 1px solid $error;
   }
+  &:focus {
+    border: 1px solid $turquoise-blue;
+  }
 }
+
 
 textarea {
   overflow: hidden;

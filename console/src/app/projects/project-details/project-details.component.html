@@ -1,13 +1,17 @@
 <div class="main">
   <div class="row">
     <div class="col-sm-12">
-      <h1 class="display-2">{{project?.name}} maps</h1>
+      <h1 class="section-title">{{project?.name}} maps</h1>
       <p class="lead">{{project?.description}}</p>
     </div>
   </div>
-  <div class="d-flex flex-row-reverse">
-    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
-    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  <div class="filter d-flex flex-row-reverse">
+    <div class="p-2">
+      <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
+      <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
+      <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
+    </div>
+
   </div>
 
   <div class="row">
