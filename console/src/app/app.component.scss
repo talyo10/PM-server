@@ -27,6 +27,9 @@
 .nav {
   align-items: center;
   li.nav-item {
+    &:first-child {
+      margin-top: 47px;
+    }
     a.nav-link {
       color: $text-color;
       font-size: 25px;
