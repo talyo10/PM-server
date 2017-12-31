@@ -27,6 +27,7 @@
         "../node_modules/primeng/resources/primeng.min.css",
         "../node_modules/jointjs/dist/joint.min.css",
         "../node_modules/angular-calendar/css/angular-calendar.css",
+        "../node_modules/ng2-toasty/style-material.css",
         "./assets/sass/icons.css",
         "styles.scss"
       ],
