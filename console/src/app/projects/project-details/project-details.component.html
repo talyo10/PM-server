@@ -6,13 +6,14 @@
       <p class="lead">{{project?.description}}</p>
     </div>
   </div>
-  <div class="filter d-flex flex-row-reverse">
-    <div class="p-2">
+
+  <div class="filter d-flex justify-content-between align-items-end">
+    <h5 class="section-sub-title">All projects</h5>
+    <div>
       <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
       <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
       <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
     </div>
-
   </div>
 
   <div class="row">

@@ -1,7 +1,7 @@
 @import "~assets/sass/base";
 
 .pad {
-  margin-top: 10px;
+  margin-top: 45px;
 }
 
 .link {
@@ -13,7 +13,6 @@
 }
 
 .main {
-  margin-top: 39px;
   margin-left: 50px;
   padding-left: 15px;
   padding-right: 15px;
@@ -25,11 +24,16 @@
 }
 
 .filter {
+  h5 {
+    padding-bottom: 15px;
+  }
   div {
+    padding-bottom: 10px;
     i {
       position: relative;
       top: 30px;
       left: 175px;
     }
   }
+
 }

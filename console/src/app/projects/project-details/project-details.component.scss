@@ -1,12 +1,16 @@
 .main {
   padding-right: 15px;
   padding-left: 15px;
-  margin-top: 39px;
   margin-left: 50px;
 }
 
 .filter {
+  h5 {
+    padding-bottom: 15px;
+  }
   div {
+    padding-bottom: 10px;
+
     i {
       position: relative;
       top: 30px;

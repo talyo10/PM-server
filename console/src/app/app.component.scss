@@ -1,6 +1,8 @@
 @import '~assets/sass/variables';
 
 .root {
+  margin-left: 0;
+  margin-right: 0;
   height: 100%;
   .pm-sidebar {
     max-width: 80px;
@@ -9,12 +11,14 @@
     img {
       width: 52px;
       margin-top: 23px;
-      margin-left: 20px;
+      margin-left: 15px;
     }
 
   }
   .main {
     padding: 0px;
+    padding-right: 50px;
+    margin-top: 39px;
     flex: 0 0 calc(100% - 80px);
     max-width: calc(100% - 80px);
   }
@@ -22,11 +26,9 @@
 
 .nav {
   align-items: center;
-  padding: 45px;
   li.nav-item {
     a.nav-link {
       color: $text-color;
-      margin-bottom: 44px;
       font-size: 25px;
     }
   }
