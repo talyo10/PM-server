@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
 
-import * as _ from "lodash";
-import { Subscription } from "rxjs/Subscription";
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 
-import { MapsService } from "../maps.service";
-import { Map } from "../models/map.model";
-import { MapStructure } from "../models/map-structure.model";
+import { MapsService } from '../maps.service';
+import { Map } from '../models/map.model';
+import { MapStructure } from '../models/map-structure.model';
 
 @Component({
   selector: 'app-map-detail',
@@ -33,7 +33,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.routeReq = this.route.params.subscribe(params => {
-      this.id = params["id"];
+      this.id = params['id'];
       this.mapReq = this.mapsService.getMap(this.id).subscribe(map => {
         this.map = map;
         this.originalMap = _.cloneDeep(map);
@@ -41,12 +41,12 @@ export class MapDetailComponent implements OnInit, OnDestroy {
         this.mapStructureReq = this.mapsService.getMapStructure(this.id).subscribe(structure => {
           if (structure === null) {
             structure = new MapStructure();
-            structure.map = params["id"];
+            structure.map = params['id'];
           }
           this.mapsService.setCurrentMapStructure(structure);
         })
       }, () => {
-        console.log("Couldn't get map model");
+        console.log('Couldn\'t get map model');
       });
     });
     this.mapsService.getCurrentMap().subscribe(map => {
@@ -88,7 +88,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
 
   }
 
-  discardChanges(){
+  discardChanges() {
     this.mapsService.setCurrentMapStructure(this.originalMapStructure);
   }
 
