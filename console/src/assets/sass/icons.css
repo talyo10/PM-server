@@ -36,3 +36,6 @@
 .icon-admin:before {
   content: "\e903";
 }
+.icon-add-new:before {
+  content: "\e904";
+}
