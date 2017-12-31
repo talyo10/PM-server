@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { MapsService } from "../maps.service";
-import { Map } from "../models/map.model";
-import { Project } from "../../projects/models/project.model";
-import { ProjectsService } from "../../projects/projects.service";
-import { DefaultKeyValueDiffer } from "@angular/core/src/change_detection/differs/default_keyvalue_differ";
+import { MapsService } from '../maps.service';
+import { Map } from '../models/map.model';
+import { Project } from '../../projects/models/project.model';
+import { ProjectsService } from '../../projects/projects.service';
+import { DefaultKeyValueDiffer } from '@angular/core/src/change_detection/differs/default_keyvalue_differ';
 
 @Component({
   selector: 'app-map-create',
@@ -43,7 +43,6 @@ export class MapCreateComponent implements OnInit, OnDestroy {
       this.projectsReq = this.projectsService.list().subscribe(projects => {
         this.projects = projects;
         if (params.map) {
-
           projects.forEach(project => {
             const index = (<string[]>project.maps).indexOf(params.map);
             if (index !== -1) {
@@ -72,19 +71,19 @@ export class MapCreateComponent implements OnInit, OnDestroy {
 
   setFormValues(data: { name: string, description: string, licence: string }) {
     this.mapForm.controls.name.setValue(data.name || null);
-    this.mapForm.controls.description.setValue(data.name || null);
-    this.mapForm.controls.licence.setValue(data.name || null);
+    this.mapForm.controls.description.setValue(data.description || null);
+    this.mapForm.controls.licence.setValue(data.licence || null);
   }
 
 
   onSubmitForm(value) {
     if (this.map) {
       this.mapsService.updateMap(this.map.id, value).subscribe(map => {
-        this.router.navigate(["/maps", this.map.id]);
+        this.router.navigate(['/maps', this.map.id]);
       });
     } else {
       this.mapsService.createMap(value).subscribe(map => {
-        this.router.navigate(["/maps", map.id]);
+        this.router.navigate(['/maps', map.id]);
       });
     }
   }
