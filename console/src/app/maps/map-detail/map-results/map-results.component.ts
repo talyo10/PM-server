@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import { MapsService } from "../../maps.service";
 import { MapStructure } from "../../models/map-structure.model";
 import { MapResult } from "../../models/execution-result.model";
-import { SocketService } from "../../socket.service";
+import { SocketService } from "../../../shared/socket.service";
 
 @Component({
   selector: 'app-map-results',
