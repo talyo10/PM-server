@@ -2,7 +2,13 @@
 @import "~assets/sass/variables";
 @import "~assets/sass/base";
 
+@font-face {
+  font-family: "OpenSans";
+  src: url("./assets/fonts/OpenSans-Regular.ttf");
+}
+
 html, body {
+  font-family: "OpenSans";
   height: 100%;
   @extend .main-background;
 }
