@@ -26,12 +26,17 @@
 .nav {
   align-items: center;
   li.nav-item {
+    margin-bottom: 15px;
     &:first-child {
       margin-top: 47px;
     }
     a.nav-link {
       color: $text-color;
-      font-size: 25px;
+      font-size: 24px;
+      i {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
 }
