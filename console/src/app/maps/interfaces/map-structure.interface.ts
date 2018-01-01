@@ -23,7 +23,7 @@ export interface IAction {
   order: number,
   mandatory: boolean,
   method: IPluginMethod,
-  params?: [IActionParam]
+  params?: IActionParam[]
 }
 
 export interface IProcess {
@@ -35,7 +35,7 @@ export interface IProcess {
   condition?: string,
   preRun?: string,
   postRun?: string,
-  actions: [IAction],
+  actions: IAction[],
   plugin: IPlugin,
   createdAt: Date,
   correlateAgents: boolean,
@@ -60,9 +60,9 @@ export interface IMapStructure {
   content: any,
   map: string,
   code?: string,
-  attributes?: [IAttribute],
-  processes?: [IProcess],
-  links?: [ILink]
+  attributes?: IAttribute[],
+  processes?: IProcess[],
+  links?: ILink[]
 
 }
 
