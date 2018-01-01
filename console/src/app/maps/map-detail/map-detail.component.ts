@@ -44,7 +44,13 @@ export class MapDetailComponent implements OnInit, OnDestroy {
             structure.map = params['id'];
           }
           this.mapsService.setCurrentMapStructure(structure);
-        })
+        }, error => {
+          // if there is an error, return a new map structure
+          let structure = new MapStructure();
+          structure.map = params['id'];
+          this.mapsService.setCurrentMapStructure(structure);
+          console.log('Error getting map structure', error);
+        });
       }, () => {
         console.log('Couldn\'t get map model');
       });

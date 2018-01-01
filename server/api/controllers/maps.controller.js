@@ -13,12 +13,20 @@ module.exports = {
         }
         mapsService.create(req.body).then((map) => {
             projectsService.addMap(req.body.project, map._id).then(() => {
-                req.io.emit('notification', { title: 'Map created', message: `Map ${map.name} was created`, type: 'success' });
+                req.io.emit('notification', {
+                    title: 'Map created',
+                    message: `Map ${map.name} was created`,
+                    type: 'success'
+                });
                 res.json(map);
             });
         }).catch((error) => {
             console.log("Error creating map: ", error);
-            req.io.emit('notification', { title: 'Error', message: `Error creating map. Please try again`, type: 'error' });
+            req.io.emit('notification', {
+                title: 'Error',
+                message: `Error creating map. Please try again`,
+                type: 'error'
+            });
 
             res.status(500).send(error);
         })
@@ -48,16 +56,15 @@ module.exports = {
         mapsService.getMapStructure(req.params.id, req.params.structureId).then((structure) => {
             if (structure)
                 return res.json(structure);
-            else
-                return res.send('');
+            return res.status(204).send();
         }).catch((error) => {
             console.log("Error finding map version: ", error);
             return res.status(500).json(error);
         });
     },
     /* update a map with new body
-    * This will also call the projects service to update the maps of the relevant projects.
-    * */
+     * This will also call the projects service to update the maps of the relevant projects.
+     * */
     update: (req, res) => {
         const mapId = req.params.id;
         mapsService.update(mapId, req.body).then((map) => {
@@ -124,7 +131,11 @@ module.exports = {
             res.json(results);
         }).catch(error => {
             console.log("Error getting execution results: ", error);
-            req.io.emit('notification', { title: 'Whoops...', message: `Error getting execution results`, type: 'error' });
+            req.io.emit('notification', {
+                title: 'Whoops...',
+                message: `Error getting execution results`,
+                type: 'error'
+            });
 
             return res.status(500).json(error);
         });
@@ -134,7 +145,11 @@ module.exports = {
     /* create trigger */
     triggerCreate: (req, res) => {
         triggersService.create(req.params.id, req.body).then(trigger => {
-            req.io.emit('notification', { title: 'Trigger saved', message: `${trigger.name} saved successfully`, type: 'success' });
+            req.io.emit('notification', {
+                title: 'Trigger saved',
+                message: `${trigger.name} saved successfully`,
+                type: 'success'
+            });
 
             return res.json(trigger);
         }).catch((error) => {
@@ -145,11 +160,19 @@ module.exports = {
     /* delete a trigger */
     triggerDelete: (req, res) => {
         triggersService.delete(req.params.triggerId).then(() => {
-            req.io.emit('notification', { title: 'Trigger deleted', message: `${trigger.name} saved successfully`, type: 'success' });
+            req.io.emit('notification', {
+                title: 'Trigger deleted',
+                message: `${trigger.name} saved successfully`,
+                type: 'success'
+            });
 
             return res.send("OK");
         }).catch((error) => {
-            req.io.emit('notification', { title: 'Error deleting', message: `We couldn't delete this trigger`, type: 'error' });
+            req.io.emit('notification', {
+                title: 'Error deleting',
+                message: `We couldn't delete this trigger`,
+                type: 'error'
+            });
             console.log("Error getting map's triggers: ", error);
             return res.status(500).json(error);
         });
@@ -166,7 +189,11 @@ module.exports = {
     /* update a trigger */
     triggerUpdate: (req, res) => {
         triggersService.update(req.params.triggerId, req.body).then(trigger => {
-            req.io.emit('notification', { title: 'Trigger saved', message: `${trigger.name} saved successfully`, type: 'success' });
+            req.io.emit('notification', {
+                title: 'Trigger saved',
+                message: `${trigger.name} saved successfully`,
+                type: 'success'
+            });
 
             return res.json(trigger);
         }).catch((error) => {
