@@ -1,7 +1,7 @@
 @import "~assets/sass/base";
 
 .pad {
-  margin-top: 45px;
+  margin-top: 25px;
 }
 
 .link {
@@ -18,9 +18,13 @@
   padding-right: 15px;
 }
 
-.card {
-  height: 150px;
-  overflow-y: hidden;
+.featured {
+  padding-left: 10px;
+  padding-right: 10px;
+  .card {
+    height: 150px;
+    overflow-y: hidden;
+  }
 }
 
 .filter {
