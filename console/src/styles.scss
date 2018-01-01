@@ -36,7 +36,7 @@ input, textarea, select {
 
 input, textarea, select {
   border: 1px solid $input-border !important;
-  background-color: $input-bg;
+  background-color: $input-bg !important;
   outline: none !important;
   &.ng-invalid.ng-touched {
     border: 1px solid $error;
