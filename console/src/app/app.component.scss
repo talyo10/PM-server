@@ -9,7 +9,6 @@
     flex: 0 0 80px;
     background-color: $turquoise-blue;
     img {
-      width: 52px;
       margin-top: 23px;
       margin-left: 15px;
     }
@@ -17,7 +16,7 @@
   }
   .main {
     padding: 0px;
-    padding-right: 50px;
+    padding-right: 35px;
     margin-top: 39px;
     flex: 0 0 calc(100% - 80px);
     max-width: calc(100% - 80px);
@@ -27,12 +26,17 @@
 .nav {
   align-items: center;
   li.nav-item {
+    margin-bottom: 15px;
     &:first-child {
       margin-top: 47px;
     }
     a.nav-link {
       color: $text-color;
-      font-size: 25px;
+      font-size: 24px;
+      i {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
 }

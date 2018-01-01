@@ -2,7 +2,13 @@
 @import "~assets/sass/variables";
 @import "~assets/sass/base";
 
+@font-face {
+  font-family: "OpenSans";
+  src: url("./assets/fonts/OpenSans-Regular.ttf");
+}
+
 html, body {
+  font-family: "OpenSans";
   height: 100%;
   @extend .main-background;
 }
@@ -29,11 +35,17 @@ input, textarea, select {
 }
 
 input, textarea, select {
+  border: 1px solid $input-border !important;
+  background-color: $input-bg;
+  outline: none !important;
   &.ng-invalid.ng-touched {
     border: 1px solid $error;
   }
   &:focus {
-    border: 1px solid $turquoise-blue;
+    outline-style: none;
+    outline-width: 0px;
+    box-shadow: none !important;
+    border: 1px solid $turquoise-blue !important;
   }
 }
 

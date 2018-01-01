@@ -1,14 +1,13 @@
 <div class="main">
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-12">
       <h1 class="section-title">Projects</h1>
       <h5 class="section-sub-title">Recently added</h5>
     </div>
-    <div class="col-3" *ngFor="let project of projects?.slice(-4)">
+    <div class="featured col-3" *ngFor="let project of projects?.slice(-4)">
       <div class="card link" [routerLink]="[project.id]">
         <div class="card-body">
           <h4 class="card-title">{{project.name}}</h4>
-          <h6 class="card-subtitle mb-2">{{project.createdAt | date: 'short'}}</h6>
           <p class="card-text">{{project.description}}</p>
         </div>
       </div>
@@ -29,7 +28,6 @@
   <table class="table">
     <thead>
     <tr>
-      <th scope="col">#</th>
       <th scope="col">Name</th>
       <th scope="col">Description</th>
       <th scope="col">Created</th>
@@ -37,12 +35,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let project of projects | filter:{term: filterTerm, param: 'name'}; let i = index">
-      <th scope="row">{{ i+1 }}</th>
+    <tr *ngFor="let project of projects | filter:{term: filterTerm, param: 'name'}">
       <td><a [routerLink]="[project.id]">{{ project.name }}</a></td>
       <td>{{ project.description }}</td>
-      <td>{{ project.createdAt | date: 'short' }}</td>
-      <td>{{ project.updatedAt | date: 'short' }}</td>
+      <td>{{ (project.createdAt | date: 'dd/MM/yyyy') + ' ' +  (project.createdAt | date: 'HH:mm') }}</td>
+      <td *ngIf="project.updatedAt">{{ (project.updatedAt | date: 'dd/MM/yyyy') + ' ' +  (project.updatedAt | date: 'HH:mm') }}</td>
+      <td *ngIf="!project.updatedAt"> - </td>
     </tr>
 
     </tbody>

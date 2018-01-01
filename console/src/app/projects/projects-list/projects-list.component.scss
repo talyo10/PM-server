@@ -1,7 +1,7 @@
 @import "~assets/sass/base";
 
 .pad {
-  margin-top: 45px;
+  margin-top: 25px;
 }
 
 .link {
@@ -13,14 +13,26 @@
 }
 
 .main {
-  margin-left: 50px;
+  margin-left: 35px;
   padding-left: 15px;
   padding-right: 15px;
 }
 
-.card {
-  height: 150px;
-  overflow-y: hidden;
+.featured {
+  padding-left: 10px;
+  padding-right: 10px;
+  .card {
+    height: 150px;
+    overflow-y: hidden;
+    .card-body {
+      padding: 16px 18px 18px 16px;
+      .card-text {
+        padding: 5px;
+        margin: 0;
+        line-height: 18px;
+      }
+    }
+  }
 }
 
 .filter {
@@ -32,7 +44,11 @@
     i {
       position: relative;
       top: 30px;
-      left: 175px;
+      left: 195px;
+    }
+    input {
+      width: 220px;
+      height: 34px;
     }
   }
 
