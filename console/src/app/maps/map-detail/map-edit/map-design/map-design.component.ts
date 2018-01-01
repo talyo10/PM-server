@@ -1,15 +1,15 @@
 import { AfterContentInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
-import * as $ from "jquery";
-import * as joint from "jointjs";
-import * as _ from "lodash";
-import { Subscription } from "rxjs/Subscription";
+import * as $ from 'jquery';
+import * as joint from 'jointjs';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 
-import { MapDesignService } from "../map-design.service";
-import { Link, MapStructure, Process } from "../../../models/map-structure.model";
-import { MapsService } from "../../../maps.service";
-import { PluginsService } from "../../../../plugins/plugins.service";
-import { Plugin } from "../../../../plugins/models/plugin.model";
+import { MapDesignService } from '../map-design.service';
+import { Link, MapStructure, Process } from '../../../models/map-structure.model';
+import { MapsService } from '../../../maps.service';
+import { PluginsService } from '../../../../plugins/plugins.service';
+import { Plugin } from '../../../../plugins/models/plugin.model';
 
 
 @Component({
@@ -63,7 +63,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   ngAfterContentInit() {
     this.graph = new joint.dia.Graph;
     this.paper = new joint.dia.Paper({
-      el: $("#graph"),
+      el: $('#graph'),
       width: this.wrapper.nativeElement.offsetWidth,
       height: this.wrapper.nativeElement.offsetHeight,
       gridSize: this.scale,
@@ -113,15 +113,14 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   addNewLink(cell) {
-    console.log("Add new link");
     console.log(this.link);
-    if (!this.link)
+    if (!this.link) {
       return;
-    let link = _.find(this.mapStructure.links, (o) => {
+    }
+    const link = _.find(this.mapStructure.links, (o) => {
       return (o.targetId === this.link.targetId && o.sourceId === this.link.sourceId)
     });
     if (link) {
-      console.log("A link already exists between those nodes");
       return;
     }
 
@@ -131,7 +130,6 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     else
       this.mapStructure.links.push(this.link);
     this.mapStructure.content = JSON.stringify(this.graph.toJSON());
-    console.log(this.mapStructure);
     this.mapsService.setCurrentMapStructure(this.mapStructure);
   }
 
@@ -196,8 +194,6 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
-    console.log('should add a new process');
-    console.log(obj.cell.model.attributes.attrs['.label'].text);
     const pluginName = obj.cell.model.attributes.attrs['.label'].text;
     const plugin = this.plugins.find((o) => {
       return o.name === pluginName;
@@ -205,8 +201,8 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
 
     const imageModel = new joint.shapes.devs['MyImageModel']({
       position: {
-        x: obj.x,
-        y: obj.y
+        x: obj.x - (300 * this.scale),
+        y: obj.y - (270 * this.scale)
       },
       size: {
         width: 110,
@@ -220,7 +216,6 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       }
     });
     this.graph.addCell(imageModel);
-    console.log(joint.shapes.devs['MyImageModel']);
     let p = new Process();
     p.plugin = plugin;
     p.uuid = <string>imageModel.id;
@@ -232,70 +227,14 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     }
     this.mapStructure.content = JSON.stringify(this.graph.toJSON());
     this.mapsService.setCurrentMapStructure(this.mapStructure);
-    console.log(this.mapStructure);
-
     this.editProcess(this.mapStructure.processes[this.mapStructure.processes.length - 1]);
-    // let m1 = new joint.shapes.devs.Model({
-    //   position: { x: 50, y: 50 },
-    //   size: { width: 110, height: 75 },
-    //   inPorts: [' '],
-    //   outPorts: ['  '],
-    //   ports: {
-    //     groups: {
-    //       'in': {
-    //         attrs: {
-    //           '.port-body': {
-    //             fill: '#2c2c2c',
-    //             stroke: '#a2a2a2',
-    //             magnet: 'active'
-    //           }
-    //         }
-    //       },
-    //       'out': {
-    //         attrs: {
-    //           '.port-body': {
-    //             fill: '#a2a2a2',
-    //             stroke: '#a2a2a2'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    //   attrs: {
-    //     '.label': { text: 'Command Line', 'ref-y': 0.83, 'y-alignment': 'middle', fill: '#f1f1f1', 'font-size': 13 },
-    //     '.body': { stroke: '#3c3e41', fill: '#2c2c2c', 'rx': 6, 'ry': 6 },
-    //     '.port-body': { r: 7.5, stroke: 'gray', fill: '#2c2c2c', magnet: 'active' },
-    //     rect: { fill: '#2c2c2c', stroke: '#a2a2a2' }
-    //   }
-    // });
-    //
-    // m1.position(obj.x - offsetLeft - 450, obj.y - offsetTop + 350);
-    // let c = m1.clone();
-    // c.attributes.attrs['.label'].text = obj.cell.model.attributes.attrs.text.text;
-    // // c.attributes.position(obj.x - offsetLeft, obj.y - offsetTop);
-    // this.graph.addCell(c);
-    // let p = new Process();
-    // p.plugin = _.find(this.plugins, (o) => {
-    //   return o.name === c.attributes.attrs['.label'].text
-    // });
-    // p.uuid = <string>c.id;
-    // p.x = c.attributes.position.x;
-    // p.y = c.attributes.position.y;
-    //
-    // if (!this.mapStructure.processes)
-    //   this.mapStructure.processes = [p];
-    // else
-    //   this.mapStructure.processes.push(p);
-    // this.mapStructure.content = JSON.stringify(this.graph.toJSON());
-    // this.mapsService.setCurrentMapStructure(this.mapStructure);
-    // console.log(this.mapStructure);
-    //
-    // this.editProcess(this.mapStructure.processes[this.mapStructure.processes.length - 1]);
+
   }
 
   drawGraph() {
-    if (this.mapStructure.content)
+    if (this.mapStructure.content) {
       this.graph.fromJSON(JSON.parse(this.mapStructure.content));
+    }
   }
 
   editProcess(process) {
@@ -319,7 +258,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       move = true;
     });
 
-    $("#graph").mousemove((event) => {
+    $('#graph').mousemove((event) => {
       if (move)
         self.paper.translate(event.offsetX - initialPosition.x, event.offsetY - initialPosition.y);
     });
@@ -348,7 +287,6 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     });
 
     this.graph.on('change:source change:target', function (link) {
-      console.log("Source change");
       let sourcePort = link.get('source').port;
       let sourceId = link.get('source').id;
       let targetPort = link.get('target').port;
