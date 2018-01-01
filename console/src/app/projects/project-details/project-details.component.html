@@ -2,7 +2,8 @@
   <div class="row">
     <div class="col-sm-12">
       <h1 class="section-title">{{project?.name}} maps</h1>
-      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn" (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn"
+         (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
       <p class="lead">{{project?.description}}</p>
     </div>
   </div>
@@ -26,19 +27,20 @@
     <table class="table" *ngIf="project?.maps?.length > 0">
       <thead>
       <tr>
-        <th scope="col">#</th>
         <th scope="col">Name</th>
         <th scope="col">Description</th>
         <th scope="col">Created</th>
+        <th scope="col">Updated</th>
       </tr>
       </thead>
       <tbody>
 
-      <tr *ngFor="let maps of project?.maps | filter:{term: filterTerm, param: 'name'}; let i = index">
-        <th scope="row">{{ i+1 }}</th>
-        <td><a [routerLink]="['/maps', maps.id]">{{ maps.name }}</a></td>
-        <td>{{ maps.description }}</td>
-        <td>{{ maps.createdAt | date: 'short' }}</td>
+      <tr *ngFor="let map of project?.maps | filter:{term: filterTerm, param: 'name'}; let i = index">
+        <td><a [routerLink]="['/maps', map.id]">{{ map.name }}</a></td>
+        <td>{{ map.description }}</td>
+        <td>{{ (map.createdAt | date: 'dd/MM/yyyy') + ' ' + (map.createdAt | date: 'HH:mm') }}</td>
+        <td *ngIf="map.updatedAt">{{ (map.updatedAt | date: 'dd/MM/yyyy') + ' ' + (map.updatedAt | date: 'HH:mm') }}</td>
+        <td *ngIf="!map.updatedAt"> -</td>
       </tr>
 
       </tbody>

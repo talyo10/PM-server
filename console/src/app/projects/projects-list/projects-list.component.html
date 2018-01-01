@@ -29,7 +29,6 @@
   <table class="table">
     <thead>
     <tr>
-      <th scope="col">#</th>
       <th scope="col">Name</th>
       <th scope="col">Description</th>
       <th scope="col">Created</th>
@@ -37,12 +36,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let project of projects | filter:{term: filterTerm, param: 'name'}; let i = index">
-      <th scope="row">{{ i+1 }}</th>
+    <tr *ngFor="let project of projects | filter:{term: filterTerm, param: 'name'}">
       <td><a [routerLink]="[project.id]">{{ project.name }}</a></td>
       <td>{{ project.description }}</td>
-      <td>{{ project.createdAt | date: 'short' }}</td>
-      <td>{{ project.updatedAt | date: 'short' }}</td>
+      <td>{{ (project.createdAt | date: 'dd/MM/yyyy') + ' ' +  (project.createdAt | date: 'HH:mm') }}</td>
+      <td *ngIf="project.updatedAt">{{ (project.updatedAt | date: 'dd/MM/yyyy') + ' ' +  (project.updatedAt | date: 'HH:mm') }}</td>
+      <td *ngIf="!project.updatedAt"> - </td>
     </tr>
 
     </tbody>
