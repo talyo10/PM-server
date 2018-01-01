@@ -13,7 +13,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TreeTableModule, SharedModule } from 'primeng/primeng';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { FilterPipe } from './shared/filter.pipe';
-
+import { TruncatecharsPipe } from './shared/truncatechars.pipe';
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -100,7 +100,8 @@ import { ToastyModule } from 'ng2-toasty';
     AgentsListComponent,
     AddFolderComponent,
     FilterPipe,
-    SearchComponent
+    SearchComponent,
+    TruncatecharsPipe
     // CalendarContainerComponent,
     // AddJobComponent,
     // CalendarComponent
