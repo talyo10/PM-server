@@ -27,6 +27,8 @@
     .card-body {
       padding: 16px 18px 18px 16px;
       .card-text {
+        height: 75px;
+        overflow-y: hidden;
         margin: 0;
         line-height: 18px;
       }
