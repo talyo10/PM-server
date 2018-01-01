@@ -35,10 +35,14 @@ input, textarea, select {
 }
 
 input, textarea, select {
+  border: 1px solid $input-border;
+  background-color: $input-bg;
+  outline: none;
   &.ng-invalid.ng-touched {
     border: 1px solid $error;
   }
   &:focus {
+    outline: none;
     border: 1px solid $turquoise-blue;
   }
 }
