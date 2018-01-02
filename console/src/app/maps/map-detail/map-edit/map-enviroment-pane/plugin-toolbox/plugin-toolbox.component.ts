@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
-import * as $ from "jquery";
-import * as joint from "jointjs";
+import * as $ from 'jquery';
+import * as joint from 'jointjs';
 
-import { PluginsService } from "../../../../../plugins/plugins.service";
-import { Plugin } from "../../../../../plugins/models/plugin.model";
-import { MapDesignService } from "../../map-design.service";
+import { PluginsService } from '../../../../../plugins/plugins.service';
+import { Plugin } from '../../../../../plugins/models/plugin.model';
+import { MapDesignService } from '../../map-design.service';
 
 
 @Component({
@@ -28,8 +28,8 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
     this.stencilGraph = new joint.dia.Graph;
     this.stencilPaper = new joint.dia.Paper({
-      el: $("#stencil"),
-      width: 400,
+      el: $('#stencil'),
+      width: 250,
       height: 80,
       gridSize: 1,
       model: this.stencilGraph,
@@ -44,48 +44,27 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
         type: 'devs.MyImageModel',
         size: {
-          width: 80,
-          height: 80
+          width: 108,
+          height: 73
         },
         attrs: {
           rect: {
-            stroke: '#d1d1d1',
-            fill: {
-              type: 'linearGradient',
-              stops: [{
-                offset: '0%',
-                color: 'white'
-              }, {
-                offset: '50%',
-                color: '#d1d1d1'
-              }],
-              attrs: {
-                x1: '0%',
-                y1: '0%',
-                x2: '0%',
-                y2: '100%'
-              }
-            }
+            // stroke: '#5d5d5d',
+            rect: { fill: '#2d3236' }
           },
           circle: {
             stroke: 'gray'
           },
           '.label': {
             text: '',
-            'ref-y': 0
-          },
-          '.inPorts circle': {
-            fill: '#c8c8c8'
-          },
-          '.outPorts circle': {
-            fill: '#262626'
+            'ref-y': 70
           },
           image: {
             'xlink:href': 'http://via.placeholder.com/350x150',
             width: 80,
             height: 50,
             'ref-x': .5,
-            'ref-y': .5,
+            'ref-y': 0,
             ref: 'rect',
             'x-alignment': 'middle',
             'y-alignment': 'middle'
@@ -96,7 +75,7 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
     this.pluginsReq = this.pluginsService.list().subscribe(plugins => {
       this.plugins = plugins.filter(plugin => {
-        return plugin.type === "executer"
+        return plugin.type === 'executer'
       });
       this.addPluginsToGraph();
     });
@@ -125,12 +104,12 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
 
     flyShape.position(0, 0);
     flyGraph.addCell(flyShape);
-    $("#flyPaper").offset({
+    $('#flyPaper').offset({
       left: event.pageX - offset.x,
       top: event.pageY - offset.y
     });
     $('body').on('mousemove.fly', function (e) {
-      $("#flyPaper").offset({
+      $('#flyPaper').offset({
         left: e.pageX - offset.x,
         top: e.pageY - offset.y
       });
@@ -140,43 +119,38 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
       let x = e.pageX;
       let y = e.pageY;
 
-
       $('body').off('mousemove.fly').off('mouseup.fly');
       flyShape.remove();
       self.designService.drop(x, y, cellView);
       $('#flyPaper').remove();
     });
-
   }
-
 
   addPluginsToGraph() {
     let plugins = [];
     let iteration = 0;
     this.plugins.forEach(plugin => {
+      console.log((iteration % 2 ? iteration * 73 : Math.abs((iteration - 1) * 73)) + 16);
       let imageModel = new joint.shapes.devs['MyImageModel']({
         position: {
-          x: 20,
-          y: iteration * 80
+          x: iteration % 2 ? 128 : 10,
+          y: (iteration % 2 ? (iteration - 1) * 45 : iteration * 45) + 15
         },
         size: {
-          width: 110,
-          height: 75
+          width: 108,
+          height: 73
         },
-        inPorts: [' '],
-        outPorts: ['  '],
         attrs: {
-          '.label': { text: plugin.name },
+          '.label': { text: plugin.name, 'ref-y': 5 },
           image: { 'xlink:href': `plugins/${plugin.name}/${plugin.imgUrl}` }
         }
       });
       plugins.push(imageModel);
       iteration++;
     });
-    this.stencilPaper.setDimensions(400, iteration * 80);
+    this.stencilPaper.setDimensions(250, iteration * 80);
     this.stencilGraph.addCells(plugins);
   }
-
 
   ngOnDestroy() {
     this.pluginsReq.unsubscribe();
