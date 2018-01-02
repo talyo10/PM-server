@@ -1,24 +1,22 @@
 <div class="container">
-  <hr class="my-4">
-  <ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-center"
-        *ngFor="let attr of mapStructure?.attributes; let i = index;">
-      <span>"{{attr.name}}" = "{{attr.value}}"</span>
-      <span>
+  <table class="table">
+    <tbody>
+    <tr *ngFor="let attr of mapStructure?.attributes; let i = index;">
+      <td>{{attr.name}} = "{{attr.value}}"</td>
+      <td>
         <button type="button" class="btn btn-link" (click)="openAddAtrributeModal(i)">
           <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
         </button>
         <button type="button" class="btn btn-link" (click)="removeAttribute(i)">
           <i class="fa fa-trash-o" aria-hidden="true"></i>
         </button>
-      </span>
-    </li>
-  </ul>
+      </td>
+    </tr>
 
+    </tbody>
+  </table>
 
-  <div class="row bottom-section">
-    <div class="col-sm-12">
-      <button type="button" class="btn btn-primary btn-block" (click)="openAddAtrributeModal()">Add attribute</button>
-    </div>
+  <div class="bottom">
+    <button type="button" class="btn btn-primary btn-block" (click)="openAddAtrributeModal()">Add attribute</button>
   </div>
 </div>
