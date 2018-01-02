@@ -4,14 +4,16 @@
       <h1 class="section-title">Projects</h1>
       <h5 class="section-sub-title">Recently added</h5>
     </div>
-    <div class="featured col-3" *ngFor="let project of projects?.slice(-4)">
-      <div class="card link" [routerLink]="[project.id]">
-        <div class="card-body">
-          <h4 class="card-title">{{project.name}}</h4>
-          <p class="card-text">{{ project.description | truncatechars: 110 : '' }}<span class="etc" *ngIf="project?.description?.length > 110"> ... </span></p>
-        </div>
-      </div>
-    </div>
+    <!--<div class="featured col-3" *ngFor="let project of projects?.slice(-4)">-->
+      <!--<div class="card link" [routerLink]="[project.id]">-->
+        <!--<div class="card-body">-->
+          <!--<h4 class="card-title">{{project.name}}</h4>-->
+          <!--<p class="card-text">{{ project.description | truncatechars: 110 : '' }}<span class="etc"-->
+                                                                                        <!--*ngIf="project?.description?.length > 110"> ... </span>-->
+          <!--</p>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
   </div>
 
   <div class="pad"></div>
@@ -21,28 +23,31 @@
     <div>
       <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
       <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
-      <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
+      <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" (keyup)="loadProjectLazy(filterTerm.value)" />
     </div>
   </div>
 
-  <table class="table">
-    <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">Created</th>
-      <th scope="col">Updated</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let project of projects | filter:{term: filterTerm, param: 'name'}">
-      <td><a [routerLink]="[project.id]">{{ project.name }}</a></td>
-      <td>{{ project.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="project?.description?.length > 70"> ... </span></td>
-      <td>{{ (project.createdAt | date: 'dd/MM/yyyy') + ' ' +  (project.createdAt | date: 'HH:mm') }}</td>
-      <td *ngIf="project.updatedAt">{{ (project.updatedAt | date: 'dd/MM/yyyy') + ' ' +  (project.updatedAt | date: 'HH:mm') }}</td>
-      <td *ngIf="!project.updatedAt"> - </td>
-    </tr>
-
-    </tbody>
-  </table>
+  <p-dataTable [value]="projects" [lazy]="true" [rows]="15" [paginator]="true" [totalRecords]="resultCount"
+               (onLazyLoad)="loadProjectLazy($event)"  [globalFilter]="filterTerm">
+    <p-column field="name" header="Name" [sortable]="true">
+      <ng-template let-col let-project="rowData" pTemplate="body">
+        <a [routerLink]="project.id">{{ project.name }}</a>
+      </ng-template>
+    </p-column>
+    <p-column field="description" header="Description" [sortable]="true">
+      <ng-template let-col let-project="rowData" pTemplate="body">
+        <span>{{ project.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="project?.description?.length > 70"> ... </span></span>
+      </ng-template>
+    </p-column>
+    <p-column field="createdAt" header="Created" [sortable]="true">
+      <ng-template let-col let-project="rowData" pTemplate="body">
+        <span>{{ (project.createdAt | date: 'dd/MM/yyyy') + ' ' +  (project.createdAt | date: 'HH:mm') }}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="updatedAt" header="Updated" [sortable]="true">
+      <ng-template let-col let-project="rowData" pTemplate="body">
+        <span>{{ ((project.updatedAt | date: 'dd/MM/yyyy') || '') + ' ' +  ((project.updatedAt | date: 'HH:mm') || '' )}}</span>
+      </ng-template>
+    </p-column>
+  </p-dataTable>
 </div>
