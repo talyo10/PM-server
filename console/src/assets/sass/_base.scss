@@ -45,9 +45,14 @@
   background: $grey-dark-3;
 }
 
+
 .pane-header {
-  background-color: $blue-dark-1;
-  color: #fff;
+  padding-left: 13px;
+  font-size: 18px;
+  line-height: 40px;
+  height: 43px;
+  background-color: $pane-header-background;
+  border-left: 1px solid $cool-grey;
 }
 
 .main-background {

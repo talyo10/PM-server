@@ -5,7 +5,31 @@
   @extend .btn-clock-bottom;
 }
 
-
-.pane-title {
+h3 {
   @extend .pane-header;
+  border: none;
 }
+
+div {
+  button.btn.dropdown-toggle {
+    width: 61px;
+    height: 21px;
+    border-radius: 10.5px;
+    background: none;
+    border: solid 2px #97999b;
+    color: #97999b;
+  }
+}
+
+.clearfix {
+  color: $greyish-text;
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+.action-form {
+  padding: 15px;
+}
+
+

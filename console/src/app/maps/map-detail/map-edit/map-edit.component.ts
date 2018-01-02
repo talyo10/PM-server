@@ -16,23 +16,22 @@ export class MapEditComponent implements OnInit, OnDestroy {
   map: Map;
   mapSubscription: Subscription;
   mapStructureSubscription: Subscription;
+  tab: string;
   @ViewChild('wrapper') wrapper: ElementRef;
 
-  constructor(private mapsService: MapsService) {
+  constructor(private mapsService: MapsService, private designService: MapDesignService) {
   }
 
   ngOnInit() {
     this.mapSubscription = this.mapsService.getCurrentMap().subscribe(map => {
       if (map) {
         this.map = map;
-
       }
     });
 
     this.mapStructureSubscription = this.mapsService.getCurrentMapStructure().subscribe(structure => {
       this.mapStructure = structure;
-    })
-
+    });
   }
 
   ngOnDestroy() {

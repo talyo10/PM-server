@@ -186,3 +186,42 @@ table, .table {
 
   }
 }
+
+//
+.btn-link {
+  color: $turquoise-blue;
+  cursor: pointer;
+}
+
+// accordion
+.panel {
+  .panel.card {
+    background: transparent !important;
+  }
+
+}
+
+// dropdown
+.dropdown-item {
+  color: $text-color !important;
+  &:hover {
+    color: #000 !important;
+    background: $turquoise-blue !important;
+
+  }
+}
+
+.dropdown-menu {
+  background: $selected-tab-environment;
+  color: $text-color;
+}
+
+
+.menuitem {
+  color: $text-color;
+  &:hover {
+    background: $turquoise-blue !important;
+    color: #000 !important;
+
+  }
+}

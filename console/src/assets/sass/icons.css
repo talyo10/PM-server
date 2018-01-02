@@ -24,6 +24,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-zoom1:before {
+  content: "\e905";
+}
+.icon-zoom2:before {
+  content: "\e906";
+}
+.icon-plugins:before {
+  content: "\e907";
+}
+.icon-attribute:before {
+  content: "\e908";
+}
+.icon-trigger:before {
+  content: "\e909";
+}
+.icon-agent:before {
+  content: "\e90a";
+}
+.icon-add-new:before {
+  content: "\e904";
+}
 .icon-search1:before {
   content: "\e900";
 }
@@ -35,7 +56,4 @@
 }
 .icon-admin:before {
   content: "\e903";
-}
-.icon-add-new:before {
-  content: "\e904";
 }
