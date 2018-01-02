@@ -14,7 +14,7 @@ export class SearchComponent implements OnDestroy {
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   query: string;
   maps: [Map];
-  projects: [Project];
+  projects: Project[];
   timeout: any;
   loading: boolean = false;
   mapReq: any;
@@ -39,10 +39,10 @@ export class SearchComponent implements OnDestroy {
         this.maps = maps;
         this.loading = false;
       });
-      this.projectReq = this.projectsService.filter(this.query).subscribe(projects => {
-        this.projects = projects;
+      this.projectReq = this.projectsService.filter(null, null, null, this.query).subscribe(data => {
+        this.projects = data.items;
         this.loading = false;
-      })
+      });
     }, 400);
   }
 
