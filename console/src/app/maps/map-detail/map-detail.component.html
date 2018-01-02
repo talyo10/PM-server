@@ -1,4 +1,6 @@
-<h1 class="display-4">{{map?.name}}</h1>
+<div class="header">
+  <h1>{{map?.name}}</h1>
+</div>
 
 <div class="map-nav">
   <ul class="nav justify-content-center">
@@ -17,21 +19,15 @@
     <li class="nav-item" routerLinkActive="active">
       <a class="nav-link" [routerLink]="['settings']">Settings</a>
     </li>
-    <li class="nav-item pull-right">
-      <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-outline-primary" (click)="discardChanges()"
-                *ngIf="edited || structureEdited" disabled><i class="fa fa-undo" aria-hidden="true"></i> Discard
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="saveMap()" *ngIf="!edited && !structureEdited"
-                disabled><i class="fa fa-check-circle-o" aria-hidden="true"></i> Saved
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="saveMap()" *ngIf="edited || structureEdited"><i
-          class="fa fa-floppy-o" aria-hidden="true"></i> Save
-        </button>
-        <button class="btn btn-primary" (click)="executeMap()">Execute</button>
-      </div>
-    </li>
+
   </ul>
+</div>
+
+<div class="action-buttons">
+  <button type="button" class="btn" (click)="discardChanges()" *ngIf="edited || structureEdited" disabled>Discard</button>
+  <button type="button" class="btn" (click)="saveMap()" *ngIf="!edited && !structureEdited" disabled>Saved</button>
+  <button type="button" class="btn" (click)="saveMap()" *ngIf="edited || structureEdited">Save</button>
+  <button class="btn" (click)="executeMap()">Execute</button>
 </div>
 
 <div class="router-wrapper">
