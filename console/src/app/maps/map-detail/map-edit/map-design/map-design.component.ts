@@ -64,7 +64,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.graph = new joint.dia.Graph;
     this.paper = new joint.dia.Paper({
       el: $('#graph'),
-      width: this.wrapper.nativeElement.offsetWidth,
+      width: this.wrapper.nativeElement.offsetWidth - 250,
       height: this.wrapper.nativeElement.offsetHeight,
       gridSize: this.scale,
       model: this.graph,
@@ -343,4 +343,8 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.paper.scale(this.scale, this.scale);
   }
 
+  onResize(event) {
+    // when resizing window paper size should be updated
+    this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
+  }
 }
