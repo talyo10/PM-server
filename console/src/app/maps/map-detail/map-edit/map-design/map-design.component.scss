@@ -1,26 +1,41 @@
 @import "~assets/sass/base";
 @import "~assets/sass/variables";
 
+.main, .map-management {
+  padding: 0;
+}
+
 .wrapper {
   height: 100%;
   width: 100%;
   overflow-y: scroll;
+  margin-left: 0;
+  margin-right: 0;
   .map-management {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    @extend .base-shadow;
-    @extend .side-bar;
+    background: $selected-tab-environment;
+    //position: absolute;
+    //right: 0;
+    //top: 0;
+    //height: 100%;
+    //@extend .base-shadow;
+    //@extend .side-bar;
+  }
+}
+
+.map-controllers {
+  background: $dark-background;
+  .btn {
+    background: transparent;
   }
 }
 
 .graph {
-  background: $grey-dark-1;
+  background: $dark-background;
 }
 
 .pane-header {
   @extend .pane-header;
+  margin-bottom: 0;
 }
 
 /* port styling */
