@@ -6,6 +6,7 @@ import { Observable } from "rxjs/Observable";
 export class MapDesignService {
   public dropped: Subject<any> = new Subject<any>();
   public onDrop: boolean;
+  public tabOpen: boolean;
 
   constructor() {  }
 
