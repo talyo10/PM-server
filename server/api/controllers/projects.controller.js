@@ -59,9 +59,11 @@ module.exports = {
 
     /* filter projects */
     filter: (req, res) => {
-        console.log(req.query);
-        projectsService.filter(req.query).then(projects => {
-            res.json(projects);
+        projectsService.filter(req.query).then(data => {
+            if (!data || data.totalCount === 0) {
+                return res.status(204).send();
+            }
+            return res.json(data);
         }).catch((error) => {
             req.io.emit('notification', { title: 'Whoops..', message: `Error getting projects list`, type: 'error' });
 
