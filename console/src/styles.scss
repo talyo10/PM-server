@@ -253,3 +253,27 @@ rect.body {
     }
   }
 }
+
+.pm-modal {
+  background: $background;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.75);
+  .modal-header {
+    border-bottom: 0;
+    button.close {
+      color: $text-color;
+      cursor: pointer;
+    }
+  }
+  .modal-body {
+    border-bottom: 0;
+  }
+  .modal-footer {
+    border-top: 0;
+  }
+}
+
+//
+//.modal {
+//  background: $background;
+//
+//}
