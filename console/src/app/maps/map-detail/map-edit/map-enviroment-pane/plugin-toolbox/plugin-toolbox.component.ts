@@ -49,22 +49,29 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
         },
         attrs: {
           rect: {
-            // stroke: '#5d5d5d',
-            rect: { fill: '#2d3236' }
+            'stroke-width': '1',
+            'stroke-opacity': .7,
+            stroke: '#7f7f7f',
+            rx: 3,
+            ry: 3,
+            fill: '#2d3236',
+            'fill-opacity': .5
           },
           circle: {
             stroke: 'gray'
           },
           '.label': {
             text: '',
-            'ref-y': 70
+            'ref-y': 5,
+            'font-size': 14,
+            fill: '#bbbbbb'
           },
           image: {
             'xlink:href': 'http://via.placeholder.com/350x150',
-            width: 80,
-            height: 50,
-            'ref-x': .5,
-            'ref-y': 0,
+            width: 46,
+            height: 32,
+            'ref-x': 50,
+            'ref-y': 60,
             ref: 'rect',
             'x-alignment': 'middle',
             'y-alignment': 'middle'
@@ -141,8 +148,17 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
           height: 73
         },
         attrs: {
-          '.label': { text: plugin.name, 'ref-y': 5 },
-          image: { 'xlink:href': `plugins/${plugin.name}/${plugin.imgUrl}` }
+          '.label': { text: plugin.name },
+          image: {
+            'xlink:href': `plugins/${plugin.name}/${plugin.imgUrl}`,
+            width: 46,
+            height: 32,
+            'ref-x': 50,
+            'ref-y': 50,
+            ref: 'rect',
+            'x-alignment': 'middle',
+            'y-alignment': 'middle'
+          }
         }
       });
       plugins.push(imageModel);

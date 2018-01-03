@@ -154,46 +154,38 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         },
         attrs: {
           rect: {
-            stroke: '#d1d1d1',
-            fill: {
-              type: 'linearGradient',
-              stops: [{
-                offset: '0%',
-                color: 'white'
-              }, {
-                offset: '50%',
-                color: '#d1d1d1'
-              }],
-              attrs: {
-                x1: '0%',
-                y1: '0%',
-                x2: '0%',
-                y2: '100%'
-              }
-            }
+            'stroke-width': '1',
+            'stroke-opacity': .7,
+            stroke: '#7f7f7f',
+            rx: 3,
+            ry: 3,
+            fill: '#2d3236',
+            'fill-opacity': .5
           },
           circle: {
             stroke: 'gray'
           },
           '.label': {
             text: '',
-            'ref-y': -20
+            'ref-y': 5,
+            'font-size': 14,
+            fill: '#bbbbbb'
+          },
+          image: {
+            'xlink:href': 'http://via.placeholder.com/350x150',
+            width: 46,
+            height: 32,
+            'ref-x': 50,
+            'ref-y': 50,
+            ref: 'rect',
+            'x-alignment': 'middle',
+            'y-alignment': 'middle'
           },
           '.inPorts circle': {
             fill: '#c8c8c8'
           },
           '.outPorts circle': {
             fill: '#262626'
-          },
-          image: {
-            'xlink:href': 'http://via.placeholder.com/350x150',
-            width: 80,
-            height: 50,
-            'ref-x': .5,
-            'ref-y': .5,
-            ref: 'rect',
-            'x-alignment': 'middle',
-            'y-alignment': 'middle'
           }
         }
       }, joint.shapes.devs.Model.prototype.defaults)
@@ -206,7 +198,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       return o.name === pluginName;
     });
 
-    const imageModel = new joint.shapes.devs['MyImageModel']({
+    let imageModel = new joint.shapes.devs['MyImageModel']({
       position: {
         x: obj.x - (300 * this.scale),
         y: obj.y - (270 * this.scale)
@@ -218,8 +210,37 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       inPorts: [' '],
       outPorts: ['  '],
       attrs: {
-        '.label': { text: pluginName },
-        image: { 'xlink:href': `plugins/${pluginName}/${plugin.imgUrl}` }
+        '.label': {
+          text: pluginName,
+          'ref-y': 5,
+          'font-size': 14,
+          fill: '#bbbbbb'
+        },
+        rect: {
+          'stroke-width': '1',
+          'stroke-opacity': .7,
+          stroke: '#7f7f7f',
+          rx: 3,
+          ry: 3,
+          fill: '#2d3236',
+          'fill-opacity': .5
+        },
+        image: {
+          'xlink:href': `plugins/${pluginName}/${plugin.imgUrl}`,
+          width: 46,
+          height: 32,
+          'ref-x': 50,
+          'ref-y': 50,
+          ref: 'rect',
+          'x-alignment': 'middle',
+          'y-alignment': 'middle'
+        },
+        '.inPorts circle': {
+          fill: '#c80f15'
+        },
+        '.outPorts circle': {
+          fill: '#262626'
+        }
       }
     });
     this.graph.addCell(imageModel);

@@ -147,3 +147,15 @@ table, .table {
 
   }
 }
+
+rect.body {
+  stroke: #bbbbbb;
+  &:hover {
+    fill: #3f4247;
+}
+}
+
+.port-body {
+  fill: $selected-tab-environment;
+  stroke: #7f7f7f;
+}
