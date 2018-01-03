@@ -98,6 +98,13 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         // Note that this is the default behaviour. Just showing it here for reference.
         // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
         return magnet.getAttribute('magnet') !== 'passive';
+      },
+      interactive: (cellView: any): any => {
+        if (cellView.model instanceof joint.dia.Link) {
+          // Disable the default vertex add functionality on pointerdown.
+          return { vertexAdd: false };
+        }
+        return true;
       }
     });
 
