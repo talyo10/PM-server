@@ -64,7 +64,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     this.graph = new joint.dia.Graph;
     this.paper = new joint.dia.Paper({
       el: $('#graph'),
-      width: this.wrapper.nativeElement.offsetWidth - 250,
+      width: this.wrapper.nativeElement.offsetWidth,
       height: this.wrapper.nativeElement.offsetHeight,
       gridSize: this.scale,
       model: this.graph,
@@ -107,7 +107,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         return true;
       }
     });
-
+    this.resizePaper();
 
     this.listeners();
     this.mapStructureSubscription = this.mapsService.getCurrentMapStructure().subscribe(structure => {
@@ -266,6 +266,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   editProcess(process) {
+    this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
     this.process = process;
     if (this.editing) {
       this.editing = false;
@@ -340,6 +341,15 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   onClose(event) {
     this.editing = false;
     this.process = null;
+    // this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth, this.wrapper.nativeElement.offsetHeight);
+    this.resizePaper();
+  }
+
+  resizePaper() {
+    this.paper.setDimensions(
+      this.wrapper.nativeElement.offsetWidth - (this.designService.tabOpen && this.editing ? 250 : 0),
+      this.wrapper.nativeElement.offsetHeight
+    );
   }
 
   onDelete(event) {
@@ -373,6 +383,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
 
   onResize(event) {
     // when resizing window paper size should be updated
-    this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
+    this.resizePaper();
+    // this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
   }
 }
