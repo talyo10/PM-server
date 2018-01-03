@@ -28,8 +28,34 @@ div {
   }
 }
 
-.action-form {
-  padding: 15px;
+.process-form {
+  margin-bottom: 55px;
+  .action-form {
+    font-size: 13px;
+    padding-right: 10px;
+    padding-left: 10px;
+    .action-params {
+      margin-bottom: 5px;
+    }
+  }
+  button[type="submit"] {
+    width: 90%;
+    margin-left: 20px;
+    position: absolute;
+    bottom: 0;
+  }
 }
 
-
+.dropdown-pm {
+  border: 2px solid #97999b;
+  border-radius: 25px;
+  height: 21px;
+  width: 60px;
+  text-align: center;
+  line-height: initial;
+  cursor: pointer;
+  font-size: 13px;
+  &:hover {
+    border-color: #fff;
+  }
+}

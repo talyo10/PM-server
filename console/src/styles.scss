@@ -237,3 +237,19 @@ rect.body {
   fill: $selected-tab-environment;
   stroke: #7f7f7f;
 }
+
+.btn {
+  &.pm {
+    padding: 5px 29px 5px 29px;
+    color: $text-color;
+    background: transparent;
+    border-radius: 20px;
+    border: 2px solid $turquoise-blue;
+    &:hover {
+      cursor: pointer;
+      background: $turquoise-blue;
+      color: $background;
+      font-weight: bolder;
+    }
+  }
+}
