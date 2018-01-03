@@ -167,7 +167,7 @@
         <hr>
         <div *ngFor="let param of processForm.controls.actions.at(index).controls.params.controls; let k = index">
           <div [formGroupName]="k">
-            <div class="row">
+            <div class="row action-params">
               <div class="col-4">{{param.value.viewName}}</div>
               <hr>
               <div class="col-2"><input formControlName="code" type="checkbox" class="form-control"></div>
