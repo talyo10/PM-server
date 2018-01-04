@@ -159,8 +159,8 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
             stroke: '#7f7f7f',
             rx: 3,
             ry: 3,
-            fill: '#2d3236',
-            'fill-opacity': .5
+            fill: '#2d3236'
+            // 'fill-opacity': .5
           },
           circle: {
             stroke: 'gray'
@@ -217,9 +217,9 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
           fill: '#bbbbbb'
         },
         rect: {
-          'stroke-width': '1',
+          'stroke-width': 12,
           'stroke-opacity': .7,
-          stroke: '#7f7f7f',
+          'stroke': '#7f7f7f',
           rx: 3,
           ry: 3,
           fill: '#2d3236',
@@ -266,6 +266,17 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   editProcess(process) {
+    const cell = this.graph.get('cells');
+    let model = cell.models.find((o) => {
+      return o.id === process.uuid;
+    });
+    model.attr('rect/fill', '#02a7c7');
+    if (this.process) {
+      model = cell.models.find((o) => {
+        return o.id === this.process.uuid;
+      });
+      model.attr('rect/fill', '#2d3236');
+    }
     this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
     this.process = process;
     if (this.editing) {
@@ -305,11 +316,12 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
           this.addNewLink(cellView);
         }
       } else {
-        let id = cellView.model.id;
-        let process = _.find(this.mapStructure.processes, (o) => {
-          return o.uuid === id
+        const id = cellView.model.id;
+        const process = _.find(this.mapStructure.processes, (o) => {
+          return o.uuid === id;
         });
-
+        // cellView.model.attr('rect/fill', '#02a7c7');
+        // cellView.model.attr('rect/stroke', '#02a7c7');
         this.editProcess(process);
       }
 
@@ -339,6 +351,11 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   onClose(event) {
+    const cell = this.graph.get('cells');
+    const model = cell.models.find((o) => {
+      return o.id === this.process.uuid;
+    });
+    model.attr('rect/fill', '#2d3236');
     this.editing = false;
     this.process = null;
     // this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth, this.wrapper.nativeElement.offsetHeight);
