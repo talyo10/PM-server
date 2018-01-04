@@ -2,6 +2,10 @@ const Map = require("../models/map.model");
 const MapStructure = require("../models/map-structure.model");
 
 module.exports = {
+    /* archiving maps in ids array */
+    archive: (mapsIds) => {
+        return Map.update({ _id: { $in: mapsIds } }, { archived: true }, {multi: true})
+    },
     create: (map) => {
         return Map.create(map)
     },

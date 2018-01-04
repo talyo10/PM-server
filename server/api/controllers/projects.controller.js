@@ -1,6 +1,25 @@
 let projectsService = require("../services/projects.service");
 
 module.exports = {
+    // archive a project
+    archive: (req, res) => {
+        projectsService.archive(req.params.id).then(() => {
+            req.io.emit('notification', {
+                title: 'Archived',
+                message: ``,
+                type: 'success'
+            });
+            return res.status(204).send();
+        }).catch((error) => {
+            req.io.emit('notification', {
+                title: 'Oh no..',
+                message: `Error archiving project`,
+                type: 'error'
+            });
+            console.log("Error archiving project: ", error);
+            res.status(500).send(error);
+        });
+    },
     /* add a new project */
     create: (req, res) => {
         projectsService.create(req.body).then(project => {
@@ -11,6 +30,11 @@ module.exports = {
             });
             return res.json(project);
         }).catch((error) => {
+            req.io.emit('notification', {
+                title: 'Oh no..',
+                message: `There was an error creating this project`,
+                type: 'error'
+            });
             console.log("Error creating new project: ", error);
             res.status(500).send(error);
         });

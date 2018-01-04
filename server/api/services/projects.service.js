@@ -1,9 +1,16 @@
 const Project = require("../models/project.model");
+const mapsService = require("./maps.service");
 const env = require("../../env/enviroment");
 
 const PAGE_SIZE = env.page_size;
 
 module.exports = {
+    /* archive project and maps */
+    archive: (projectId) => {
+        return Project.findByIdAndUpdate(projectId, { archived: true }).then(project => {
+            return mapsService.archive(project.maps);
+        });
+    },
     count: (filter) => {
         return Project.count(filter)
     },
