@@ -21,7 +21,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let map of maps | filter:{term: filterTerm, param: 'name'}; let i = index">
-      <td><a [routerLink]="[map.id]">{{ map.name }}</a></td>
+      <td><i class="fa fa-archive" aria-hidden="true" *ngIf="map.archived"> </i><a [routerLink]="[map.id]">{{ map.name }}</a></td>
       <td>{{ map.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="map?.description?.length > 70"> ... </span></td>
       <td>{{ (map.createdAt | date: 'dd/MM/yyyy') + ' ' + (map.createdAt | date: 'HH:mm') }}</td>
       <td *ngIf="map.updatedAt">{{ (map.updatedAt | date: 'dd/MM/yyyy') + ' ' + (map.updatedAt | date: 'HH:mm') }}</td>

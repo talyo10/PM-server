@@ -16,7 +16,7 @@ import { DefaultKeyValueDiffer } from '@angular/core/src/change_detection/differ
 export class MapCreateComponent implements OnInit, OnDestroy {
   mapForm: FormGroup;
   projectsReq: any;
-  projects: [Project];
+  projects: Project[];
   paramsReq: any;
   map: Map;
 
@@ -40,10 +40,10 @@ export class MapCreateComponent implements OnInit, OnDestroy {
       } else {
         this.initMapForm();
       }
-      this.projectsReq = this.projectsService.list().subscribe(projects => {
-        this.projects = projects;
+      this.projectsReq = this.projectsService.filter().subscribe(data => {
+        this.projects = data.items;
         if (params.map) {
-          projects.forEach(project => {
+          data.items.forEach(project => {
             const index = (<string[]>project.maps).indexOf(params.map);
             if (index !== -1) {
               this.mapForm.controls.project.setValue(project._id);

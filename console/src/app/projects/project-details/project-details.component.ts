@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ProjectsService } from "../projects.service";
-import { Project } from "../models/project.model";
-import { ActivatedRoute } from "@angular/router";
+import { ProjectsService } from '../projects.service';
+import { Project } from '../models/project.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-project-details',
@@ -13,6 +13,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   id: string;
   projectReq: any;
   routeReq: any;
+  archiveReq: any;
   filterTerm: string;
 
   constructor(private route: ActivatedRoute, private projectsService: ProjectsService) {
@@ -20,21 +21,27 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.routeReq = this.route.params.subscribe(params => {
-      this.id = params["id"];
+      this.id = params['id'];
       this.projectReq = this.projectsService.detail(this.id).subscribe(project => {
-        this.project = project
-      })
+        this.project = project;
+      });
     });
   }
 
   ngOnDestroy() {
     this.routeReq.unsubscribe();
-    if (this.projectReq)
+    if (this.projectReq) {
       this.projectReq.unsubscribe();
+    }
+    if (this.archiveReq) {
+      this.archiveReq.unsubscribe();
+    }
   }
 
-  editProject() {
-
+  archiveProject() {
+    if (confirm('Sure you want to archive this project?').valueOf()) {
+      this.archiveReq = this.projectsService.archive(this.id).subscribe(() => this.project.archived = true);
+    }
   }
 
 }
