@@ -13,7 +13,8 @@
     <div>
       <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
       <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
-      <input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter"/>
+      <input #gb class="form-control" type="text" placeholder="Filter"
+            />
     </div>
   </div>
 
@@ -22,29 +23,34 @@
       No maps yet.
       Go ahead and <a routerLink="/maps/create" [queryParams]="{'project': project?.id}">add a new map</a>.
     </p>
-
-
-    <table class="table" *ngIf="project?.maps?.length > 0">
-      <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Created</th>
-        <th scope="col">Updated</th>
-      </tr>
-      </thead>
-      <tbody>
-
-      <tr *ngFor="let map of project?.maps | filter:{term: filterTerm, param: 'name'}; let i = index">
-        <td><a [routerLink]="['/maps', map.id]">{{ map.name }}</a></td>
-        <td>{{ map.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="map?.description?.length > 70"> ... </span></td>
-        <td>{{ (map.createdAt | date: 'dd/MM/yyyy') + ' ' + (map.createdAt | date: 'HH:mm') }}</td>
-        <td *ngIf="map.updatedAt">{{ (map.updatedAt | date: 'dd/MM/yyyy') + ' ' + (map.updatedAt | date: 'HH:mm') }}</td>
-        <td *ngIf="!map.updatedAt"> -</td>
-      </tr>
-
-      </tbody>
-    </table>
+    <p-dataTable
+      [value]="project?.maps"
+      [rows]="15"
+      [paginator]="true"
+      [pageLinks]="4"
+      [globalFilter]="gb"
+      *ngIf="project?.maps && project?.maps?.length > 0">
+      <p-column field="name" header="Name" [sortable]="true">
+        <ng-template let-col let-map="rowData" pTemplate="body">
+          <a [routerLink]="map.id">{{ map.name }}</a>
+        </ng-template>
+      </p-column>
+      <p-column field="description" header="Description" [sortable]="true">
+        <ng-template let-col let-map="rowData" pTemplate="body">
+          <span>{{ map.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="map?.description?.length > 70"> ... </span></span>
+        </ng-template>
+      </p-column>
+      <p-column field="createdAt" header="Created" [sortable]="true">
+        <ng-template let-col let-map="rowData" pTemplate="body">
+          <span>{{ (map.createdAt | date: 'dd/MM/yyyy') + ' ' +  (map.createdAt | date: 'HH:mm') }}</span>
+        </ng-template>
+      </p-column>
+      <p-column field="updatedAt" header="Updated" [sortable]="true">
+        <ng-template let-col let-map="rowData" pTemplate="body">
+          <span>{{ ((map.updatedAt | date: 'dd/MM/yyyy') || '') + ' ' +  ((map.updatedAt | date: 'HH:mm') || '' )}}</span>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
   </div>
 </div>
 
