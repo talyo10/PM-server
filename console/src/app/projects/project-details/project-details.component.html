@@ -1,9 +1,10 @@
 <div class="main">
   <div class="row">
-    <div class="col-sm-12">
-      <h1 class="section-title">{{project?.name}} maps</h1>
-      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn"
-         (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+    <div class="col-12">
+      <h1 class="section-title">{{project?.name}} <span *ngIf="project?.archived  ">(archived)</span></h1>
+      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn" (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+      <button class="btn-success btn" (click)="archiveProject()" [disabled]="project?.archived">Archive <i class="fa fa-archive" aria-hidden="true"></i>
+      </button>
       <p class="lead">{{project?.description}}</p>
     </div>
   </div>
@@ -36,7 +37,7 @@
       <tbody>
 
       <tr *ngFor="let map of project?.maps | filter:{term: filterTerm, param: 'name'}; let i = index">
-        <td><a [routerLink]="['/maps', map.id]">{{ map.name }}</a></td>
+        <td><i class="fa fa-archive" aria-hidden="true" *ngIf="map.archived"> </i><a [routerLink]="['/maps', map.id]">{{ map.name }}</a></td>
         <td>{{ map.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="map?.description?.length > 70"> ... </span></td>
         <td>{{ (map.createdAt | date: 'dd/MM/yyyy') + ' ' + (map.createdAt | date: 'HH:mm') }}</td>
         <td *ngIf="map.updatedAt">{{ (map.updatedAt | date: 'dd/MM/yyyy') + ' ' + (map.updatedAt | date: 'HH:mm') }}</td>
