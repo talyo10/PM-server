@@ -22,8 +22,16 @@
 
 .map-controllers {
   background: $dark-background;
+  text-align: right;
+  padding-right: 25px;
   .btn {
+    color: $greyish-text;
     background: transparent;
+    padding: 5px;
+    &:hover {
+      background: rgba(254, 234, 255, 0.3);
+      cursor: pointer;
+    }
   }
 }
 
