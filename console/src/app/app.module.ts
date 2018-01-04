@@ -67,6 +67,7 @@ import { SearchComponent } from './search/search.component';
 import { CalendarModule } from './calendar/calendar.module';
 import { CalendarService } from './calendar/calendar.service';
 import { ToastyModule } from 'ng2-toasty';
+import { UnsavedGuard } from './shared/guards/unsaved.guard';
 
 
 @NgModule({
@@ -129,7 +130,7 @@ import { ToastyModule } from 'ng2-toasty';
     CalendarModule
   ],
   entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
-  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService],
+  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService, UnsavedGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

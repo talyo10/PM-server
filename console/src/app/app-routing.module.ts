@@ -20,6 +20,7 @@ import { AdminComponent } from "./admin/admin.component";
 import { AgentsListComponent } from "./agents/agents-list/agents-list.component";
 import { MapSettingComponent } from "./maps/map-detail/map-setting/map-setting.component";
 import { CalendarContainerComponent } from "./calendar/calendar-container/calendar-container.component";
+import { UnsavedGuard } from './shared/guards/unsaved.guard';
 
 const appRoutes: Routes = [
   // maps
@@ -43,6 +44,7 @@ const appRoutes: Routes = [
   {
     path: 'maps/:id',
     component: MapDetailComponent,
+    canDeactivate: [UnsavedGuard],
     children: [
       {
         path: 'properties',

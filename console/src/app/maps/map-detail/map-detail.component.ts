@@ -125,4 +125,12 @@ export class MapDetailComponent implements OnInit, OnDestroy {
 
   }
 
+  canDeactivate() {
+    // will be triggered by deactivate guard
+    if (this.edited || this.structureEdited) {
+      return confirm('Discard changes?');
+    }
+    return true;
+  }
+
 }
