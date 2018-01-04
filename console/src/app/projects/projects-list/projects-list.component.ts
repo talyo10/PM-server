@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProjectsService } from '../projects.service';
 import { Project } from '../models/project.model';
 
+import 'rxjs/operators/take';
+
 @Component({
   selector: 'app-projects-list',
   templateUrl: './projects-list.component.html',
@@ -11,6 +13,7 @@ export class ProjectsListComponent implements OnInit {
   projects: Project[];
   projectsReq: any;
   featuredReq: any;
+  featuredProjects: Project[];
   filterTerm: string;
   page: number = 1;
   resultCount: number;
@@ -22,6 +25,10 @@ export class ProjectsListComponent implements OnInit {
     this.projectsReq = this.projectsService.filter(null, null, this.page).subscribe(data => {
       this.projects = data.items;
       this.resultCount = data.totalCount;
+    });
+    this.projectsService.filter(null, '-createdAt', this.page).take(1).subscribe(data => {
+      this.featuredProjects = data.items.slice(0, 4);
+      console.log(">>", this.featuredProjects);
     });
   }
 
