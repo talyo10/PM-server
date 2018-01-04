@@ -33,22 +33,28 @@ Add a new scheduled job
     <div *ngSwitchDefault>
 
       <div class="form-group">
-        <label>Date:</label>
-        <input type="text" id="date" bsDatepicker class="form-control" formControlName="date"/>
-      </div>
-      <div class="form-group">
-        <label>Time:</label>
-        <timepicker formControlName="time"></timepicker>
+        <label>Date & Time:</label>
+        <p-calendar formControlName="datetime" showTime="true" hourFormat="24"></p-calendar>
       </div>
     </div>
 
     <div *ngSwitchCase="'repeated'">
+        <label>Cron:</label>
       <div class="input-group mb-2 mb-sm-0">
-        <div class="input-group-addon" (click)="openCrontab()"><i class="fa fa-calendar-o"></i></div>
+
         <input type="text" class="form-control" formControlName="cron" />
+        <button type="button" class="input-group-addon"
+                [popover]="popTemplate"
+                placement="right"
+                [outsideClick]="true"
+        ><i class="fa fa-calendar-o"></i></button>
       </div>
     </div>
   </div>
-  <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid">Create</button>
+
+  <button type="submit" class="btn pm btn-block" [disabled]="form.invalid">Create</button>
 </form>
 
+<ng-template #popTemplate>
+  <cron-jobs [(ngModel)]="cron" (change)="updateCron()" [config]="cronConfig"></cron-jobs>
+</ng-template>

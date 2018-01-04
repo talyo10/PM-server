@@ -39,7 +39,9 @@ module.exports = {
     delete: (req, res) => {
         agentsService.delete(req.params.id).then(() => {
             res.status(200).send('OK');
+            req.io.emit('notification', { title: 'Agent deleted', message: ``, type: 'success' });
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops...', message: `Error deleting agent`, type: 'error' });
             console.log("Error deleting agent", error);
             res.status(500).send(error);
         });
@@ -50,6 +52,7 @@ module.exports = {
         agentsService.filter({}).then(agents => {
             res.json(agents);
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops...', message: `Error finding agents`, type: 'error' });
             console.log("Error filtering agents", error);
             res.status(500).send(error);
         });
@@ -70,8 +73,10 @@ module.exports = {
         let agent = req.body;
         delete agent._id;
         agentsService.update(req.params.id, agent).then((agent) => {
+            req.io.emit('notification', { title: 'Update success', message: `${agent.name} updated successfully`, type: 'success' });
             return res.json(agent);
         }).catch(error => {
+            req.io.emit('notification', { title: 'Whoops...', message: `Error updating agent`, type: 'error' });
             console.log("Error updating agent", error);
             res.status(500).send(error);
         });

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { MapsService } from "../maps.service";
-import { Map } from "../models/map.model";
+import { MapsService } from '../maps.service';
+import { Map } from '../models/map.model';
 
 @Component({
   selector: 'app-maps-list',
@@ -9,21 +9,41 @@ import { Map } from "../models/map.model";
   styleUrls: ['./maps-list.component.scss']
 })
 export class MapsListComponent implements OnInit, OnDestroy {
-  maps: [Map];
+  maps: Map[];
   mapReq: any;
   filterTerm: string;
+  resultCount: number = 0;
+  page: number = 1;
 
   constructor(private mapsService: MapsService) {
   }
 
   ngOnInit() {
-    this.mapReq = this.mapsService.allMaps().subscribe((maps) => {
-      this.maps = maps;
-    })
+    this.mapReq = this.mapsService.filterMaps(null, null, this.page).subscribe(data => {
+      this.maps = data.items;
+      this.resultCount = data.totalCount;
+    });
   }
 
   ngOnDestroy() {
     this.mapReq.unsubscribe();
   }
 
+  loadProjectLazy(event) {
+    let fields, page, sort;
+    if (event) {
+      fields = event.filters || null;
+      page = event.first / 5 + 1;
+      if (event.sortField) {
+        sort = event.sortOrder === -1 ? '-' + event.sortField : event.sortField;
+      }
+    }
+    this.mapReq = this.mapsService.filterMaps(fields, sort, page, this.filterTerm).subscribe(data => {
+      this.maps = data.items;
+      this.resultCount = data.totalCount;
+    });
+  }
+
 }
+
+

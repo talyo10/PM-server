@@ -42,9 +42,23 @@ export class MapsService {
     return this.http.get<Map>(serverUrl + 'api/maps/' + id)
   }
 
-  filterMaps(query): Observable<[Map]> {
-    let params = new HttpParams().set('q', query);
-    return this.http.get<[Map]>(serverUrl + 'api/maps/', { params: params })
+  filterMaps(fields?: any, sort?: string, page?: number, globalFilter?: string) {
+    let params = new HttpParams();
+    if (fields) {
+      Object.keys(fields).map(key => {
+        params = params.set(`fields[${key}]`, fields[key]);
+      });
+    }
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+    if (page) {
+      params = params.set('page', page.toString());
+    }
+    if (globalFilter) {
+      params = params.set('globalFilter', globalFilter);
+    }
+    return this.http.get<{ totalCount: number, items: Map[] }>(`${serverUrl}api/maps`, { params: params });
   }
 
   setCurrentMap(map: Map) {
