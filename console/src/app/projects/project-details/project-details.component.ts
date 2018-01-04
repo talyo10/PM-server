@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 import { ProjectsService } from '../projects.service';
 import { Project } from '../models/project.model';
-import { ActivatedRoute } from '@angular/router';
+import { Map } from '../../maps/models/map.model';
 
 @Component({
   selector: 'app-project-details',
@@ -14,6 +16,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   projectReq: any;
   routeReq: any;
   filterTerm: string;
+  featuredMaps: Map[];
 
   constructor(private route: ActivatedRoute, private projectsService: ProjectsService) {
   }
@@ -23,6 +26,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       this.id = params['id'];
       this.projectReq = this.projectsService.detail(this.id).subscribe(project => {
         this.project = project;
+        this.featureMaps(project.maps);
       });
     });
   }
@@ -32,6 +36,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     if (this.projectReq) {
       this.projectReq.unsubscribe();
     }
+  }
+
+  featureMaps(maps) {
+    maps = maps.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+    this.featuredMaps = maps.slice(0, 4);
   }
 
 }
