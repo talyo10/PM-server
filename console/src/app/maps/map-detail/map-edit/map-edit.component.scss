@@ -35,8 +35,13 @@ ul.nav {
         width: 24px;
         height: 24px;
       }
+      &:hover {
+        color: $turquoise-blue;
+        cursor: pointer;
+      }
 
     }
+
     &.active {
       background: $selected-tab-environment;
       a.nav-link {

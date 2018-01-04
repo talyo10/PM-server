@@ -140,11 +140,11 @@ export class PluginToolboxComponent implements AfterViewInit, OnDestroy {
       console.log((iteration % 2 ? iteration * 73 : Math.abs((iteration - 1) * 73)) + 16);
       let imageModel = new joint.shapes.devs['MyImageModel']({
         position: {
-          x: iteration % 2 ? 128 : 10,
-          y: (iteration % 2 ? (iteration - 1) * 45 : iteration * 45) + 15
+          x: iteration % 2 ? 115 : 5,
+          y: (iteration % 2 ? (iteration - 1) * 42 : iteration * 42) + 15
         },
         size: {
-          width: 108,
+          width: 100,
           height: 73
         },
         attrs: {
