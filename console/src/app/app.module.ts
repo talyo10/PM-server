@@ -14,6 +14,7 @@ import { TreeTableModule, SharedModule } from 'primeng/primeng';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { FilterPipe } from './shared/filter.pipe';
 import { TruncatecharsPipe } from './shared/truncatechars.pipe';
+import { FeatureComponent } from './shared/feature/feature.component';
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -101,10 +102,8 @@ import { ToastyModule } from 'ng2-toasty';
     AddFolderComponent,
     FilterPipe,
     SearchComponent,
-    TruncatecharsPipe
-    // CalendarContainerComponent,
-    // AddJobComponent,
-    // CalendarComponent
+    TruncatecharsPipe,
+    FeatureComponent
   ],
   imports: [
     BrowserModule,
