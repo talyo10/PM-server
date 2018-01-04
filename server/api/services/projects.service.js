@@ -44,11 +44,11 @@ module.exports = {
         } else if (query.globalFilter) {
             // if there is a global filter, expecting or condition between name and description fields
             q = {
-                $or: [
-                    { name: { '$regex': `.*${query.globalFilter}.*` } },
-                    { description: { '$regex': `.*${query.globalFilter}.*` } }
-                ]
+                $or: [{ name: { '$regex': `.*${query.globalFilter}.*` } }, { description: { '$regex': `.*${query.globalFilter}.*` } }]
             }
+        }
+        if (!query.archived) {
+            q.archived = false;
         }
         let p = Project.find(q);
         if (query.sort) {
