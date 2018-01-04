@@ -111,7 +111,6 @@ a {
   padding: 5px;
 }
 
-
 .ui-widget-content, .ui-datatable tbody > tr.ui-widget-content.ui-datatable-odd {
   border: none;
   background: none;
@@ -216,7 +215,6 @@ table, .table {
   color: $text-color;
 }
 
-
 .menuitem {
   color: $text-color;
   &:hover {
@@ -230,7 +228,7 @@ rect.body {
   stroke: #bbbbbb;
   &:hover {
     fill: #3f4247;
-}
+  }
 }
 
 .port-body {
@@ -256,7 +254,7 @@ rect.body {
 
 .pm-modal {
   background: $background;
-  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.75);
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.75);
   .modal-header {
     border-bottom: 0;
     button.close {
@@ -272,8 +270,25 @@ rect.body {
   }
 }
 
-//
-//.modal {
-//  background: $background;
-//
-//}
+.ui-datepicker {
+  background: $background;
+  .ui-datepicker-header {
+    color: $text-color;
+    .ui-corner-all {
+      color: $text-color;
+    }
+  }
+  table.ui-datepicker-calendar {
+    thead {
+      color: $turquoise-blue;
+      border-bottom: 1px solid $cool-grey;
+      th {
+        background: transparent !important;
+      }
+    }
+  }
+  .ui-timepicker {
+    text-align: center;
+    color: $turquoise-blue;
+  }
+}

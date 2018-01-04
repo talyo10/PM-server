@@ -33,12 +33,8 @@ Add a new scheduled job
     <div *ngSwitchDefault>
 
       <div class="form-group">
-        <label>Date:</label>
-        <input type="text" id="date" bsDatepicker class="form-control" formControlName="date"/>
-      </div>
-      <div class="form-group">
-        <label>Time:</label>
-        <timepicker formControlName="time"></timepicker>
+        <label>Date & Time:</label>
+        <p-calendar formControlName="datetime" showTime="true" hourFormat="24"></p-calendar>
       </div>
     </div>
 

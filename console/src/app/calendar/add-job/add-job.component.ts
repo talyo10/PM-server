@@ -43,20 +43,12 @@ export class AddJobComponent implements OnInit {
       project: new FormControl(null, Validators.required),
       map: new FormControl(null, Validators.required),
       type: new FormControl('once', Validators.required),
-      date: new FormControl(null),
-      time: new FormControl(null),
+      datetime: new FormControl(null),
       cron: new FormControl(null)
     });
   }
 
   onSubmit(form) {
-    const time = form.time;
-    const date = form.date;
-    if (time && date) {
-      const datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
-      form.datetime = datetime;
-    }
-
     this.calendarService.create(form.map, form).subscribe(job => {
       this.calendarService.setNewJob(job);
     });
