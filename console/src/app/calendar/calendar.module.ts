@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 import { CalendarModule as AngularCalendarModule } from 'angular-calendar';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { CronJobsModule } from 'ngx-cron-jobs';
 import { CalendarModule as PrimeCalendarModule } from 'primeng/primeng';
 
@@ -29,9 +28,8 @@ import { CrontabComponent } from './add-job/crontab/crontab.component';
     // angular-calendar
     AngularCalendarModule.forRoot(),
     // ngx-bootstrap
-    BsDatepickerModule.forRoot(), // only needed in this module, so using for root
-    TimepickerModule.forRoot(), // only needed in this module, so using for root
     ModalModule,
+    PopoverModule.forRoot(),
     // ngx-cron-jobs
     CronJobsModule,
     // primeng
