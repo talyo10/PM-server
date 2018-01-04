@@ -56,6 +56,9 @@ div {
   cursor: pointer;
   font-size: 13px;
   &:hover {
-    border-color: #fff;
+    border-color: $turquoise-blue;
+  }
+  &[aria-expanded="true"] {
+    border-color: $turquoise-blue;
   }
 }
