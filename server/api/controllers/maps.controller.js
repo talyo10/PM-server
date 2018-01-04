@@ -43,8 +43,11 @@ module.exports = {
     },
     filter: (req, res) => {
         let query = req.query;
-        mapsService.filter(query).then((maps) => {
-            return res.status(200).json(maps);
+        mapsService.filter(query).then(data => {
+            if (!data || data.totalCount === 0) {
+                return res.status(204).send();
+            }
+            return res.json(data);
         }).catch((error) => {
             console.log("Error filtering maps: ", error);
             req.io.emit('notification', { title: 'Whoops...', message: `Error filtering maps`, type: 'error' });

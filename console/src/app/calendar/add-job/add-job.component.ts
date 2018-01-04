@@ -14,7 +14,7 @@ import { CrontabComponent } from './crontab/crontab.component';
   styleUrls: ['./add-job.component.scss']
 })
 export class AddJobComponent implements OnInit {
-  projects: [Project];
+  projects: Project[];
   selectedProject: Project;
   projectsReq: any;
   form: FormGroup;
@@ -24,14 +24,14 @@ export class AddJobComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectsReq = this.projectsService.list().subscribe(projects => {
-      this.projects = projects;
+    this.projectsReq = this.projectsService.filter().subscribe(data => {
+      this.projects = data.items;
     });
     this.form = this.initForm();
   }
 
   onSelectProject() {
-    let projectId = this.form.controls.project.value;
+    const projectId = this.form.controls.project.value;
     this.projectsService.detail(projectId).subscribe(project => {
       this.selectedProject = project;
     });

@@ -22,7 +22,6 @@ export class ProjectsService {
   }
 
   filter(fields?: any, sort?: string, page?: number, globalFilter?: string) {
-    console.log(fields, sort, page);
     let params = new HttpParams();
     if (fields) {
       Object.keys(fields).map(key => {
