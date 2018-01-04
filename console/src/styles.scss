@@ -307,3 +307,43 @@ rect.body {
   }
 }
 
+.cal-month-view {
+  .cal-day-badge {
+    background-color: $turquoise-blue;
+  }
+  .cal-cell-row {
+    &:hover {
+      background-color: transparent;
+    }
+    .cal-cell {
+      &:hover {
+        background: transparent;
+      }
+      &.cal-open {
+        background: transparent;
+        border: 3px solid $turquoise-blue;
+      }
+    }
+
+  }
+  .cal-day-cell {
+    &:not(:last-child) {
+      border-right: 1px solid $cool-grey;
+    }
+    &.cal-today {
+      background-color: $dark-background;
+    }
+    &.cal-weekend {
+      .cal-day-number {
+        color: $greyish-text;
+      }
+    }
+  }
+  .cal-days {
+    border: 1px solid $cool-grey;
+    .cal-cell-row {
+      border-bottom: 1px solid $cool-grey;
+
+    }
+  }
+}

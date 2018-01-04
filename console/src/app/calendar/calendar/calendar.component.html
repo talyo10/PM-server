@@ -1,34 +1,22 @@
-<!-- prev today next -->
-<div class="col-md-4">
-  <div class="btn-group">
-    <div
-      class="btn btn-primary"
-      mwlCalendarPreviousView
-      [view]="'month'"
-      [(viewDate)]="viewDate"
-      (viewDateChange)="activeDayIsOpen = false">
-      Previous
-    </div>
-    <div
-      class="btn btn-outline-secondary"
-      mwlCalendarToday
-      [(viewDate)]="viewDate">
-      Today
-    </div>
-    <div
-      class="btn btn-primary"
-      mwlCalendarNextView
-      [view]="'month'"
-      [(viewDate)]="viewDate"
-      (viewDateChange)="activeDayIsOpen = false">
-      Next
-    </div>
-  </div>
-</div>
-
 <!-- month header -->
-<div class="col-md-4">
+<div class="d-flex justify-content-center">
+  <div
+    class="month-control"
+    mwlCalendarPreviousView
+    [view]="'month'"
+    [(viewDate)]="viewDate"
+    (viewDateChange)="activeDayIsOpen = false">
+    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+  </div>
   <h3>{{ viewDate | calendarDate:('month' + 'ViewTitle'):'en' }}</h3>
+  <div
+    class="month-control"
+    mwlCalendarNextView
+    [view]="'month'"
+    [(viewDate)]="viewDate"
+    (viewDateChange)="activeDayIsOpen = false">
+    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+  </div>
 </div>
 
 <!-- cell template -->

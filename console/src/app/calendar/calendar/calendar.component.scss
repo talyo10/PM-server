@@ -1,3 +1,11 @@
+.month-control {
+  padding: 5px 25px 5px 25px;
+  &:hover {
+    color: #fff;
+    cursor: pointer;
+  }
+}
+
 .event {
   span {
     margin-right: 5px;
