@@ -13,7 +13,7 @@ import { ProjectsService } from "../projects/projects.service";
 export class SearchComponent implements OnDestroy {
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   query: string;
-  maps: [Map];
+  maps: Map[];
   projects: Project[];
   timeout: any;
   loading: boolean = false;
@@ -35,8 +35,8 @@ export class SearchComponent implements OnDestroy {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.loading = true;
-      this.mapReq = this.mapsService.filterMaps(this.query).subscribe(maps => {
-        this.maps = maps;
+      this.mapReq = this.mapsService.filterMaps(null, null, null, this.query).subscribe(data => {
+        this.maps = data.items;
         this.loading = false;
       });
       this.projectReq = this.projectsService.filter(null, null, null, this.query).subscribe(data => {

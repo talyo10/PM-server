@@ -26,7 +26,7 @@ module.exports = {
 
     /* get project details */
     detail: (projectId) => {
-        return Project.findOne({ _id: projectId }).populate('maps')
+        return Project.findById(projectId).populate('maps')
     },
 
     /* delete a project */

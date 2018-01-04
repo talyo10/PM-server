@@ -1,34 +1,71 @@
 <div class="main">
   <h1 class="display-1"><i class="fa fa-plug" aria-hidden="true"></i>  Plugins</h1>
 
-  <!--<app-plugin-upload></app-plugin-upload>-->
-
-  <div class="d-flex">
-    <div class="mr-auto p-2"><button class="btn btn-primary" (click)="onOpenModal()">Upload a plugin</button></div>
-    <div class="p-2"><input class="form-control" [(ngModel)]="filterTerm" type="text" placeholder="Filter" /></div>
-    <div class="p-2"><button type="button" class="btn btn-secondary" (click)="filterTerm = null"><i class="fa fa-ban" aria-hidden="true"></i>Clear</button></div>
+  <div class="filter d-flex justify-content-between align-items-end">
+    <h5 class="section-sub-title">All plugins</h5>
+    <div>
+      <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
+      <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
+      <input #gb class="form-control" type="text" placeholder="Filter"
+      />
+    </div>
   </div>
-  <table class="table" *ngIf="plugins && plugins?.length > 0">
-    <thead>
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">Version</th>
-      <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let plugin of plugins | filter:{term: filterTerm, param: 'name'}; let i = index">
-      <td><img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail"></td>
-      <td>{{ plugin.name }}</td>
-      <td>{{ plugin.description }}</td>
-      <td>{{ plugin.version }}</td>
-      <td>
+  <p-dataTable
+    [value]="plugins"
+    [rows]="15"
+    [paginator]="true"
+    [pageLinks]="4"
+    [globalFilter]="gb"
+    *ngIf="plugins && plugins?.length > 0">
+    <p-column field="imgUrl" header="" [sortable]="true">
+      <ng-template let-col let-plugin="rowData" pTemplate="body">
+        <img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail">
+      </ng-template>
+    </p-column>
+    <p-column field="name" header="Name" [sortable]="true">
+      <ng-template let-col let-plugin="rowData" pTemplate="body">
+        {{ plugin.name }}
+      </ng-template>
+    </p-column>
+    <p-column field="description" header="Description" [sortable]="true">
+      <ng-template let-col let-plugin="rowData" pTemplate="body">
+        <span>{{ plugin.description | truncatechars : 70 : '' }}<span class="etc" *ngIf="plugin?.description?.length > 70"> ... </span></span>
+      </ng-template>
+    </p-column>
+    <p-column field="version" header="Version" [sortable]="true">
+      <ng-template let-col let-plugin="rowData" pTemplate="body">
+        <span>{{ plugin.version }}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="" header="Actions" [sortable]="true">
+      <ng-template let-col let-plugin="rowData" pTemplate="body">
         <button class="btn btn-danger" (click)="deletePlugin(plugin.id, i)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      </ng-template>
+    </p-column>
+  </p-dataTable>
 
 </div>
+
+
+<!--<table class="table" *ngIf="plugins && plugins?.length > 0">-->
+<!--<thead>-->
+<!--<tr>-->
+<!--<th scope="col"></th>-->
+<!--<th scope="col">Name</th>-->
+<!--<th scope="col">Description</th>-->
+<!--<th scope="col">Version</th>-->
+<!--<th scope="col">Actions</th>-->
+<!--</tr>-->
+<!--</thead>-->
+<!--<tbody>-->
+<!--<tr *ngFor="let plugin of plugins | filter:{term: filterTerm, param: 'name'}; let i = index">-->
+<!--<td><img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail"></td>-->
+<!--<td>{{ plugin.name }}</td>-->
+<!--<td>{{ plugin.description }}</td>-->
+<!--<td>{{ plugin.version }}</td>-->
+<!--<td>-->
+<!--<button class="btn btn-danger" (click)="deletePlugin(plugin.id, i)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>-->
+<!--</td>-->
+<!--</tr>-->
+<!--</tbody>-->
+<!--</table>-->
