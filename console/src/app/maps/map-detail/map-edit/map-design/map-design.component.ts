@@ -88,9 +88,13 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
       markAvailable: true,
       validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
         // Prevent linking from input ports.
-        if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+        if (magnetS && magnetS.getAttribute('port-group') === 'in') {
+          return false;
+        }
         // Prevent linking from output ports to input ports within one element.
-        if (cellViewS === cellViewT) return false;
+        if (cellViewS === cellViewT) {
+          return false;
+        }
         // Prevent linking to input ports.
         return magnetT && magnetT.getAttribute('port-group') === 'in';
       },
@@ -120,7 +124,10 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   addNewLink(cell) {
-    console.log(this.link);
+    if (!cell.targetMagnet) {
+      cell.remove();
+      return;
+    }
     if (!this.link) {
       return;
     }
@@ -132,10 +139,11 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     }
 
     this.link.uuid = cell.model.id;
-    if (!this.mapStructure.links)
+    if (!this.mapStructure.links) {
       this.mapStructure.links = [this.link];
-    else
+    } else {
       this.mapStructure.links.push(this.link);
+    }
     this.mapStructure.content = JSON.stringify(this.graph.toJSON());
     this.mapsService.setCurrentMapStructure(this.mapStructure);
   }
