@@ -15,6 +15,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   id: string;
   projectReq: any;
   routeReq: any;
+  archiveReq: any;
   filterTerm: string;
   featuredMaps: Map[];
 
@@ -35,6 +36,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.routeReq.unsubscribe();
     if (this.projectReq) {
       this.projectReq.unsubscribe();
+    }
+    if (this.archiveReq) {
+      this.archiveReq.unsubscribe();
+    }
+  }
+
+  archiveProject() {
+    if (confirm('Sure you want to archive this project?').valueOf()) {
+      this.archiveReq = this.projectsService.archive(this.id).subscribe(() => this.project.archived = true);
     }
   }
 

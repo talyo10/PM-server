@@ -77,6 +77,9 @@ function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
     return mapsService.get(mapId).then(mapobj => {
         map = mapobj;
         mapAgents = map.agents;
+        if (map.archived) {
+            throw new Error("Can't execute archived map");
+        }
         return mapsService.getMapStructure(mapId)
     }).then(structure => {
         mapStructure = structure;

@@ -13,6 +13,10 @@ export class ProjectsService {
   constructor(private http: HttpClient) {
   }
 
+  archive(projectId) {
+    return this.http.get(`${serverUrl}api/projects/${projectId}/archive`);
+  }
+
   create(project) {
     return this.http.post<Project>(serverUrl + 'api/projects/create', project);
   }

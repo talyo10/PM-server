@@ -1,9 +1,16 @@
 const Project = require("../models/project.model");
+const mapsService = require("./maps.service");
 const env = require("../../env/enviroment");
 
 const PAGE_SIZE = env.page_size;
 
 module.exports = {
+    /* archive project and maps */
+    archive: (projectId) => {
+        return Project.findByIdAndUpdate(projectId, { archived: true }).then(project => {
+            return mapsService.archive(project.maps);
+        });
+    },
     count: (filter) => {
         return Project.count(filter)
     },
@@ -37,11 +44,11 @@ module.exports = {
         } else if (query.globalFilter) {
             // if there is a global filter, expecting or condition between name and description fields
             q = {
-                $or: [
-                    { name: { '$regex': `.*${query.globalFilter}.*` } },
-                    { description: { '$regex': `.*${query.globalFilter}.*` } }
-                ]
+                $or: [{ name: { '$regex': `.*${query.globalFilter}.*` } }, { description: { '$regex': `.*${query.globalFilter}.*` } }]
             }
+        }
+        if (!query.archived) {
+            q.archived = false;
         }
         let p = Project.find(q);
         if (query.sort) {

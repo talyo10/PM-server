@@ -5,6 +5,10 @@ const env = require("../../env/enviroment");
 const PAGE_SIZE = env.page_size;
 
 module.exports = {
+    /* archiving maps in ids array */
+    archive: (mapsIds) => {
+        return Map.update({ _id: { $in: mapsIds } }, { archived: true }, {multi: true})
+    },
     /* count how many documents exist for a certain query */
     count: (filter) => {
         return Map.count(filter)

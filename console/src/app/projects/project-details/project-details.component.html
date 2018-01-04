@@ -1,9 +1,10 @@
 <div class="main">
   <div class="row">
     <div class="col-12">
-      <h1 class="section-title">{{project?.name}} maps</h1>
-      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn"
-         (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+      <h1 class="section-title">{{project?.name}} <span *ngIf="project?.archived  ">(archived)</span></h1>
+      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn" (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+      <button class="btn-success btn" (click)="archiveProject()" [disabled]="project?.archived">Archive <i class="fa fa-archive" aria-hidden="true"></i>
+      </button>
       <p class="lead">{{project?.description}}</p>
     </div>
     <div class="featured">
@@ -26,6 +27,7 @@
       No maps yet.
       Go ahead and <a routerLink="/maps/create" [queryParams]="{'project': project?.id}">add a new map</a>.
     </p>
+
     <p-dataTable
       [value]="project?.maps"
       [rows]="15"
@@ -35,7 +37,8 @@
       *ngIf="project?.maps && project?.maps?.length > 0">
       <p-column field="name" header="Name" [sortable]="true">
         <ng-template let-col let-map="rowData" pTemplate="body">
-          <a [routerLink]="map.id">{{ map.name }}</a>
+          <i class="fa fa-archive" aria-hidden="true" *ngIf="map.archived"> </i>
+          <a [routerLink]="['/maps', map.id]">{{ map.name }}</a>
         </ng-template>
       </p-column>
       <p-column field="description" header="Description" [sortable]="true">
