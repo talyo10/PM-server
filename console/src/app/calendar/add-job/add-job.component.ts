@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import { BsModalService, BsModalRef } from 'ngx-bootstrap';
-
 import { ProjectsService } from '../../projects/projects.service';
 import { Project } from '../../projects/models/project.model';
 import { CalendarService } from '../calendar.service';
-import { CrontabComponent } from './crontab/crontab.component';
 import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 
 @Component({
@@ -27,7 +24,7 @@ export class AddJobComponent implements OnInit {
   };
 
 
-  constructor(private calendarService: CalendarService, private projectsService: ProjectsService, private modalService: BsModalService) {
+  constructor(private calendarService: CalendarService, private projectsService: ProjectsService) {
   }
 
   ngOnInit() {
@@ -58,15 +55,6 @@ export class AddJobComponent implements OnInit {
   onSubmit(form) {
     this.calendarService.create(form.map, form).subscribe(job => {
       this.calendarService.setNewJob(job);
-    });
-  }
-
-  openCrontab() {
-    let modal: BsModalRef;
-    modal = this.modalService.show(CrontabComponent);
-    modal.content.cron = this.form.controls.cron.value;
-    modal.content.result.subscribe(cron => {
-      this.form.controls.cron.setValue(cron);
     });
   }
 
