@@ -7,6 +7,7 @@ import { ProjectsService } from '../../projects/projects.service';
 import { Project } from '../../projects/models/project.model';
 import { CalendarService } from '../calendar.service';
 import { CrontabComponent } from './crontab/crontab.component';
+import { CronJobsConfig } from 'ngx-cron-jobs/src/app/lib/contracts/contracts';
 
 @Component({
   selector: 'app-add-job',
@@ -18,6 +19,12 @@ export class AddJobComponent implements OnInit {
   selectedProject: Project;
   projectsReq: any;
   form: FormGroup;
+  cron: any;
+  cronConfig: CronJobsConfig = {
+    multiple: false,
+    quartz: false,
+    bootstrap: true
+  };
 
 
   constructor(private calendarService: CalendarService, private projectsService: ProjectsService, private modalService: BsModalService) {
@@ -61,6 +68,10 @@ export class AddJobComponent implements OnInit {
     modal.content.result.subscribe(cron => {
       this.form.controls.cron.setValue(cron);
     });
+  }
+
+  updateCron() {
+    this.form.controls.cron.setValue(this.cron);
   }
 
 }
