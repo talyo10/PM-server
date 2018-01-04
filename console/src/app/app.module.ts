@@ -15,6 +15,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { FilterPipe } from './shared/filter.pipe';
 import { TruncatecharsPipe } from './shared/truncatechars.pipe';
 import { FeatureComponent } from './shared/feature/feature.component';
+import { UnsavedGuard } from './shared/guards/unsaved.guard';
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -67,7 +68,6 @@ import { SearchComponent } from './search/search.component';
 import { CalendarModule } from './calendar/calendar.module';
 import { CalendarService } from './calendar/calendar.service';
 import { ToastyModule } from 'ng2-toasty';
-import { UnsavedGuard } from './shared/guards/unsaved.guard';
 
 
 @NgModule({
