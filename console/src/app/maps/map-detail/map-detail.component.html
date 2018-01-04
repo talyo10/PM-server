@@ -1,5 +1,5 @@
 <div class="header">
-  <h1>{{map?.name}}</h1>
+  <h1>{{map?.name}} <span *ngIf="map?.archived">(archived)</span></h1>
 </div>
 
 <div class="map-nav">
