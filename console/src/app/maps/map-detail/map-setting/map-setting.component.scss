@@ -1,0 +1,27 @@
+@import "~assets/sass/variables";
+
+.main {
+  padding-left: 15px;
+  padding-top: 15px;
+  height: 100%;
+  .row {
+    height: 100%;
+  }
+}
+
+#graph {
+  background: $dark-background;
+}
+
+.btn-inline-action {
+  color: $text-color;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  padding: 5px;
+  &:hover {
+    background: rgba(92, 92, 92, 0.7);
+    cursor: pointer;
+  }
+}
+

@@ -41,6 +41,46 @@ module.exports = {
             return res.status(500).json(error);
         });
     },
+    /* duplicating map with a structure */
+    duplicateMap: (req, res) => {
+        let dupMap;
+        // find the map
+        mapsService.filterByQuery({ _id: req.params.id }).then((map) => {
+            map = map[0];
+            // copy the descriptive fields (not including archive) and create a new map.
+            const newMap = {
+                name: map.name,
+                description: map.description,
+                licence: map.licence
+            };
+            return mapsService.create(newMap)
+        }).then(duplicatedMap => {
+            dupMap = duplicatedMap;
+            return mapsService.getMapStructure(req.params.id, req.params.structureId)
+        }).then(structure => {
+            const newStructure = {
+                links: structure.links,
+                processes: structure.processes,
+                attributes: structure.attributes,
+                content: structure.content,
+                code: structure.code,
+                map: dupMap._id
+            };
+            return mapsService.createStructure(newStructure);
+        }).then(() => {
+            projectsService.addMap(req.body.projectId, dupMap._id).then(() => {
+                req.io.emit('notification', {
+                    title: 'Map duplicated',
+                    message: `${dupMap.name} was duplicated`,
+                    type: 'success'
+                });
+                return res.json(dupMap);
+            });
+        }).catch(error => {
+            console.log(error);
+            return res.status(500).send(error);
+        });
+    },
     filter: (req, res) => {
         let query = req.query;
         mapsService.filter(query).then(data => {

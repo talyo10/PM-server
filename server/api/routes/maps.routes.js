@@ -20,6 +20,7 @@ router.get("/:id/structure", mapController.getMapStructure);
 router.get("/:id/structures", mapController.getStructureList);
 router.post("/:id/structure/create", mapController.createStructure);
 router.get("/:id/structure/:structureId", mapController.getMapStructure);
+router.post("/:id/structure/:structureId/duplicate", mapController.duplicateMap);
 
 /* map triggers */
 router.get("/:id/triggers", mapController.triggersList);
