@@ -15,8 +15,10 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { FilterPipe } from './shared/filter.pipe';
 import { TruncatecharsPipe } from './shared/truncatechars.pipe';
 import { FeatureComponent } from './shared/feature/feature.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { UnsavedGuard } from './shared/guards/unsaved.guard';
 import { ConfirmComponent } from './shared/confirm/confirm.component';
+
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -126,6 +128,7 @@ import { ToastyModule } from 'ng2-toasty';
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
     ToastyModule.forRoot(),
+    TooltipModule.forRoot(),
     NgxChartsModule,
 
     AppRoutingModule,

@@ -3,23 +3,33 @@
     <img src="/assets/images/pm.png" alt="" />
     <ul class="nav flex-column">
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <a class="nav-link" routerLink="/projects"><i class="icon-folder1" aria-hidden="true"></i></a>
+        <a class="nav-link" routerLink="/projects"
+           tooltip="Projects"
+           placement="right"><i class="icon-folder1" aria-hidden="true"></i></a>
       </li>
 
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <a class="nav-link" routerLink="/maps"><i class="icon-map" aria-hidden="true"></i></a>
+        <a class="nav-link" routerLink="/maps"
+           tooltip="Maps"
+           placement="right"><i class="icon-map" aria-hidden="true"></i></a>
       </li>
 
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/admin"><i class="icon-admin" aria-hidden="true"></i></a>
+        <a class="nav-link" routerLink="/admin"
+           tooltip="Manage"
+           placement="right"><i class="icon-admin" aria-hidden="true"></i></a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSearch()"><i class="icon-search1" aria-hidden="true"></i></a>
+        <a class="nav-link" (click)="toggleSearch()"
+           tooltip="Search"
+           placement="right"><i class="icon-search1" aria-hidden="true"></i></a>
       </li>
 
       <li dropdown class="nav-item dropdown">
-        <a class="nav-link" href dropdownToggle (click)="false">
+        <a class="nav-link" href dropdownToggle (click)="false"
+           tooltip="Create"
+           placement="right">
           <i class="icon-add-new" aria-hidden="true"></i>
         </a>
 
