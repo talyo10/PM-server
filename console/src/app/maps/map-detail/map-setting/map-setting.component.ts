@@ -42,11 +42,10 @@ export class MapSettingComponent implements OnInit {
     });
     this.defineShape();
     this.paper.scale(0.75, 0.75);
-    console.log(this.wrapper.nativeElement.offsetHeight);
   }
 
-  changeStructure() {
-    this.mapsService.getMapStructure(this.mapId, this.structureId).subscribe(structure => {
+  changeStructure(structureId) {
+    this.mapsService.getMapStructure(this.mapId, structureId).subscribe(structure => {
       this.mapsService.setCurrentMapStructure(structure);
     });
   }
@@ -109,8 +108,9 @@ export class MapSettingComponent implements OnInit {
     });
   }
 
-  archiveMap() {
-    //  TODO: archive map
+  onResize(event) {
+    // when resizing window paper size should be updated
+    this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth, this.wrapper.nativeElement.offsetHeight);
   }
 
 }
