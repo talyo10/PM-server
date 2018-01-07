@@ -16,6 +16,7 @@ import { FilterPipe } from './shared/filter.pipe';
 import { TruncatecharsPipe } from './shared/truncatechars.pipe';
 import { FeatureComponent } from './shared/feature/feature.component';
 import { UnsavedGuard } from './shared/guards/unsaved.guard';
+import { ConfirmComponent } from './shared/confirm/confirm.component';
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -104,7 +105,8 @@ import { ToastyModule } from 'ng2-toasty';
     FilterPipe,
     SearchComponent,
     TruncatecharsPipe,
-    FeatureComponent
+    FeatureComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -129,7 +131,7 @@ import { ToastyModule } from 'ng2-toasty';
     AppRoutingModule,
     CalendarModule
   ],
-  entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
+  entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent, ConfirmComponent],
   providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService, UnsavedGuard],
   bootstrap: [AppComponent]
 })
