@@ -13,7 +13,6 @@ import { PluginsService } from './plugins/plugins.service';
 import { AgentsService } from './agents/agents.service';
 import { ProjectsService } from './projects/projects.service';
 import { CalendarService } from './calendar/calendar.service';
-import { SearchComponent } from './search/search.component';
 import { CoreModule } from './core/core.module';
 
 

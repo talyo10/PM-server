@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { SearchComponent } from '../search/search.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @NgModule({
   imports: [
@@ -14,8 +16,9 @@ import { SharedModule } from '../shared/shared.module';
     HttpClientModule,
     RouterModule,
     ToastyModule.forRoot(),
-
-    SharedModule,
+    BsDropdownModule,
+    TooltipModule,
+    SharedModule
   ],
   declarations: [
     AppComponent,
