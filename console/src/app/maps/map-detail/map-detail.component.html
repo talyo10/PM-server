@@ -1,5 +1,10 @@
 <div class="header">
-  <h1>{{map?.name}} <span *ngIf="map?.archived">(archived)</span></h1>
+
+  <h1>
+    {{map?.name}}
+    <span *ngIf="map?.archived">(archived)</span>
+    <span *ngIf="structuresList[0] && mapStructure?.id !== structuresList[0].id">(<i class="fa fa-history" aria-hidden="true"></i> {{ structureIndex }}/{{ structuresList.length }})</span>
+  </h1>
 </div>
 
 <div class="map-nav">

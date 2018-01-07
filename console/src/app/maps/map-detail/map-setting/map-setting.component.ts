@@ -16,7 +16,7 @@ import { Project } from '../../../projects/models/project.model';
   styleUrls: ['./map-setting.component.scss']
 })
 export class MapSettingComponent implements OnInit {
-  structures: [MapStructure];
+  structures: MapStructure[];
   structureId: string;
   mapId: string;
   graph: joint.dia.Graph;
@@ -34,7 +34,7 @@ export class MapSettingComponent implements OnInit {
       this.getMapProject();
       this.mapsService.structuresList(params.id).subscribe(structures => {
         this.structures = structures
-      })
+      });
     });
     this.wrapper.nativeElement.maxHeight = this.wrapper.nativeElement.offsetHeight;
     this.graph = new joint.dia.Graph;

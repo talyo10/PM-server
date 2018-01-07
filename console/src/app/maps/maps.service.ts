@@ -110,7 +110,7 @@ export class MapsService {
   }
 
   structuresList(mapId) {
-    return this.http.get<[MapStructure]>(serverUrl + 'api/maps/' + mapId + '/structures')
+    return this.http.get<MapStructure[]>(`${serverUrl}api/maps/${mapId}/structures`)
   }
 
   /* map triggers */
