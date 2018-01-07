@@ -49,12 +49,9 @@ import { ToastyModule } from 'ng2-toasty';
 @NgModule({
   declarations: [
     AppComponent,
-
     PluginUploadComponent,
     PluginsListComponent,
-    ProjectsListComponent,
-    ProjectDetailsComponent,
-    ProjectCreateComponent,
+
     AdminComponent,
     AgentsListComponent,
     AddFolderComponent,
