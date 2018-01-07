@@ -1,9 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
+
 import { ProjectsService } from '../projects.service';
 import { Project } from '../models/project.model';
 import { Map } from '../../maps/models/map.model';
+import { ConfirmComponent } from '../../shared/confirm/confirm.component';
 
 @Component({
   selector: 'app-project-details',
@@ -19,7 +22,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   filterTerm: string;
   featuredMaps: Map[];
 
-  constructor(private route: ActivatedRoute, private projectsService: ProjectsService) {
+  constructor(private route: ActivatedRoute, private projectsService: ProjectsService, private modalService: BsModalService) {
   }
 
   ngOnInit() {
@@ -43,9 +46,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   archiveProject() {
-    if (confirm('Sure you want to archive this project?').valueOf()) {
-      this.archiveReq = this.projectsService.archive(this.id).subscribe(() => this.project.archived = true);
-    }
+    let modal = this.modalService.show(ConfirmComponent);
+    modal.content.title = 'Archive this project?';
+    modal.content.message = 'When archiving a project, all the maps will be archived as well.';
+    modal.content.confirm = 'Yes, archive';
+    modal.content.result.subscribe(result => {
+      if (result) {
+        this.archiveReq = this.projectsService.archive(this.id).subscribe(() => this.project.archived = true);
+      }
+    });
   }
 
   featureMaps(maps) {
