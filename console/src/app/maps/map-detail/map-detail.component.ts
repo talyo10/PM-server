@@ -22,6 +22,9 @@ export class MapDetailComponent implements OnInit, OnDestroy {
   mapExecReq: any;
   mapStructure: MapStructure;
   mapStructureReq: any;
+  mapStructuresListReq: any;
+  structuresList: MapStructure[] = [];
+  structureIndex: number;
   originalMapStructure: MapStructure;
   mapStructureSubscription: Subscription;
   edited: boolean = false;
@@ -38,7 +41,11 @@ export class MapDetailComponent implements OnInit, OnDestroy {
         this.map = map;
         this.originalMap = _.cloneDeep(map);
         this.mapsService.setCurrentMap(map);
+        this.mapStructuresListReq = this.mapsService.structuresList(this.id).subscribe(structureList => {
+          this.structuresList = structureList;
+        });
         this.mapStructureReq = this.mapsService.getMapStructure(this.id).subscribe(structure => {
+
           if (structure === null) {
             structure = new MapStructure();
             structure.map = params['id'];
@@ -79,6 +86,9 @@ export class MapDetailComponent implements OnInit, OnDestroy {
       }
       this.mapStructure = structure;
       this.initiated = true;
+      this.structureIndex = this.structuresList.length - this.structuresList.findIndex((o) => {
+        return o.id === structure.id;
+      })
     });
   }
 
@@ -118,6 +128,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
       this.mapsService.createMapStructure(this.map.id, this.mapStructure).subscribe(() => {
         this.originalMapStructure = _.cloneDeep(this.mapStructure);
         this.structureEdited = false;
+        this.structuresList.push(this.mapStructure);
       }, error => {
         console.log(error);
       });

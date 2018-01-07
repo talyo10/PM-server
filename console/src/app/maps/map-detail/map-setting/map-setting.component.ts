@@ -10,7 +10,7 @@ import { MapStructure } from "../../models/map-structure.model";
   styleUrls: ['./map-setting.component.scss']
 })
 export class MapSettingComponent implements OnInit {
-  structures: [MapStructure];
+  structures: MapStructure[];
   structureId: string;
   mapId: string;
   constructor(private mapsService: MapsService, private route: ActivatedRoute) {
@@ -21,7 +21,7 @@ export class MapSettingComponent implements OnInit {
       this.mapId = params.id;
       this.mapsService.structuresList(params.id).subscribe(structures => {
         this.structures = structures
-      })
+      });
     });
   }
 
