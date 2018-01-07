@@ -225,7 +225,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
           fill: '#bbbbbb'
         },
         rect: {
-          'stroke-width': 12,
+          'stroke-width': 1,
           'stroke-opacity': .7,
           'stroke': '#7f7f7f',
           rx: 3,
@@ -278,7 +278,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     let model = cell.models.find((o) => {
       return o.id === process.uuid;
     });
-    model.attr('rect/fill', '#02a7c7');
+    model.attr('rect/fill', '#000000');
     if (this.process) {
       model = cell.models.find((o) => {
         return o.id === this.process.uuid;
