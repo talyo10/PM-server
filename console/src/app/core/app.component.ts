@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SocketService } from './shared/socket.service';
+import { SocketService } from '../shared/socket.service';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';

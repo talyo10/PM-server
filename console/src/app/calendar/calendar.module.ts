@@ -10,6 +10,7 @@ import { CalendarModule as PrimeCalendarModule } from 'primeng/primeng';
 import { AddJobComponent } from './add-job/add-job.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { CalendarContainerComponent } from './calendar-container/calendar-container.component';
+import { CalendarRoutingModule } from './calendar-routing.module';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { CalendarContainerComponent } from './calendar-container/calendar-contai
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    CalendarRoutingModule,
     // angular-calendar
     AngularCalendarModule.forRoot(),
     // ngx-bootstrap
