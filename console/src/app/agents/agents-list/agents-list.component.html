@@ -1,5 +1,5 @@
 <div class="main">
-  <h1 class="display-1"><i class="fa fa-server" aria-hidden="true"></i> Agents</h1>
+  <h1 class="section-title">Agents</h1>
   <div class="row">
     <p-dataTable [value]="agents" [editable]="true" (onEditComplete)="onUpdateAgent($event)">
       <p-column field="name" header="Name" [filter]="true" filterPlaceholder="Search" filterMatchMode="contains" [sortable]="true" [editable]="true">

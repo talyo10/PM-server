@@ -1,15 +1,15 @@
 <div class="main">
-  <h1 class="display-1"><i class="fa fa-plug" aria-hidden="true"></i>  Plugins</h1>
+  <h1 class="section-title">Projects</h1>
 
   <div class="filter d-flex justify-content-between align-items-end">
     <h5 class="section-sub-title">All plugins</h5>
     <div>
       <i class="fa fa-search" aria-hidden="true" *ngIf="!filterTerm"></i>
       <i class="fa fa-times" aria-hidden="true" *ngIf="filterTerm" (click)="filterTerm = null"></i>
-      <input #gb class="form-control" type="text" placeholder="Filter"
-      />
+      <input class="form-control" #gb type="text" placeholder="Filter" />
     </div>
   </div>
+
   <p-dataTable
     [value]="plugins"
     [rows]="15"
