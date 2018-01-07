@@ -28,13 +28,6 @@ const appRoutes: Routes = [
     path: 'maps',
     loadChildren: './maps/maps.module#MapsModule'
   },
-
-//  plugins
-  {
-    path: 'plugins',
-    component: PluginsListComponent
-  },
-
 //  projects
   {
     path: 'projects',
@@ -44,26 +37,9 @@ const appRoutes: Routes = [
 //  admin
   {
     path: 'admin',
-    redirectTo: 'admin/plugins'
+    loadChildren: './admin/admin.module#AdminModule'
   },
-  {
-    path: 'admin',
-    component: AdminComponent,
-    children: [
-      {
-        path: 'plugins',
-        component: PluginsListComponent
-      },
-      {
-        path: 'agents',
-        component: AgentsListComponent
-      },
-      {
-        path: 'calendar',
-        component: CalendarContainerComponent
-      }
-    ]
-  }
+
 ];
 
 

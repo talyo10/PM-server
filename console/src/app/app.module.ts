@@ -28,14 +28,9 @@ import { PluginsListComponent } from './plugins/plugins-list/plugins-list.compon
 // agents etc
 import { AgentsService } from './agents/agents.service';
 import { AgentsListComponent } from './agents/agents-list/agents-list.component';
-import { DataTableModule } from 'primeng/primeng';
 
 // projects tex
-import { ProjectsListComponent } from './projects/projects-list/projects-list.component';
-import { ProjectDetailsComponent } from './projects/project-details/project-details.component';
 import { ProjectsService } from './projects/projects.service';
-import { ProjectCreateComponent } from './projects/project-create/project-create.component';
-import { ActionResultComponent } from './maps/map-detail/map-results/action-result/action-result.component';
 import { AdminComponent } from './admin/admin.component';
 import { AddFolderComponent } from './agents/agents-list/add-folder/add-folder.component';
 import { SearchComponent } from './search/search.component';
@@ -49,12 +44,7 @@ import { ToastyModule } from 'ng2-toasty';
 @NgModule({
   declarations: [
     AppComponent,
-    PluginUploadComponent,
-    PluginsListComponent,
 
-    AdminComponent,
-    AgentsListComponent,
-    AddFolderComponent,
     SearchComponent,
     ConfirmComponent
   ],
@@ -70,7 +60,7 @@ import { ToastyModule } from 'ng2-toasty';
     AppRoutingModule,
     CalendarModule
   ],
-  entryComponents: [PluginUploadComponent, AddFolderComponent, ConfirmComponent],
+  entryComponents: [ConfirmComponent],
   providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService, UnsavedGuard],
   bootstrap: [AppComponent]
 })
