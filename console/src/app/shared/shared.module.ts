@@ -12,6 +12,7 @@ import { FilterPipe } from './filter.pipe';
 import { TruncatecharsPipe } from './truncatechars.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FeatureComponent } from './feature/feature.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 
 @NgModule({
@@ -31,8 +32,8 @@ import { FeatureComponent } from './feature/feature.component';
   declarations: [
     FilterPipe,
     TruncatecharsPipe,
-    FeatureComponent
-
+    FeatureComponent,
+    ConfirmComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -42,9 +43,10 @@ import { FeatureComponent } from './feature/feature.component';
     FeatureComponent,
     TreeTableModule,
     PrimeSharedModule,
-    DataTableModule
-
-  ]
+    DataTableModule,
+    ConfirmComponent
+  ],
+  entryComponents: [ConfirmComponent]
 })
 export class SharedModule {
 }
