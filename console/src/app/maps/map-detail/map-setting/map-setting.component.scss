@@ -1,0 +1,13 @@
+@import "~assets/sass/variables";
+
+.main {
+  padding-left: 15px;
+  padding-top: 15px;
+  height: 100%;
+  .row {
+    height: 100%;
+  }
+}
+#graph {
+  background: $dark-background;
+}
