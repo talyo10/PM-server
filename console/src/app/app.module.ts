@@ -16,6 +16,8 @@ import { FilterPipe } from './shared/filter.pipe';
 import { TruncatecharsPipe } from './shared/truncatechars.pipe';
 import { FeatureComponent } from './shared/feature/feature.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { UnsavedGuard } from './shared/guards/unsaved.guard';
+
 
 // map components etc.
 import { MapsService } from './maps/maps.service';
@@ -131,7 +133,7 @@ import { ToastyModule } from 'ng2-toasty';
     CalendarModule
   ],
   entryComponents: [SelectAgentComponent, AddAttributeComponent, TriggerFormComponent, PluginUploadComponent, AddFolderComponent, MapSettingComponent],
-  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService],
+  providers: [MapsService, PluginsService, AgentsService, ProjectsService, SocketService, CalendarService, UnsavedGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {
