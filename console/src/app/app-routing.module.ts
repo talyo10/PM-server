@@ -26,53 +26,7 @@ const appRoutes: Routes = [
   // maps
   {
     path: 'maps',
-    component: MapsListComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'maps/create',
-    component: MapCreateComponent
-  },
-  {
-    path: 'maps/update',
-    component: MapCreateComponent
-  },
-  {
-    path: 'maps/:id',
-    redirectTo: 'maps/:id/edit/design',
-  },
-  {
-    path: 'maps/:id',
-    component: MapDetailComponent,
-    canDeactivate: [UnsavedGuard],
-    children: [
-      {
-        path: 'properties',
-        component: MapPropertiesComponent
-      },
-      {
-        path: 'settings',
-        component: MapSettingComponent
-      },
-      {
-        path: 'edit',
-        component: MapEditComponent,
-        children: [
-          {
-            path: 'code',
-            component: MapCodeComponent
-          },
-          {
-            path: 'design',
-            component: MapDesignComponent
-          },
-        ]
-      },
-      {
-        path: 'results',
-        component: MapResultsComponent
-      }
-    ]
+    loadChildren: './maps/maps.module#MapsModule'
   },
 
 //  plugins
