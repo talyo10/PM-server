@@ -7,7 +7,7 @@ const PAGE_SIZE = env.page_size;
 module.exports = {
     /* archiving maps in ids array */
     archive: (mapsIds) => {
-        return Map.update({ _id: { $in: mapsIds } }, { archived: true }, {multi: true})
+        return Map.update({ _id: { $in: mapsIds } }, { archived: true }, { multi: true })
     },
     /* count how many documents exist for a certain query */
     count: (filter) => {
@@ -51,6 +51,9 @@ module.exports = {
                 return { items: projects, totalCount: r }
             });
         });
+    },
+    filterByQuery(query = {}) {
+        return Map.find(query);
     },
     get: (id) => {
         console.log(id);

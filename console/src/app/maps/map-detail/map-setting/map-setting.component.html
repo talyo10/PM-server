@@ -2,11 +2,15 @@
   <div class="row">
     <div class="col-3">
       <p-dataTable [value]="structures" [rows]="10" [paginator]="true" [pageLinks]="3">
-        <p-column field="createdAt" header="Date"></p-column>
+        <p-column field="createdAt" header="Date">
+          <ng-template let-col let-structure="rowData" pTemplate="body">
+            <span>{{ (structure.createdAt | date: 'dd/MM/yyyy') + ' ' +  (structure.createdAt | date: 'HH:mm') }}</span>
+          </ng-template>
+        </p-column>
         <p-column field="" header="Actions">
           <ng-template let-col let-structure="rowData" pTemplate="body">
             <span><button class="btn-inline-action" (click)="previewStructure(structure.id)"><i class="fa fa-eye" aria-hidden="true"></i></button></span>
-            <span><button class="btn-inline-action"><i class="fa fa-clone" aria-hidden="true"></i></button></span>
+            <span><button class="btn-inline-action" (click)="duplicateMap(structure.id)"><i class="fa fa-clone" aria-hidden="true"></i></button></span>
             <span><button class="btn-inline-action" (click)="changeStructure(structure.id)"><i class="fa fa-external-link" aria-hidden="true"></i></button></span>
           </ng-template>
         </p-column>

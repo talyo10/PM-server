@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import * as $ from 'jquery';
 import * as joint from 'jointjs';
@@ -7,6 +7,8 @@ import * as joint from 'jointjs';
 import { MapsService } from '../../maps.service';
 import { MapStructure } from '../../models/map-structure.model';
 import { SocketService } from '../../../shared/socket.service';
+import { ProjectsService } from '../../../projects/projects.service';
+import { Project } from '../../../projects/models/project.model';
 
 @Component({
   selector: 'app-map-setting',
@@ -19,14 +21,17 @@ export class MapSettingComponent implements OnInit {
   mapId: string;
   graph: joint.dia.Graph;
   paper: joint.dia.Paper;
+  projectsReq: any;
+  project: Project;
   @ViewChild('wrapper') wrapper: ElementRef;
 
-  constructor(private mapsService: MapsService, private route: ActivatedRoute, private socketServiec: SocketService) {
+  constructor(private mapsService: MapsService, private router: Router, private route: ActivatedRoute, private projectsService: ProjectsService, private socketServiec: SocketService) {
   }
 
   ngOnInit() {
     this.route.parent.params.subscribe(params => {
       this.mapId = params.id;
+      this.getMapProject();
       this.mapsService.structuresList(params.id).subscribe(structures => {
         this.structures = structures
       })
@@ -43,6 +48,19 @@ export class MapSettingComponent implements OnInit {
     });
     this.defineShape();
     this.paper.scale(0.75, 0.75);
+
+
+
+  }
+
+  getMapProject() {
+    this.projectsReq = this.projectsService.filter().subscribe(data => {
+      data.items.forEach(project => {
+        if ((<string[]>project.maps).indexOf(this.mapId) > -1 ) {
+          this.project = project;
+        }
+      });
+    });
   }
 
   changeStructure(structureId) {
@@ -104,6 +122,12 @@ export class MapSettingComponent implements OnInit {
           }
         }
       }, joint.shapes.devs.Model.prototype.defaults)
+    });
+  }
+
+  duplicateMap(structureId) {
+    this.mapsService.duplicateMap(this.mapId, structureId, this.project.id).subscribe(map => {
+      this.router.navigate(['/maps', map.id])
     });
   }
 
