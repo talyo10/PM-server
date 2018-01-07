@@ -1,12 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
+import * as _ from 'lodash';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { MapsService } from '../maps.service';
 import { Map } from '../models/map.model';
 import { MapStructure } from '../models/map-structure.model';
+import { ConfirmComponent } from '../../shared/confirm/confirm.component';
+
 
 @Component({
   selector: 'app-map-detail',
@@ -28,7 +31,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
   structureEdited: boolean = false;
   initiated: boolean = false;
 
-  constructor(private route: ActivatedRoute, private mapsService: MapsService) {
+  constructor(private route: ActivatedRoute, private mapsService: MapsService, private modalService: BsModalService) {
   }
 
   ngOnInit() {
@@ -128,7 +131,9 @@ export class MapDetailComponent implements OnInit, OnDestroy {
   canDeactivate() {
     // will be triggered by deactivate guard
     if (this.edited || this.structureEdited) {
-      return confirm('Discard changes?');
+      let modal = this.modalService.show(ConfirmComponent);
+      modal.content.message = 'You have unsaved changed that will be lost by this action. Discard changes?';
+      return modal.content.result.asObservable();
     }
     return true;
   }
