@@ -6,6 +6,7 @@ import * as joint from 'jointjs';
 
 import { MapsService } from '../../maps.service';
 import { MapStructure } from '../../models/map-structure.model';
+import { SocketService } from '../../../shared/socket.service';
 
 @Component({
   selector: 'app-map-setting',
@@ -20,7 +21,7 @@ export class MapSettingComponent implements OnInit {
   paper: joint.dia.Paper;
   @ViewChild('wrapper') wrapper: ElementRef;
 
-  constructor(private mapsService: MapsService, private route: ActivatedRoute) {
+  constructor(private mapsService: MapsService, private route: ActivatedRoute, private socketServiec: SocketService) {
   }
 
   ngOnInit() {
@@ -47,6 +48,10 @@ export class MapSettingComponent implements OnInit {
   changeStructure(structureId) {
     this.mapsService.getMapStructure(this.mapId, structureId).subscribe(structure => {
       this.mapsService.setCurrentMapStructure(structure);
+      this.socketServiec.setNotification({
+        title: 'Changed version',
+        type: 'info'
+      })
     });
   }
 
