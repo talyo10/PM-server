@@ -111,6 +111,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         return true;
       }
     });
+
     this.resizePaper();
 
     this.listeners();
@@ -366,7 +367,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     model.attr('rect/fill', '#2d3236');
     this.editing = false;
     this.process = null;
-    // this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth, this.wrapper.nativeElement.offsetHeight);
+
     this.resizePaper();
   }
 
@@ -408,7 +409,9 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
 
   onResize(event) {
     // when resizing window paper size should be updated
+    if (!event) {
+      return ;
+    }
     this.resizePaper();
-    // this.paper.setDimensions(this.wrapper.nativeElement.offsetWidth - 250, this.wrapper.nativeElement.offsetHeight);
   }
 }
