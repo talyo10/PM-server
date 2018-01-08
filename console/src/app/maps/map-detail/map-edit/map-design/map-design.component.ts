@@ -364,7 +364,9 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
     const model = cell.models.find((o) => {
       return o.id === this.process.uuid;
     });
-    model.attr('rect/fill', '#2d3236');
+    if (model) {
+      model.attr('rect/fill', '#2d3236');
+    }
     this.editing = false;
     this.process = null;
 
@@ -410,7 +412,7 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   onResize(event) {
     // when resizing window paper size should be updated
     if (!event) {
-      return ;
+      return;
     }
     this.resizePaper();
   }
