@@ -1,4 +1,4 @@
-Add a new scheduled job
+<h3 class="section-sub-title">Schedule a job</h3>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
   <div class="form-group">
@@ -17,18 +17,18 @@ Add a new scheduled job
     </select>
   </div>
 
-  <div class="form-check">
-    <label class="form-check-label">
-      <input class="form-check-input" type="radio" formControlName="type" name="type" id="type1" value="once">
-      Once
-    </label>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" formControlName="type" name="type" id="type1" value="once">
+
+    <label class="form-check-label">Once</label>
   </div>
-  <div class="form-check">
-    <label class="form-check-label">
-      <input class="form-check-input" type="radio" formControlName="type" name="type" id="type2" value="repeated">
-      Repeated
-    </label>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" formControlName="type" name="type" id="type2" value="repeated">
+    <label class="form-check-label">Repeated</label>
   </div>
+
+
+
   <div [ngSwitch]="form.controls.type.value">
     <div *ngSwitchDefault>
 
