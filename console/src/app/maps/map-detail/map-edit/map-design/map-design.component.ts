@@ -198,6 +198,34 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
         }
       }, joint.shapes.devs.Model.prototype.defaults)
     });
+
+
+    joint.shapes.devs['PMStartPoint'] = joint.shapes.devs.Model.extend({
+
+      markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><image/><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+      portMarkup: '<g class="port"><circle class="port-body"/><text class="port-label"/></g>',
+
+      defaults: joint.util.deepSupplement({
+
+        type: 'devs.PMStartPoint',
+        size: { width: 40, height: 39 },
+        outPorts: [' '],
+        attrs: {
+          '.body': { stroke: '#3c3e41', fill: '#2c2c2c', 'rx': 6, 'ry': 6, 'opacity': 0 },
+          '.label': {
+            text: '', 'ref-y': 0.83, 'y-alignment': 'middle',
+            fill: '#f1f1f1', 'font-size': 13
+          },
+          '.port-body': { r: 7.5, stroke: 'gray', fill: '#2c2c2c', magnet: 'active' },
+          'image': {
+            'ref-x': 10, 'ref-y': 18, ref: 'rect',
+            width: 35, height: 34, 'y-alignment': 'middle',
+            'x-alignment': 'middle', 'xlink:href': 'assets/images/start.png'
+          }
+        }
+
+      }, joint.shapes.devs.Model.prototype.defaults)
+    });
   }
 
   addNewProcess(obj: { x: number, y: number, cell: any }, offsetTop: number, offsetLeft: number) {
@@ -270,6 +298,14 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   drawGraph() {
     if (this.mapStructure.content) {
       this.graph.fromJSON(JSON.parse(this.mapStructure.content));
+    } else {
+      let startNode = new joint.shapes.devs['PMStartPoint']({
+        position: {
+          x: 50,
+          y: 20
+        }
+      });
+      this.graph.addCell(startNode);
     }
   }
 
@@ -324,13 +360,14 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
           this.addNewLink(cellView);
         }
       } else {
+
         const id = cellView.model.id;
         const process = _.find(this.mapStructure.processes, (o) => {
           return o.uuid === id;
         });
-        // cellView.model.attr('rect/fill', '#02a7c7');
-        // cellView.model.attr('rect/stroke', '#02a7c7');
-        this.editProcess(process);
+        if (process) {
+          this.editProcess(process);
+        }
       }
 
     });
