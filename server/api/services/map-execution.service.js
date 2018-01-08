@@ -34,12 +34,35 @@ function createContext(mapObj, context) {
     }
 }
 
+function findStartNode(structure) {
+    let node;
+    const links = structure.links;
+    for (let i = 0; i < links.length; i++) {
+        let source = links[i].sourceId;
+        let index = structure.processes.findIndex((o) => {
+            o.uuid === source;
+        });
+        if (index === -1) {
+            node = { type: 'start_node', uuid: source };
+        }
+    }
+    return node
+}
+
 function buildMapGraph(map) {
+    const startNode = findStartNode(map);
     // creating a directed graph from the map.
     let map_graph = new graphlib.Graph({ directed: true });
     console.log(map.processes.length, " processes");
+    map_graph.setNode(startNode.uuid, startNode);
+
     map.processes.forEach(node => {
-        map_graph.setNode(node.uuid, node);
+        let linkIndex = map.links.findIndex((o) => {
+            return o.targetId === node.uuid;
+        });
+        if (linkIndex > -1) {
+            map_graph.setNode(node.uuid, node);
+        }
     });
     for (let i = map.links.length - 1; i >= 0; i--) {
         let link = map.links[i];
@@ -50,8 +73,8 @@ function buildMapGraph(map) {
     return map_graph;
 }
 
-function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
-
+function executeMap(mapId, versionIndex, cleanWorkspace, req) {
+    const socket = req.io;
     function guidGenerator() {
         let S4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -59,7 +82,6 @@ function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
         return (S4() + "-" + S4());
     }
 
-    // the function get a map Id and a versionIndex
     // TODO: add execution by sourceID
     let runId = guidGenerator();
     MapExecutionLog.create({
@@ -74,6 +96,7 @@ function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
     let mapStructure;
     let mapAgents;
     let executionContext;
+
     return mapsService.get(mapId).then(mapobj => {
         map = mapobj;
         mapAgents = map.agents;
@@ -138,12 +161,14 @@ function executeMap(mapId, versionIndex, cleanWorkspace, socket) {
         if (res !== 0) {
             throw new Error("Error running map code", res);
         }
+        const startNode = findStartNode(mapStructure);
 
-        startNodes.forEach(node => {
-            executeProcess(map, mapGraph, node, _.cloneDeep(executionContext), executionAgents, socket);
-        });
+        executeProcess(map, mapGraph, startNode, _.cloneDeep(executionContext), executionAgents, socket);
+        // startNodes.forEach(node => {
+        //     executeProcess(map, mapGraph, node, _.cloneDeep(executionContext), executionAgents, socket);
+        // });
 
-        return startNodes
+        return startNode
     }).catch(error => {
         console.log("Error: ", error);
         MapExecutionLog.create({
@@ -170,11 +195,20 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
         return;
     }
 
-
     executionContext.agents = executionAgents; // adding the context the latest agents result (so user could access them with the code);
     let process = mapGraph.node(node);
     let agents = filterAgents(executionAgents); // get all available agents (not running or stopped);
     let successors = mapGraph.successors(node);
+
+    if (node.type && node.type === 'start_node') {
+        successors = mapGraph.successors(node.uuid);
+        successors.forEach(successor => {
+            console.log("next node", successor);
+            executeProcess(map, mapGraph, successor, executionContext, executionAgents, socket);
+        });
+        return ;
+    }
+
     pluginsService.getPlugin(process.plugin).then((plugin) => { // get the process plugin
         async.each(agents,
             (agent, agentCb) => {
@@ -204,7 +238,7 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
                     map: map._id,
                     runId: executionContext.runId,
                     message: `'${process.name}': executing process (${agent.name})`,
-                    status: "error"
+                    status: "info"
                 }).then((log) => {
                     socket.emit('update', log);
                 });

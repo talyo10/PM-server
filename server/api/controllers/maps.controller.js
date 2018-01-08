@@ -150,7 +150,7 @@ module.exports = {
     /* execution */
     /* execute a map */
     execute: (req, res) => {
-        mapsExecutionService.execute(req.params.id, null, null, req.io).then((r) => {
+        mapsExecutionService.execute(req.params.id, null, null, req).then((r) => {
             res.json(r);
         }).catch(error => {
             console.log("Error executing map: ", error);
