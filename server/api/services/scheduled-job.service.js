@@ -22,7 +22,7 @@ module.exports = {
     create: (job) => {
         return ScheduledJob.create(job).then((jobObj) => {
             module.exports.addScheduledJob(jobObj);
-            return jobObj
+            return module.exports.filter({ _id: jobObj._id }, true)
         });
     },
     /* deleting job object from db and removing scheduled job if exists */
@@ -31,9 +31,8 @@ module.exports = {
 
         return ScheduledJob.remove({ _id: jobId });
     },
-    filter: () => {
-        // TODO: add filtering by query
-        return ScheduledJob.find({}).populate('map');
+    filter: (query = {}, one = false) => {
+        return one ? ScheduledJob.findOne(query).populate('map') : ScheduledJob.find(query).populate('map')
     },
     /* return jobs that should happen in the future */
     getFutureJobs: () => {
