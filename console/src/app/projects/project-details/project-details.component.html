@@ -58,7 +58,7 @@
       </p-column>
     </p-dataTable>
 
-    <a routerLink="/maps/create" class="btn pm" [queryParams]="{'project': project?.id}" *ngIf="project?.maps && project?.maps?.length > 0">Add map</a>
+    <a routerLink="/maps/create" class="btn pm create" [queryParams]="{'project': project?.id}" *ngIf="project?.maps && project?.maps?.length > 0">Add map</a>
   </div>
 </div>
 
