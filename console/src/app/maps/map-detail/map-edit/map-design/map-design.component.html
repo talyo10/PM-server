@@ -1,4 +1,4 @@
-<div class="wrapper row" #wrapper (window:resize)="onResize($event)" (mouseover)="onResize()">
+<div class="wrapper row" #wrapper (window:resize)="onResize($event)">
   <div class="main" [ngClass]="{'col-12': !editing, 'col-8': editing}">
     <h3 class="pane-header">Design</h3>
     <div class="map-controllers">
