@@ -14,11 +14,22 @@
 .environment {
   max-width: 250px;
   flex: 0 0 250px;
+  .pane-header {
+    i {
+      &:hover {
+        color: #fff;
+        cursor: pointer;
+      }
+      float: right;
+      padding: 12px;
+    }
+  }
 }
 
 .row {
   flex-wrap: nowrap;
 }
+
 .designer {
   flex: 1 1;
 
