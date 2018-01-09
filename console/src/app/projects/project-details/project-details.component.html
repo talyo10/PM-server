@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <h1 class="section-title">{{project?.name}} <span *ngIf="project?.archived  ">(archived)</span></h1>
-      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn" (click)="editProject()">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
+      <a routerLink="/projects/update" [queryParams]="{'project': project?.id}" class="btn-primary btn">Edit <i class="fa fa-pencil" aria-hidden="true"></i></a>
       <button class="btn-success btn" (click)="archiveProject()" [disabled]="project?.archived">Archive <i class="fa fa-archive" aria-hidden="true"></i>
       </button>
       <p class="lead">{{project?.description}}</p>
@@ -57,6 +57,8 @@
         </ng-template>
       </p-column>
     </p-dataTable>
+
+    <a routerLink="/maps/create" class="btn pm">Create map</a>
   </div>
 </div>
 

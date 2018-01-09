@@ -19,7 +19,7 @@ export class MapEditComponent implements OnInit, OnDestroy {
   tab: string;
   @ViewChild('wrapper') wrapper: ElementRef;
 
-  constructor(private mapsService: MapsService, private designService: MapDesignService) {
+  constructor(private mapsService: MapsService, public designService: MapDesignService) {
   }
 
   ngOnInit() {
