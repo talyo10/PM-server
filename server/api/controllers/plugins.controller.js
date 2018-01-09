@@ -27,8 +27,7 @@ module.exports = {
         }
 
         pluginsService.createPlugin(req.file.path, req).then((obj) => {
-            console.log("Finish uploading");
-            req.io.emit('notification', { title: 'Installed new plugin', message: `You can now use ${obj.name}`, type: 'success' });
+            req.io.emit('notification', { title: 'Installed plugin', message: `You can now use this plugin`, type: 'success' });
             return res.json(obj);
         }).catch(error => {
             req.io.emit('notification', { title: 'Whoops', message: `Error while installing plugin`, type: 'error' });
@@ -40,7 +39,6 @@ module.exports = {
     pluginDelete: (req, res) => {
         pluginsService.pluginDelete(req.params.id).then(() => {
             req.io.emit('notification', { title: 'Plugin deleted', message: ``, type: 'success' });
-
             return res.status(200).send();
         }).catch(error => {
             req.io.emit('notification', { title: 'Whoops', message: `Error deleting plugin`, type: 'error' });
