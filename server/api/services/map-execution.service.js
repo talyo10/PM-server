@@ -76,6 +76,7 @@ function buildMapGraph(map) {
 
 function executeMap(mapId, versionIndex, cleanWorkspace, req) {
     const socket = req.io;
+
     function guidGenerator() {
         let S4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -206,7 +207,7 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
             console.log("next node", successor);
             executeProcess(map, mapGraph, successor, executionContext, executionAgents, socket);
         });
-        return ;
+        return;
     }
 
     let process = mapGraph.node(node);
@@ -479,7 +480,7 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
 
                     for (let i in availableAgents) {
                         // check if availble passed all processes.
-                        if (Object.keys(availableAgents[i].processes).length !== mapGraph.nodes().length) {
+                        if (Object.keys(availableAgents[i].processes).length !== (mapGraph.nodes().length - 1)) {
                             flag = false;
                         }
                     }
