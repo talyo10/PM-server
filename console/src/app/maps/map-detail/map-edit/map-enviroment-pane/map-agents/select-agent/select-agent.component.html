@@ -7,13 +7,12 @@
       </button>
     </div>
     <div class="modal-body">
-      <p-treeTable
-        [value]="agentsTree"
-        selectionMode="checkbox"
-        [(selection)]="selectedNodes"
-        (onNodeSelect)="nodeSelect($event)">
-        <p-column field="name" header="Name"></p-column>
-      </p-treeTable>
+      <p-dataTable [value]="agents" [(selection)]="selectedAgents" dataKey="name">
+        <p-column [style]="{'width':'38px'}" selectionMode="multiple"></p-column>
+        <p-column field="name" header="name"></p-column>
+        <p-column field="url" header="url"></p-column>
+      </p-dataTable>
+
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-primary" (click)="onClose()">Cancel</button>

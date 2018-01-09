@@ -13,11 +13,11 @@ import { Subject } from "rxjs/Subject";
   styleUrls: ['./select-agent.component.scss']
 })
 export class SelectAgentComponent implements OnInit {
-  agents: [Agent];
+  agents: Agent[];
   agentsReq: any;
   agentsTree: TreeNode[];
   selectedNodes: TreeNode[];
-  selectedAgents: Agent[] = [];
+  selectedAgents: Agent[];
 
   public result: Subject<any> = new Subject();
 
