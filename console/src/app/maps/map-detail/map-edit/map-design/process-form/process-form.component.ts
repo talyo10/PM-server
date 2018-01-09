@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
-import { Process } from "../../../../models/map-structure.model";
-import { Plugin } from "../../../../../plugins/models/plugin.model";
-import { FormArray, FormControl, FormGroup } from "@angular/forms";
-import { PluginMethod } from "../../../../../plugins/models/plugin-method.model";
+import { Process } from '../../../../models/map-structure.model';
+import { Plugin } from '../../../../../plugins/models/plugin.model';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { PluginMethod } from '../../../../../plugins/models/plugin-method.model';
 
 @Component({
   selector: 'app-process-form',
@@ -47,12 +47,13 @@ export class ProcessFormComponent implements OnInit {
     });
 
     if (this.process.actions) {
+      console.log(this.process.actions);
       this.process.actions.forEach((action, actionIndex) => {
         let actionControl = <FormArray>this.processForm.controls['actions'];
         actionControl.push(this.initActionController(action.id, action.name, action.timeout, action.timeunit, action.retries, action.mandatory, action.method));
         if (action.params) {
           action.params.forEach((param, index) => {
-            actionControl.controls[actionIndex]['controls'].params.push(this.initActionParamController(param.code, param.value, param._id? param._id: param.param, param.viewName, param.name));
+            actionControl.controls[actionIndex]['controls'].params.push(this.initActionParamController(param.code, param.value, param._id ? param._id : param.param, param.viewName, param.name));
           })
         }
       });
@@ -112,16 +113,17 @@ export class ProcessFormComponent implements OnInit {
 
   onSelectMethod() {
     /* when a method selected - change the form params*/
-    console.log("Selected method");
-    let method = this.processForm.value.actions[this.index].method;
+    console.log('Selected method');
+    let methodId = this.processForm.value.actions[this.index].method;
     let action = this.processForm.controls['actions']['controls'][this.index];
     for (let i = 0; i < action.controls.params.length; i++) {
       action.controls.params.removeAt(i);
     }
 
+    const method = this.plugin.methods.find((o) => {
+      return o._id === methodId
+    });
     method.params.forEach(param => {
-      console.log(param);
-      // console.log(this.processForm.controls['actions']['controls'][this.index]);
       action.controls.params.push(this.initActionParamController(null, null, param._id, param.viewName, param.name))
     });
   }

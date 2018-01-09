@@ -311,6 +311,11 @@ export class MapDesignComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   editProcess(process) {
+    if (typeof process.plugin === 'string') {
+      process.plugin = this.plugins.find((o) => {
+        return o._id === <string>(process.plugin)
+      });
+    }
     const cell = this.graph.get('cells');
     let model = cell.models.find((o) => {
       return o.id === process.uuid;
