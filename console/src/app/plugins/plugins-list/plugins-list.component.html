@@ -18,14 +18,9 @@
     [pageLinks]="4"
     [globalFilter]="gb"
     *ngIf="plugins && plugins?.length > 0">
-    <p-column field="imgUrl" header="" [sortable]="true">
-      <ng-template let-col let-plugin="rowData" pTemplate="body">
-        <img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail">
-      </ng-template>
-    </p-column>
     <p-column field="name" header="Name" [sortable]="true">
       <ng-template let-col let-plugin="rowData" pTemplate="body">
-        {{ plugin.name }}
+        <img src="plugins/{{plugin.name}}/{{plugin.imgUrl}}" class="thumbnail"> {{ plugin.name }}
       </ng-template>
     </p-column>
     <p-column field="description" header="Description" [sortable]="true">
