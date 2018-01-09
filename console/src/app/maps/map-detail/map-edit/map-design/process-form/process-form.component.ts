@@ -42,6 +42,7 @@ export class ProcessFormComponent implements OnInit {
       preRun: new FormControl(this.process.preRun),
       postRun: new FormControl(this.process.postRun),
       correlateAgents: new FormControl(this.process.correlateAgents),
+      filterAgents: new FormControl(this.process.filterAgents),
       actions: new FormArray([])
     });
 
