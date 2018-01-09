@@ -80,5 +80,7 @@ export class MapStructure implements IMapStructure {
 
   constructor() {
     this.processes = [];
+    this.attributes = [];
+    this.links = [];
   }
 }
