@@ -26,6 +26,10 @@
   align-items: center;
   li.nav-item {
     margin-bottom: 15px;
+    border-radius: 5px;
+    &.active, &:hover {
+      background: $selected-nav;
+    }
     &:first-child {
       margin-top: 47px;
     }
