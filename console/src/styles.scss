@@ -47,6 +47,9 @@ input, textarea, select {
     box-shadow: none !important;
     border: 1px solid $turquoise-blue !important;
   }
+  &:disabled {
+    background-color: $selected-tab-environment !important;
+  }
 }
 
 textarea {

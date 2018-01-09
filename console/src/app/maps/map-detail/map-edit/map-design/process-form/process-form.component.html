@@ -5,10 +5,8 @@
   </h3>
   <div *ngIf="!action">
     <div class="btn-group" dropdown placement="bottom right">
-      <!--<button dropdownToggle type="button" class="btn dropdown-toggle">-->
-        <!--<i class="fa fa-ellipsis-h" aria-hidden="true"></i>-->
-      <!--</button>-->
-      <span class="dropdown-pm" dropdownToggle><i class="fa fa-ellipsis-h" aria-hidden="true"></i> <i class="fa fa-chevron-down" aria-hidden="true"></i></span>
+      <span class="dropdown-pm" dropdownToggle><i class="fa fa-ellipsis-h" aria-hidden="true"></i> <i
+        class="fa fa-chevron-down" aria-hidden="true"></i></span>
       <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
         <li role="menuitem"><a class="dropdown-item" (click)="deleteProcess()">Delete</a></li>
         <li role="menuitem"><a class="dropdown-item" href="#">Duplicate</a></li>
@@ -40,12 +38,11 @@
         </div>
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" class="form-control" id="name" placeholder="eg. Refresh agent" formControlName="name">
+          <input type="text" class="form-control" id="name" formControlName="name">
         </div>
         <div class="form-group">
           <label for="description">Details</label>
-          <textarea type="text" class="form-control" id="description"
-                    placeholder="eg. This process pull the data from github" formControlName="description"></textarea>
+          <textarea type="text" class="form-control" id="description" formControlName="description"></textarea>
         </div>
         <div class="form-group">
           <label for="type">Type</label>
@@ -59,12 +56,6 @@
         </div>
         <div class="form-check">
           <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" formControlName="correlateAgents">
-            Correlate agents
-          </label>
-        </div>
-        <div class="form-check">
-          <label class="form-check-label">
             <input type="checkbox" class="form-check-input" formControlName="mandatory">
             Mandatory
           </label>
@@ -72,8 +63,20 @@
         </div>
         <div class="form-group">
           <label for="condition">Condition</label>
-          <input type="text" class="form-control" id="condition" placeholder="eg. condition_test_function()"
-                 formControlName="condition">
+          <input type="text" class="form-control" id="condition" formControlName="condition">
+          <small class="form-text text-muted">Returns a boolean - determine if the process should run. You can refer to
+            map code here.
+          </small>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" formControlName="correlateAgents">
+            Correlate agents
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="condition">Filter agents condition</label>
+          <input type="text" class="form-control" id="filterAgents" formControlName="filterAgents">
           <small class="form-text text-muted">Returns a boolean - determine if the process should run. You can refer to
             map code here.
           </small>
@@ -87,8 +90,7 @@
 
         <div class="form-group">
           <label for="preRun">Pre-run function</label>
-          <input type="text" class="form-control" id="preRun"
-                 formControlName="preRun">
+          <input type="text" class="form-control" id="preRun" formControlName="preRun">
           <small class="form-text text-muted">This function will run with agent context before the process executes. The
             result will be added to the context. Code reference available.
           </small>
@@ -131,17 +133,17 @@
     <div *ngIf="action" [formGroup]="processForm.controls.actions.at(index)" class="action-form">
       <div class="form-group">
         <label for="actionName">Name</label>
-        <input type="text" class="form-control" id="actionName" placeholder="eg. copy dir" formControlName="name">
+        <input type="text" class="form-control" id="actionName" formControlName="name">
       </div>
       <div class="row">
         <div class="col">
-          <input type="text" class="form-control" placeholder="Timeout" formControlName="timeout">
+          <input type="text" class="form-control" formControlName="timeout">
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="Timeunit" formControlName="timeunit">
+          <input type="text" class="form-control" formControlName="timeunit">
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="Retries" formControlName="retries">
+          <input type="text" class="form-control" formControlName="retries">
         </div>
       </div>
       <hr>

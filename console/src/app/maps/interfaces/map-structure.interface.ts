@@ -35,12 +35,11 @@ export interface IProcess {
   condition?: string,
   preRun?: string,
   postRun?: string,
+  filterAgents?: string,
   actions: IAction[],
   plugin: IPlugin,
   createdAt: Date,
   correlateAgents: boolean,
-  x?: number,
-  y?: number,
   uuid: string
 }
 
