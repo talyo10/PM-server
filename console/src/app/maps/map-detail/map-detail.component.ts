@@ -143,7 +143,7 @@ export class MapDetailComponent implements OnInit, OnDestroy {
     // will be triggered by deactivate guard
     if (this.edited || this.structureEdited) {
       let modal = this.modalService.show(ConfirmComponent);
-      modal.content.message = 'You have unsaved changed that will be lost by this action. Discard changes?';
+      modal.content.message = 'You have unsaved changes that will be lost by this action. Discard changes?';
       return modal.content.result.asObservable();
     }
     return true;
