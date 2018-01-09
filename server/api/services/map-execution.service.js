@@ -44,6 +44,7 @@ function findStartNode(structure) {
         });
         if (index === -1) {
             node = { type: 'start_node', uuid: source };
+            return node;
         }
     }
     return node
@@ -196,19 +197,20 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
     }
 
     executionContext.agents = executionAgents; // adding the context the latest agents result (so user could access them with the code);
-    let process = mapGraph.node(node);
-    let agents = filterAgents(executionAgents); // get all available agents (not running or stopped);
     let successors = mapGraph.successors(node);
 
     if (node.type && node.type === 'start_node') {
         successors = mapGraph.successors(node.uuid);
         successors.forEach(successor => {
+            let n = mapGraph.node(successor);
             console.log("next node", successor);
             executeProcess(map, mapGraph, successor, executionContext, executionAgents, socket);
         });
         return ;
     }
 
+    let process = mapGraph.node(node);
+    let agents = filterAgents(executionAgents); // get all available agents (not running or stopped);
     pluginsService.getPlugin(process.plugin).then((plugin) => { // get the process plugin
         async.each(agents,
             (agent, agentCb) => {
@@ -416,7 +418,7 @@ function executeProcess(map, mapGraph, node, executionContext, executionAgents, 
                             console.log("Dont have to correlate");
                             successors.forEach(successor => {
                                 console.log("next node", successor);
-                                executeProcess(map, mapGraph, successor, executionContext, executionAgents);
+                                executeProcess(map, mapGraph, successor, executionContext, executionAgents, socket);
                             })
                         }
 
