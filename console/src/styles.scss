@@ -158,6 +158,21 @@ tr.ui-widget-content.ui-datatable-odd {
   }
 }
 
+/* primeng checkbox */
+
+.ui-chkbox-box{
+  border: 1px solid $greyish-text;
+  border-radius: 2px;
+  background-color: #dedede;
+  &.ui-state-active {
+    border: 1px solid $greyish-text;
+    border-radius: 2px;
+    background-color: #dedede;
+    color: black;
+  }
+}
+/*------*/
+
 table, .table {
   color: #dddddd;
   font-size: 14px;
