@@ -43,12 +43,11 @@ export class Process implements IProcess {
   condition?: string;
   preRun?: string;
   postRun?: string;
+  filterAgents?: string;
   actions: Action[];
   plugin: Plugin;
   createdAt: Date;
   correlateAgents: boolean;
-  x?: number;
-  y?: number;
   uuid: string;
 }
 

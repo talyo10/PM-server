@@ -26,14 +26,13 @@ let processSchema = new Schema({
     default_execution: Boolean,
     preRun: String,
     postRun: String,
+    filterAgents: String,
     correlateAgents: { type: Boolean, default: false },
     mandatory: { type: Boolean, default: false },
     condition: String,
     createdAt: { type: Date, default: Date.now },
     plugin: { type: Schema.Types.ObjectId, ref: 'Plugin' },
     actions: [actionSchema],
-    x: Number,
-    y: Number,
     uuid: String
 });
 
@@ -51,7 +50,7 @@ let linkSchema = new Schema({
 let attributeSchema = new Schema({
     name: { type: String, require: true },
     type: { type: String, require: true, enum: ['string', 'array', 'object'] },
-    value: {type: Schema.Types.Mixed, require: true},
+    value: { type: Schema.Types.Mixed, require: true },
 });
 
 let mapCodeSchema = new Schema({
