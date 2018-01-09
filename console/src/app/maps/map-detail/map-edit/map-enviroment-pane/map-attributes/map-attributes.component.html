@@ -4,7 +4,7 @@
     <tr *ngFor="let attr of mapStructure?.attributes; let i = index;">
       <td>{{attr.name}} = "{{attr.value}}"</td>
       <td>
-        <button type="button" class="btn btn-link" (click)="openAddAtrributeModal(i)">
+        <button type="button" class="btn btn-link" (click)="openAddAttributeModal(i)">
           <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
         </button>
         <button type="button" class="btn btn-link" (click)="removeAttribute(i)">
@@ -17,6 +17,6 @@
   </table>
 
   <div class="bottom">
-    <button type="button" class="btn btn-primary btn-block" (click)="openAddAtrributeModal()">Add attribute</button>
+    <button type="button" class="btn btn-primary btn-block" (click)="openAddAttributeModal()">Add attribute</button>
   </div>
 </div>

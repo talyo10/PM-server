@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Subscription } from "rxjs/Subscription";
-import { BsModalRef, BsModalService } from "ngx-bootstrap";
-import * as _ from "lodash";
+import { Subscription } from 'rxjs/Subscription';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import * as _ from 'lodash';
 
-import { AddAttributeComponent } from "./add-attribute/add-attribute.component";
-import { MapsService } from "../../../../maps.service";
-import { MapStructure } from "../../../../models/map-structure.model";
+import { AddAttributeComponent } from './add-attribute/add-attribute.component';
+import { MapsService } from '../../../../maps.service';
+import { MapStructure } from '../../../../models/map-structure.model';
 
 @Component({
   selector: 'app-map-attributes',
@@ -26,21 +26,25 @@ export class MapAttributesComponent implements OnInit {
     });
   }
 
-  openAddAtrributeModal(index?) {
-    const attribute = this.mapStructure.attributes[index];
-    const attributesNames = this.mapStructure.attributes.reduce((total, current, i) => {
+  openAddAttributeModal(index?) {
+    const attribute = index ? this.mapStructure.attributes[index] : null;
+    const attributesNames = this.mapStructure.attributes ? this.mapStructure.attributes.reduce((total, current, i) => {
       if (index !== i) {
         total.push(current.name);
       }
       return total;
-    }, []);
+    }, []) : [];
     let modal: BsModalRef;
     modal = this.modalService.show(AddAttributeComponent);
     modal.content.attribute = attribute;
     modal.content.forbiddenNames = attributesNames;
     modal.content.result.subscribe(result => {
       if (index || index === 0) {
-        this.mapStructure.attributes[index] = result;
+        if (this.mapStructure.attributes) {
+          this.mapStructure.attributes[index] = result;
+        } else {
+          this.mapStructure.attributes = [result];
+        }
       } else {
         this.mapStructure.attributes.push(result);
       }
