@@ -8,4 +8,5 @@ export class Agent implements IAgent {
   key: string;
   sshKey?: string;
   attributes: any[] | string;
+  // status?: any;
 }

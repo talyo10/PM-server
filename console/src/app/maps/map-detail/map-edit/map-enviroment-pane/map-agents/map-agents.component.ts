@@ -45,6 +45,7 @@ export class MapAgentsComponent implements OnInit, OnDestroy {
   openSelectAgentsModal() {
     let modal: BsModalRef;
     modal = this.modalService.show(SelectAgentComponent);
+    modal.content.selectedAgents = this.map.agents;
     modal.content.result.subscribe(result => {
       this.map.agents = result;
       this.mapsService.setCurrentMap(this.map);
