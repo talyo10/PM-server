@@ -174,7 +174,7 @@ table, .table {
     tr {
       height: 48px;
       &:hover {
-        background-color: $hover-color;
+        background-color: $hover-color !important;
         box-shadow: -4px 0px 0px 0px $turquoise-blue;
       }
     }
