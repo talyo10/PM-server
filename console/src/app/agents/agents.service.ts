@@ -6,7 +6,6 @@ import { TreeNode } from "primeng/primeng";
 import * as _ from "lodash";
 
 import { Agent } from "./models/agent.model";
-import { SNode } from "./models/snode.model";
 
 const serverUrl = environment.serverUrl;
 

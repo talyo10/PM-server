@@ -95,6 +95,10 @@ a {
   }
 }
 
+.ui-datatable tbody > tr.ui-widget-content.ui-state-highlight {
+  background-color: inherit;
+}
+
 .ui-datatable thead tr {
   background: none;
   border: none;
